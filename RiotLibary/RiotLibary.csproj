@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CD0A1A28-06DC-481F-B66C-63A515FA9903}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{77A519A7-C7C4-4331-BB30-075DB13F18D9}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AtlasBot</RootNamespace>
-    <AssemblyName>AtlasBot</AssemblyName>
+    <RootNamespace>RiotLibary</RootNamespace>
+    <AssemblyName>RiotLibary</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -39,6 +36,10 @@
     </Reference>
     <Reference Include="Discord.Net.Commands, Version=0.9.6.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Discord.Net.Commands.0.9.6\lib\net45\Discord.Net.Commands.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Discord.Net.Modules, Version=0.9.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Discord.Net.Modules.0.9.6\lib\net45\Discord.Net.Modules.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -100,12 +101,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Exceptions\ChampionNotFoundException.cs" />
+    <Compile Include="Exceptions\NoRankedGamesException.cs" />
+    <Compile Include="Exceptions\NotLevel30Exception.cs" />
+    <Compile Include="Exceptions\SummonerNotFoundException.cs" />
+    <Compile Include="Extras\MainChampion.cs" />
+    <Compile Include="Roles\ChampionAPI.cs" />
+    <Compile Include="Roles\MasteryAPI.cs" />
+    <Compile Include="Roles\RankAPI.cs" />
+    <Compile Include="Roles\RoleAPI.cs" />
+    <Compile Include="Roles\SummonerAPI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
+    <Content Include="Info.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataLibary\DataLibary.csproj">
@@ -113,17 +122,17 @@
       <Name>DataLibary</Name>
     </ProjectReference>
     <ProjectReference Include="..\Keys\Keys.csproj">
-      <Project>{48857361-D3CB-4DCC-B89B-F43CCB85F147}</Project>
+      <Project>{48857361-d3cb-4dcc-b89b-f43ccb85f147}</Project>
       <Name>Keys</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RiotLibary\RiotLibary.csproj">
-      <Project>{77a519a7-c7c4-4331-bb30-075db13f18d9}</Project>
-      <Name>RiotLibary</Name>
     </ProjectReference>
     <ProjectReference Include="..\ToolKit\ToolKit.csproj">
       <Project>{56827137-d90d-4475-9050-0cc22e254c47}</Project>
       <Name>ToolKit</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />

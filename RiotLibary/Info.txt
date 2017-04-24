@@ -1,0 +1,2 @@
+﻿The APIs aren't actually APIs, they are just called that to make sure they don't conflict with RiotSharp.
+Also yeah.. I use RiotSharp.

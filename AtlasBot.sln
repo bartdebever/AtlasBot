@@ -5,6 +5,23 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtlasBot", "AtlasBot\AtlasBot.csproj", "{CD0A1A28-06DC-481F-B66C-63A515FA9903}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLibary", "DataLibary\DataLibary.csproj", "{BAE10F63-7DEC-4F01-8CA5-C540473A228A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiotLibary", "RiotLibary\RiotLibary.csproj", "{77A519A7-C7C4-4331-BB30-075DB13F18D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keys", "Keys\Keys.csproj", "{48857361-D3CB-4DCC-B89B-F43CCB85F147}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagrams", "Diagrams", "{151E3A16-2947-4CCE-A657-84A27A940D59}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{BB28CBDA-74BD-4F8E-924A-56BA84F22850}"
+	ProjectSection(SolutionItems) = preProject
+		AtlasBot\readme.txt = AtlasBot\readme.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Personal notes", "Personal notes", "{38EC1F7A-0D35-4F51-BBF7-C42F98BBB712}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolKit", "ToolKit\ToolKit.csproj", "{56827137-D90D-4475-9050-0CC22E254C47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,8 +32,27 @@ Global
 		{CD0A1A28-06DC-481F-B66C-63A515FA9903}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD0A1A28-06DC-481F-B66C-63A515FA9903}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD0A1A28-06DC-481F-B66C-63A515FA9903}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAE10F63-7DEC-4F01-8CA5-C540473A228A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAE10F63-7DEC-4F01-8CA5-C540473A228A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAE10F63-7DEC-4F01-8CA5-C540473A228A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAE10F63-7DEC-4F01-8CA5-C540473A228A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77A519A7-C7C4-4331-BB30-075DB13F18D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77A519A7-C7C4-4331-BB30-075DB13F18D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77A519A7-C7C4-4331-BB30-075DB13F18D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77A519A7-C7C4-4331-BB30-075DB13F18D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48857361-D3CB-4DCC-B89B-F43CCB85F147}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48857361-D3CB-4DCC-B89B-F43CCB85F147}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48857361-D3CB-4DCC-B89B-F43CCB85F147}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48857361-D3CB-4DCC-B89B-F43CCB85F147}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56827137-D90D-4475-9050-0CC22E254C47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56827137-D90D-4475-9050-0CC22E254C47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56827137-D90D-4475-9050-0CC22E254C47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56827137-D90D-4475-9050-0CC22E254C47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{38EC1F7A-0D35-4F51-BBF7-C42F98BBB712} = {BB28CBDA-74BD-4F8E-924A-56BA84F22850}
 	EndGlobalSection
 EndGlobal
