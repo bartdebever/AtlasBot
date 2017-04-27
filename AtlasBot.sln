@@ -18,7 +18,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		..\..\..\ClassDiagram.ncp = ..\..\..\ClassDiagram.ncp
 		D:\Pictures\DatabaseDiagram.png = D:\Pictures\DatabaseDiagram.png
 		..\..\..\Documentation.pdf = ..\..\..\Documentation.pdf
-		AtlasBot\readme.txt = AtlasBot\readme.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Personal notes", "Personal notes", "{38EC1F7A-0D35-4F51-BBF7-C42F98BBB712}"
@@ -31,6 +30,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Other development", "Other 
 	ProjectSection(SolutionItems) = preProject
 		D:\Pictures\Dynamic responces.png = D:\Pictures\Dynamic responces.png
 		D:\Pictures\Server Verification.png = D:\Pictures\Server Verification.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{061F9A39-DF69-4E72-9EAF-E7A5827794D4}"
+	ProjectSection(SolutionItems) = preProject
+		readme.txt = readme.txt
 	EndProjectSection
 EndProject
 Global

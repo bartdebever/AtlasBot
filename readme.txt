@@ -1,0 +1,1 @@
+This is all a big work in progress. More updates will add a lot of new commands and I'll be trying to handle my Git better.
