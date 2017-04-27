@@ -15,12 +15,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagrams", "Diagrams", "{15
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{BB28CBDA-74BD-4F8E-924A-56BA84F22850}"
 	ProjectSection(SolutionItems) = preProject
+		..\..\..\ClassDiagram.ncp = ..\..\..\ClassDiagram.ncp
+		D:\Pictures\DatabaseDiagram.png = D:\Pictures\DatabaseDiagram.png
+		..\..\..\Documentation.pdf = ..\..\..\Documentation.pdf
 		AtlasBot\readme.txt = AtlasBot\readme.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Personal notes", "Personal notes", "{38EC1F7A-0D35-4F51-BBF7-C42F98BBB712}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolKit", "ToolKit\ToolKit.csproj", "{56827137-D90D-4475-9050-0CC22E254C47}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Languages", "Languages\Languages.csproj", "{5F6BF3F3-EB3A-4E27-AE3E-7891FF1E42A0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Other development", "Other development", "{7BB9FB12-AD56-4A87-BE8C-2993B2C692E4}"
+	ProjectSection(SolutionItems) = preProject
+		D:\Pictures\Dynamic responces.png = D:\Pictures\Dynamic responces.png
+		D:\Pictures\Server Verification.png = D:\Pictures\Server Verification.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,11 +59,16 @@ Global
 		{56827137-D90D-4475-9050-0CC22E254C47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56827137-D90D-4475-9050-0CC22E254C47}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56827137-D90D-4475-9050-0CC22E254C47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F6BF3F3-EB3A-4E27-AE3E-7891FF1E42A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F6BF3F3-EB3A-4E27-AE3E-7891FF1E42A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F6BF3F3-EB3A-4E27-AE3E-7891FF1E42A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F6BF3F3-EB3A-4E27-AE3E-7891FF1E42A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{38EC1F7A-0D35-4F51-BBF7-C42F98BBB712} = {BB28CBDA-74BD-4F8E-924A-56BA84F22850}
+		{7BB9FB12-AD56-4A87-BE8C-2993B2C692E4} = {BB28CBDA-74BD-4F8E-924A-56BA84F22850}
 	EndGlobalSection
 EndGlobal

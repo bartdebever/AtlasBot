@@ -51,7 +51,7 @@ namespace ToolKit
             {
                 return Platform.TR1;
             }
-            return Platform.EUW1;
+            throw new System.Exception("Region not found");
         }
     }
 }

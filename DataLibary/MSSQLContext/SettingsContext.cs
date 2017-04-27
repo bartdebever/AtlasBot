@@ -116,5 +116,16 @@ namespace DataLibary.MSSQLContext
             }
             return 0;
         }
+
+        public void AddOverride(string parameter, ulong rank, ulong serverid)
+        {
+            string query =
+                "INSERT INTO [RoleOverride] VALUES((SELECT [S].id FROM [server] S WHERE [S].DiscordServerId = @ServerId), @Parameter, @rank)";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@ServerId", Convert.ToInt64(serverid));
+            cmd.Parameters.AddWithValue("@Parameter", parameter);
+            cmd.Parameters.AddWithValue("@rank", Convert.ToInt64(rank));
+            cmd.ExecuteNonQuery();
+        }
     }
 }

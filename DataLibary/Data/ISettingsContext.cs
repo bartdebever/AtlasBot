@@ -19,5 +19,6 @@ namespace DataLibary.Data
         void SetRankType(CommandType type, ulong serverid);
         void AllowRankAccount(bool value, ulong serverid);
         ulong GetOverride(string parameter, ulong serverid);
+        void AddOverride(string parameter, ulong rank, ulong serverid);
     }
 }

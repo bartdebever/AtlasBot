@@ -13,6 +13,7 @@ using RiotSharp;
 using RiotSharp.SummonerEndpoint;
 using ToolKit;
 using Region = RiotSharp.Region;
+using Role = Discord.API.Client.Role;
 
 namespace AtlasBot
 {
@@ -53,6 +54,7 @@ namespace AtlasBot
                 GetRank();
                 ChangeType();
                 ChangeCommandAllowed();
+                OverrideSystem();
                 BotUser.ExecuteAndWait(async () =>
                 {
                     await BotUser.Connect(Keys.Keys.discordKey, TokenType.Bot);
@@ -152,6 +154,64 @@ namespace AtlasBot
                     }
                     await e.Channel.SendMessage(returnstring);
                 });
+            }
+
+            private void OverrideSystem()
+            {
+                //Temporary name Override, needs a better name like CustomRole, just programming it now for the functionallity
+                commands.CreateCommand("Override")
+                    .Parameter("CommandType", ParameterType.Optional)
+                    .Parameter("Role", ParameterType.Optional)
+                    .Parameter("Parameter", ParameterType.Unparsed)
+                    .Do(async (e) =>
+                    {
+                        string returnstring = "";
+                        SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
+                        if (new ServerRepo(new ServerContext()).IsAdmin(e.User.Id, e.Server.Id) == true)
+                        {
+                            if (e.GetArg("CommandType").ToLower() == "help" || e.GetArg("CommandType") == "?")
+                            {
+                                //Gives all of the information about -Override and its overloads
+                            }
+                            else if (e.GetArg("CommandType").ToLower() == "add")
+                            {
+                                //Adds an override to the system
+                                try
+                                {
+                                    ulong id = 0;
+                                    try
+                                    {
+                                        id = e.Server.FindRoles(e.GetArg("Role"), false).First().Id;
+                                    }
+                                    catch
+                                    {
+                                         returnstring = "Role " + e.GetArg("role") + " not found";
+                                    }
+                                    if (id != 0)
+                                    {
+                                        settingsRepo.AddOverride(e.GetArg("Parameter").ToString().ToLower(),id
+                                         , e.Server.Id);
+                                        returnstring = "Override has been saved";
+                                    }
+                                    
+                                }
+                                catch
+                                {
+                                    returnstring = "Override has failed to save";
+                                }
+                                
+                            }
+                            else if (e.GetArg("CommandType").ToLower() == "list")
+                            {
+                                //Gives a list of all the overrides made by this server.
+                            }
+                        }
+                        else
+                        {
+                            returnstring = "You are not permitted to do this.";
+                        }
+                        await e.Channel.SendMessage(returnstring);
+                    });
             }
             #endregion ServerManagement
 
