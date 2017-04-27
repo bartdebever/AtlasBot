@@ -1,0 +1,773 @@
+<Project>
+  <Name>AtlasBot Discord Frontend</Name>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>AtlasBot.exe</Name>
+    <Language>CSharp</Language>
+    <Entities>
+      <Entity type="Class">
+        <Name>Program</Name>
+        <Access>Public</Access>
+        <Location left="224" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public Program()</Member>
+        <Member type="Method">public static Void Main(String[] args)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Bot</Name>
+        <Access>Public</Access>
+        <Location left="15" top="12" />
+        <Size width="162" height="298" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private DiscordClient BotUser</Member>
+        <Member type="Field">private CommandService commands</Member>
+        <Member type="Constructor">public Bot()</Member>
+        <Member type="Method">private Void ServerAdded()</Member>
+        <Member type="Method">private Void VerifyServer()</Member>
+        <Member type="Method">private Void InviteLink()</Member>
+        <Member type="Method">private Void ChangeType()</Member>
+        <Member type="Method">private Void ChangeCommandAllowed()</Member>
+        <Member type="Method">private Void ClaimAccount()</Member>
+        <Member type="Method">private Void GetRank()</Member>
+        <Member type="Method">private Void DMBort(String message)</Member>
+        <Member type="Method">private Void AdminLog(String message)</Member>
+        <Member type="Method">private String RandomStringGenerator()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Nesting" first="0" second="1">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+      </Relationship>
+    </Relationships>
+  </ProjectItem>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>RiotLibary.dll</Name>
+    <Language>CSharp</Language>
+    <Entities>
+      <Entity type="Class">
+        <Name>ChampionAPI</Name>
+        <Access>Public</Access>
+        <Location left="860" top="278" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private RiotApi api</Member>
+        <Member type="Field">private StaticRiotApi sApi</Member>
+        <Member type="Constructor">public ChampionAPI()</Member>
+        <Member type="Method">public List&lt;MainChampion&gt; Get5MainChampions(Summoner summoner)</Member>
+        <Member type="Method">public Champion GetChampion(Int32 id, Region region)</Member>
+        <Member type="Method">public Int32 GetChampionId(String name)</Member>
+        <Member type="Method">public Champion GetChampion(String name)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>MasteryAPI</Name>
+        <Access>Public</Access>
+        <Location left="648" top="278" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private RiotApi api</Member>
+        <Member type="Field">private StaticRiotApi sApi</Member>
+        <Member type="Constructor">public MasteryAPI()</Member>
+        <Member type="Method">public Int32 GetLevel(Summoner summoner, Champion champion)</Member>
+        <Member type="Method">public Int32 GetPoints(Summoner summoner, Champion champion)</Member>
+        <Member type="Method">public List&lt;ChampionMastery&gt; GetChampionMasterys(Summoner summoner)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>RankAPI</Name>
+        <Access>Public</Access>
+        <Location left="436" top="278" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private RiotApi api</Member>
+        <Member type="Field">private StaticRiotApi sApi</Member>
+        <Member type="Constructor">public RankAPI()</Member>
+        <Member type="Method">public String GetRankingHarder(Summoner summoner, Queue queue)</Member>
+        <Member type="Method">public String GetRankingSimple(Summoner summoner, Queue queue)</Member>
+        <Member type="Method">public Int32 GetLp(Summoner summoner, Queue queue)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>RoleAPI</Name>
+        <Access>Public</Access>
+        <Location left="224" top="278" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private RiotApi api</Member>
+        <Member type="Field">private StaticRiotApi sApi</Member>
+        <Member type="Constructor">public RoleAPI()</Member>
+        <Member type="Method">public Role GetRole(Summoner summoner)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>SummonerAPI</Name>
+        <Access>Public</Access>
+        <Location left="12" top="278" />
+        <Size width="162" height="332" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private RiotApi api</Member>
+        <Member type="Field">private StaticRiotApi sApi</Member>
+        <Member type="Constructor">public SummonerAPI()</Member>
+        <Member type="Method">public Summoner GetSummoner(Int32 id, Region region)</Member>
+        <Member type="Method">public Summoner GetSummoner(String name, Region region)</Member>
+        <Member type="Method">public String GetSummonerName(Int32 id, Region region)</Member>
+        <Member type="Method">public Int64 GetSummonerId(String name, Region region)</Member>
+        <Member type="Method">public Int64 GetSummonerLevel(String name, Region region)</Member>
+        <Member type="Method">public Int64 GetSummonerLevel(Int32 id, Region region)</Member>
+        <Member type="Method">public List&lt;MasteryPage&gt; GetSummonerMasteryPages(Int32 id, Region region)</Member>
+        <Member type="Method">public List&lt;MasteryPage&gt; GetSummonerMasteryPages(String summonerName, Region region)</Member>
+        <Member type="Method">public List&lt;League&gt; GetLeagues(Int32 id, Region region)</Member>
+        <Member type="Method">public List&lt;League&gt; GetLeagues(String summonerName, Region region)</Member>
+        <Member type="Method">public Int64 GetLevel(String summonerName, Region region)</Member>
+        <Member type="Method">public Int64 GetLevel(Int32 id, Region region)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>MainChampion</Name>
+        <Access>Public</Access>
+        <Location left="860" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Property">public Int64 Id { get; private set; }</Member>
+        <Member type="Property">public Int32 Count { get; private set; }</Member>
+        <Member type="Property">public String Name { get; set; }</Member>
+        <Member type="Constructor">public MainChampion(Int64 id)</Member>
+        <Member type="Method">public Void IncreaseCount()</Member>
+        <Member type="Method">public Int32 CompareTo(Object obj)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ChampionNotFoundException</Name>
+        <Access>Public</Access>
+        <Location left="648" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public ChampionNotFoundException()</Member>
+        <Member type="Constructor">public ChampionNotFoundException(String message)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>NoRankedGamesException</Name>
+        <Access>Public</Access>
+        <Location left="436" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public NoRankedGamesException()</Member>
+        <Member type="Constructor">public NoRankedGamesException(String message)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>NotLevel30Exception</Name>
+        <Access>Public</Access>
+        <Location left="224" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public NotLevel30Exception()</Member>
+        <Member type="Constructor">public NotLevel30Exception(String message)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>SummonerNotFoundException</Name>
+        <Access>Internal</Access>
+        <Location left="12" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public SummonerNotFoundException()</Member>
+        <Member type="Constructor">public SummonerNotFoundException(String message)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+    </Entities>
+    <Relationships />
+  </ProjectItem>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>DataLibary.dll</Name>
+    <Language>CSharp</Language>
+    <Entities>
+      <Entity type="Interface">
+        <Name>ICoachContext</Name>
+        <Access>Public</Access>
+        <Location left="1708" top="903" />
+        <Size width="162" height="231" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">List&lt;ICoachContext&gt; GetAllCoaches()</Member>
+        <Member type="Method">List&lt;ICoachContext&gt; GetCoachByRole(Role role)</Member>
+        <Member type="Method">List&lt;ICoachContext&gt; GetCoachByRegion(Region region)</Member>
+        <Member type="Method">Void AddCoach(Coach coach)</Member>
+        <Member type="Method">Void RemoveCoach(Coach coach)</Member>
+        <Member type="Method">Void UpdateCoach(Coach coach, Coach oldcoach)</Member>
+        <Member type="Method">Void AddChampionToCoach(Champion champion, Coach coach)</Member>
+        <Member type="Method">Void RemoveChampionFromCoach(Champion champion, Coach coach)</Member>
+        <Member type="Method">Void AddRoleToCoach(Role role, Coach coach)</Member>
+        <Member type="Method">Void RemoveRoleFromCoach(Role role, Coach coach)</Member>
+      </Entity>
+      <Entity type="Interface">
+        <Name>ICommandContext</Name>
+        <Access>Public</Access>
+        <Location left="1496" top="903" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">Void AddCommand(Server server, Command command)</Member>
+        <Member type="Method">Void RemoveCommand(Server server, Command command)</Member>
+        <Member type="Method">Void UpdateCommand(Server server, Command command)</Member>
+      </Entity>
+      <Entity type="Interface">
+        <Name>IRankContext</Name>
+        <Access>Internal</Access>
+        <Location left="1284" top="903" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">List&lt;Rank&gt; GetRanksByServer(Server server)</Member>
+        <Member type="Method">Void AddRank(Server server, Rank rank)</Member>
+        <Member type="Method">Void RemoveRank(Server server, Rank rank)</Member>
+        <Member type="Method">Void UpdateRanks(Server server, Rank rank, Rank newrank)</Member>
+        <Member type="Method">Rank GetRankById(Rank rank)</Member>
+      </Entity>
+      <Entity type="Interface">
+        <Name>IRegionContext</Name>
+        <Access>Public</Access>
+        <Location left="1072" top="903" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">Int32 GetRegionId(Region region)</Member>
+        <Member type="Method">Int32 GetRegionId(User user)</Member>
+      </Entity>
+      <Entity type="Interface">
+        <Name>IRoleContext</Name>
+        <Access>Public</Access>
+        <Location left="860" top="903" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">Role GetRoleById(Int32 id)</Member>
+        <Member type="Method">List&lt;Role&gt; GetAllRoles()</Member>
+        <Member type="Method">List&lt;Role&gt; GetRolesPerServer(Server server)</Member>
+      </Entity>
+      <Entity type="Interface">
+        <Name>IServerContext</Name>
+        <Access>Public</Access>
+        <Location left="648" top="903" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">Void AddServer(UInt64 serverid, UInt64 ownerid, String servername, String key)</Member>
+        <Member type="Method">Void VerifyServerSQL(UInt64 userid, String key)</Member>
+        <Member type="Method">Void AddInviteLink(UInt64 userid, UInt64 serverid, String key)</Member>
+        <Member type="Method">Boolean IsAdmin(UInt64 userid, UInt64 server)</Member>
+      </Entity>
+      <Entity type="Interface">
+        <Name>ISettingsContext</Name>
+        <Access>Public</Access>
+        <Location left="436" top="903" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">Boolean RankByParameter(UInt64 serverid)</Member>
+        <Member type="Method">Boolean RankByAccount(UInt64 serverid)</Member>
+        <Member type="Method">Boolean RegionByParameter(UInt64 serverid)</Member>
+        <Member type="Method">Boolean RegionByAccount(UInt64 serverid)</Member>
+        <Member type="Method">Boolean MasteryPointsByAccount(UInt64 serverid)</Member>
+        <Member type="Method">Boolean MasteryLevelByAccount(UInt64 serverid)</Member>
+        <Member type="Method">CommandType RankCommandType(UInt64 serverid)</Member>
+        <Member type="Method">Void SetRankType(CommandType type, UInt64 serverid)</Member>
+        <Member type="Method">Void AllowRankAccount(Boolean value, UInt64 serverid)</Member>
+      </Entity>
+      <Entity type="Interface">
+        <Name>ISummonerContext</Name>
+        <Access>Public</Access>
+        <Location left="224" top="903" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">Void AddSummoner(Int32 userid, Int32 riotid, Int32 regionid, String token)</Member>
+        <Member type="Method">Void RemoveSummoner(User user, Int32 riotid)</Member>
+        <Member type="Method">Void VerifySummoner(User user, Int32 riotid)</Member>
+        <Member type="Method">String GetToken(User user, Int32 riotid)</Member>
+        <Member type="Method">Int32 GetSummonerByUserId(User user)</Member>
+        <Member type="Method">List&lt;Int32&gt; GetSummonersByRegion(Int32 regionid)</Member>
+        <Member type="Method">Boolean IsSummonerInSystem(Int32 riotid)</Member>
+      </Entity>
+      <Entity type="Interface">
+        <Name>IUserContext</Name>
+        <Access>Public</Access>
+        <Location left="12" top="903" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">User GetUserById(Int32 id)</Member>
+        <Member type="Method">List&lt;User&gt; GetUsersByRegion(Region region)</Member>
+        <Member type="Method">Void AddUser(Int64 discordid)</Member>
+        <Member type="Method">Void RemoveUser(User user)</Member>
+        <Member type="Method">User GetUserByDiscord(UInt64 discordid)</Member>
+        <Member type="Method">Int32 GetUserIdByDiscord(UInt64 discordid)</Member>
+        <Member type="Method">User GetUserByRiotid(Int32 riotid)</Member>
+      </Entity>
+      <Entity type="Class">
+        <Name>Database</Name>
+        <Access>Public</Access>
+        <Location left="1708" top="589" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public static SqlConnection Connection()</Member>
+        <Modifier>Static</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>AtlasAdminRepo</Name>
+        <Access>Public</Access>
+        <Location left="1496" top="589" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public AtlasAdminRepo()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>RegionRepo</Name>
+        <Access>Public</Access>
+        <Location left="1284" top="589" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private IRegionContext context</Member>
+        <Member type="Constructor">public RegionRepo(IRegionContext context)</Member>
+        <Member type="Method">public Int32 GetRegionId(Region region)</Member>
+        <Member type="Method">public Int32 GetRegionId(User user)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>RoleRepo</Name>
+        <Access>Public</Access>
+        <Location left="1072" top="589" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private IRoleContext context</Member>
+        <Member type="Constructor">public RoleRepo(IRoleContext context)</Member>
+        <Member type="Method">private Role GetRoleById(Int32 id)</Member>
+        <Member type="Method">private List&lt;Role&gt; GetAllRoles()</Member>
+        <Member type="Method">private List&lt;Role&gt; GetRolesPerServer(Server server)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>SettingsRepo</Name>
+        <Access>Public</Access>
+        <Location left="860" top="589" />
+        <Size width="162" height="264" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private ISettingsContext context</Member>
+        <Member type="Constructor">public SettingsRepo(ISettingsContext context)</Member>
+        <Member type="Method">public Boolean RankByParameter(UInt64 serverid)</Member>
+        <Member type="Method">public Boolean RankByAccount(UInt64 serverid)</Member>
+        <Member type="Method">public Boolean RegionByParameter(UInt64 serverid)</Member>
+        <Member type="Method">public Boolean RegionByAccount(UInt64 serverid)</Member>
+        <Member type="Method">public Boolean MasteryPointsByAccount(UInt64 serverid)</Member>
+        <Member type="Method">public Boolean MasteryLevelByAccount(UInt64 serverid)</Member>
+        <Member type="Method">public CommandType RankCommandType(UInt64 serverid)</Member>
+        <Member type="Method">public Void SetRankType(CommandType type, UInt64 serverid)</Member>
+        <Member type="Method">public Void ToggleAccountRank(Boolean value, UInt64 serverid)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>SummonerRepo</Name>
+        <Access>Public</Access>
+        <Location left="648" top="589" />
+        <Size width="162" height="230" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private ISummonerContext context</Member>
+        <Member type="Constructor">public SummonerRepo(ISummonerContext context)</Member>
+        <Member type="Method">public Void AddSummoner(Int32 userid, Int32 riotid, Int32 regionid, String token)</Member>
+        <Member type="Method">public Void RemoveSummoner(User user, Int32 riotid)</Member>
+        <Member type="Method">public Void VerifySummoner(User user, Int32 riotid)</Member>
+        <Member type="Method">public String GetToken(User user, Int32 riotid)</Member>
+        <Member type="Method">public Int32 GetSummonerByUserId(User user)</Member>
+        <Member type="Method">public List&lt;Int32&gt; GetSummonersByRegion(Int32 regionid)</Member>
+        <Member type="Method">public Boolean IsSummonerInSystem(Int32 riotid)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>RegionContext</Name>
+        <Access>Public</Access>
+        <Location left="436" top="589" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public RegionContext()</Member>
+        <Member type="Method">public Int32 GetRegionId(Region region)</Member>
+        <Member type="Method">public Int32 GetRegionId(User user)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>RoleContext</Name>
+        <Access>Public</Access>
+        <Location left="224" top="589" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public RoleContext()</Member>
+        <Member type="Method">public Role GetRoleById(Int32 id)</Member>
+        <Member type="Method">public List&lt;Role&gt; GetAllRoles()</Member>
+        <Member type="Method">public List&lt;Role&gt; GetRolesPerServer(Server server)</Member>
+        <Member type="Method">public Role CreateRoleFromReader(SqlDataReader reader)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ServerContext</Name>
+        <Access>Public</Access>
+        <Location left="12" top="589" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public ServerContext()</Member>
+        <Member type="Method">public Void AddServer(UInt64 serverid, UInt64 ownerid, String servername, String key)</Member>
+        <Member type="Method">public Void VerifyServerSQL(UInt64 userid, String key)</Member>
+        <Member type="Method">public Void AddInviteLink(UInt64 userid, UInt64 serverid, String key)</Member>
+        <Member type="Method">public Boolean IsAdmin(UInt64 userid, UInt64 server)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>SettingsContext</Name>
+        <Access>Public</Access>
+        <Location left="1708" top="292" />
+        <Size width="162" height="247" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public SettingsContext()</Member>
+        <Member type="Method">public Boolean RankByParameter(UInt64 serverid)</Member>
+        <Member type="Method">public Boolean RankByAccount(UInt64 serverid)</Member>
+        <Member type="Method">public Boolean RegionByParameter(UInt64 serverid)</Member>
+        <Member type="Method">public Boolean RegionByAccount(UInt64 serverid)</Member>
+        <Member type="Method">public Boolean MasteryPointsByAccount(UInt64 serverid)</Member>
+        <Member type="Method">public Boolean MasteryLevelByAccount(UInt64 serverid)</Member>
+        <Member type="Method">public CommandType RankCommandType(UInt64 serverid)</Member>
+        <Member type="Method">public Void SetRankType(CommandType type, UInt64 serverid)</Member>
+        <Member type="Method">public Void AllowRankAccount(Boolean value, UInt64 serverid)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>SummonerContext</Name>
+        <Access>Public</Access>
+        <Location left="1496" top="292" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public SummonerContext()</Member>
+        <Member type="Method">public Void AddSummoner(Int32 userid, Int32 riotid, Int32 regionid, String token)</Member>
+        <Member type="Method">public Void RemoveSummoner(User user, Int32 riotid)</Member>
+        <Member type="Method">public Void VerifySummoner(User user, Int32 riotid)</Member>
+        <Member type="Method">public Int32 GetSummonerByUserId(User user)</Member>
+        <Member type="Method">public List&lt;Int32&gt; GetSummonersByRegion(Int32 regionid)</Member>
+        <Member type="Method">public String GetToken(User user, Int32 riotid)</Member>
+        <Member type="Method">public Boolean IsSummonerInSystem(Int32 riotid)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>UserContext</Name>
+        <Access>Public</Access>
+        <Location left="1284" top="292" />
+        <Size width="162" height="230" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public UserContext()</Member>
+        <Member type="Method">public User GetUserById(Int32 id)</Member>
+        <Member type="Method">public List&lt;User&gt; GetUsersByRegion(Region region)</Member>
+        <Member type="Method">public Void AddUser(Int64 userid)</Member>
+        <Member type="Method">public Void RemoveUser(User user)</Member>
+        <Member type="Method">public User GetUserByDiscord(UInt64 discordid)</Member>
+        <Member type="Method">public Int32 GetUserIdByDiscord(UInt64 discordid)</Member>
+        <Member type="Method">public User GetUserByRiotid(Int32 riotid)</Member>
+        <Member type="Method">public User CreateUserFromReader(SqlDataReader reader)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>AtlasAdmin</Name>
+        <Access>Public</Access>
+        <Location left="1072" top="292" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Property">public Int32 Id { get; private set; }</Member>
+        <Member type="Property">public UInt64 DiscordId { get; private set; }</Member>
+        <Member type="Constructor">public AtlasAdmin(Int32 id, UInt64 discordId)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Coach</Name>
+        <Access>Public</Access>
+        <Location left="860" top="292" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Property">public Int32 Id { get; private set; }</Member>
+        <Member type="Property">public UInt64 CoachId { get; private set; }</Member>
+        <Member type="Property">public List&lt;Role&gt; Roles { get; private set; }</Member>
+        <Member type="Property">public List&lt;Champion&gt; Champions { get; private set; }</Member>
+        <Member type="Property">public Region Region { get; private set; }</Member>
+        <Member type="Constructor">public Coach(Int32 id, UInt64 coachid, List&lt;Role&gt; roles, List&lt;Champion&gt; champions, Region region)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Command</Name>
+        <Access>Public</Access>
+        <Location left="648" top="292" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Property">public Int32 Id { get; private set; }</Member>
+        <Member type="Property">public UInt64 ServerId { get; private set; }</Member>
+        <Member type="Property">public CommandType CommandType { get; private set; }</Member>
+        <Member type="Constructor">public Command()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Rank</Name>
+        <Access>Public</Access>
+        <Location left="436" top="292" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Property">public Int32 Id { get; private set; }</Member>
+        <Member type="Property">public String Tier { get; private set; }</Member>
+        <Member type="Property">public String Division { get; private set; }</Member>
+        <Member type="Constructor">public Rank(Int32 id, String tier)</Member>
+        <Member type="Constructor">public Rank(Int32 id, String tier, String division)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Ranks</Name>
+        <Access>Public</Access>
+        <Location left="224" top="292" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public static List&lt;String&gt; BasicRanks()</Member>
+        <Member type="Method">public static List&lt;String&gt; QueueRanks()</Member>
+        <Modifier>Static</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Server</Name>
+        <Access>Public</Access>
+        <Location left="12" top="292" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Property">public Int32 Id { get; private set; }</Member>
+        <Member type="Property">public UInt64 DiscordId { get; private set; }</Member>
+        <Member type="Property">public String InviteLink { get; private set; }</Member>
+        <Member type="Property">public User OwnerUser { get; private set; }</Member>
+        <Member type="Property">public String ServerName { get; private set; }</Member>
+        <Member type="Property">public String Description { get; private set; }</Member>
+        <Member type="Property">public Setting Settings { get; private set; }</Member>
+        <Member type="Constructor">public Server(Int32 id, UInt64 discordid, String invitelink, User owner, String servername, String discription, Setting settings)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Setting</Name>
+        <Access>Public</Access>
+        <Location left="1708" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public Setting()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>User</Name>
+        <Access>Public</Access>
+        <Location left="1496" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Property">public Int32 Id { get; private set; }</Member>
+        <Member type="Property">public UInt64 DiscordId { get; private set; }</Member>
+        <Member type="Property">public Int32 RiotId { get; private set; }</Member>
+        <Member type="Property">public Region Region { get; private set; }</Member>
+        <Member type="Constructor">public User(Int32 id, UInt64 discordId, Int32 riotid, Region region)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>CoachRepo</Name>
+        <Access>Internal</Access>
+        <Location left="1284" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public CoachRepo()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>CommandRepo</Name>
+        <Access>Internal</Access>
+        <Location left="1072" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public CommandRepo()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>RankRepo</Name>
+        <Access>Internal</Access>
+        <Location left="860" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public RankRepo()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ServerRepo</Name>
+        <Access>Public</Access>
+        <Location left="648" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private IServerContext context</Member>
+        <Member type="Constructor">public ServerRepo(IServerContext context)</Member>
+        <Member type="Method">public Void AddServer(UInt64 serverid, UInt64 ownerid, String servername, String key)</Member>
+        <Member type="Method">public Void VerifyServerSQL(UInt64 userid, String key)</Member>
+        <Member type="Method">public Void AddInviteLink(UInt64 userid, UInt64 serverid, String key)</Member>
+        <Member type="Method">public Boolean IsAdmin(UInt64 user, UInt64 server)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>UserRepo</Name>
+        <Access>Public</Access>
+        <Location left="436" top="12" />
+        <Size width="162" height="230" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private IUserContext context</Member>
+        <Member type="Constructor">public UserRepo(IUserContext context)</Member>
+        <Member type="Method">public User GetUserById(Int32 id)</Member>
+        <Member type="Method">public List&lt;User&gt; GetUsersByRegion(Region region)</Member>
+        <Member type="Method">public Void AddUser(Int64 discordid)</Member>
+        <Member type="Method">public Void RemoveUser(User user)</Member>
+        <Member type="Method">public User GetUserByDiscord(UInt64 discordid)</Member>
+        <Member type="Method">public User GetUserByRiotid(Int32 riotid)</Member>
+        <Member type="Method">public Int32 GetUserIdByDiscord(UInt64 discordid)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Enum">
+        <Name>CommandType</Name>
+        <Access>Public</Access>
+        <Location left="224" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Value>Basic = 1</Value>
+        <Value>Division = 2</Value>
+        <Value>Full = 3</Value>
+        <Value>PerQueue = 4</Value>
+      </Entity>
+      <Entity type="Enum">
+        <Name>Role</Name>
+        <Access>Public</Access>
+        <Location left="12" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Value>Top = 0</Value>
+        <Value>Jungle = 1</Value>
+        <Value>Mid = 2</Value>
+        <Value>ADC = 3</Value>
+        <Value>Support = 4</Value>
+        <Value>Fill = 5</Value>
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Realization" first="15" second="3">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Realization" first="16" second="4">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Realization" first="17" second="5">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Realization" first="18" second="6">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Realization" first="19" second="7">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Realization" first="20" second="8">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Association" first="11" second="3">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartRole>context</StartRole>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="12" second="4">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartRole>context</StartRole>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="13" second="6">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartRole>context</StartRole>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="14" second="7">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartRole>context</StartRole>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="32" second="5">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartRole>context</StartRole>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="33" second="8">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartRole>context</StartRole>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+    </Relationships>
+  </ProjectItem>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>ToolKit.dll</Name>
+    <Language>CSharp</Language>
+    <Entities>
+      <Entity type="Class">
+        <Name>LeagueAndDatabase</Name>
+        <Access>Public</Access>
+        <Location left="436" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public static Region GetRegionFromString(String region)</Member>
+        <Member type="Method">public static Region GetRegionFromDatabaseId(Int32 id)</Member>
+        <Modifier>Static</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>RiotSharpAddition</Name>
+        <Access>Public</Access>
+        <Location left="224" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public static Platform RegionToPlatform(Region region)</Member>
+        <Modifier>Static</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>RegionNotFoundException</Name>
+        <Access>Public</Access>
+        <Location left="12" top="12" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Constructor">public RegionNotFoundException()</Member>
+        <Member type="Constructor">public RegionNotFoundException(String message)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+    </Entities>
+    <Relationships />
+  </ProjectItem>
+</Project>
