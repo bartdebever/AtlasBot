@@ -75,5 +75,10 @@ namespace DataLibary.Repos
         {
             return context.GetAllOverrides(serverid);
         }
+
+        public void RemoveOverride(int id, ulong serverid)
+        {
+            context.RemoveOverride(id, serverid);
+        }
     }
 }

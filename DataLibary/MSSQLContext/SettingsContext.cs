@@ -145,5 +145,14 @@ namespace DataLibary.MSSQLContext
             }
             return returnstring;
         }
+
+        public void RemoveOverride(int id, ulong serverid)
+        {
+            string query = "DELETE [RoleOverride] FROM [RoleOverride] RO INNER JOIN [Server] S ON [RO].ServerId = [S].Id WHERE [S].DiscordServerId = @Serverid AND [RO].Id = @Overrideid";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Serverid", Convert.ToInt64(serverid));
+            cmd.Parameters.AddWithValue("@Overrideid", id);
+            cmd.ExecuteNonQuery();
+        }
     }
 }

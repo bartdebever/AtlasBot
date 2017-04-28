@@ -173,6 +173,19 @@ namespace AtlasBot
                             {
                                 //Gives all of the information about -Override and its overloads
                             }
+                            else if (e.GetArg("CommandType").ToLower() == "remove")
+                            {
+                                try
+                                {
+                                    settingsRepo.RemoveOverride(Convert.ToInt32(e.GetArg("Role")), e.Server.Id);
+                                    returnstring = "Override removed successfully";
+                                }
+                                catch
+                                {
+                                    returnstring = "Could not remove override with id " + e.GetArg("Role");
+                                }
+                                
+                            }
                             else if (e.GetArg("CommandType").ToLower() == "add")
                             {
                                 //Adds an override to the system
