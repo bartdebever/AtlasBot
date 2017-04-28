@@ -194,7 +194,7 @@ namespace AtlasBot
                                             settingsRepo.AddOverride(e.GetArg("Parameter").ToString().ToLower().Remove(0,1), id
                                          , e.Server.Id);
                                         }
-                                        else if (e.GetArg("Paramter").IndexOf(" ") == (e.GetArg("Paramter").Length))
+                                        else if (e.GetArg("Parameter").IndexOf(" ") == (e.GetArg("Parameter").Length))
                                         {
                                             settingsRepo.AddOverride(
                                                 e.GetArg("Parameter")
@@ -220,7 +220,16 @@ namespace AtlasBot
                             }
                             else if (e.GetArg("CommandType").ToLower() == "list")
                             {
+                                returnstring = "```";
                                 //Gives a list of all the overrides made by this server.
+                                foreach (string line in settingsRepo.GetAllOverrides(e.Server.Id))
+                                {
+                                    //await e.Channel.SendMessage(line.Substring(line.IndexOf("role:") + 5, line.Length - line.IndexOf("role:") - 6));
+                                    ulong id = Convert.ToUInt64(line.Substring(line.IndexOf("role:") + 5, line.Length - line.IndexOf("role:") - 5));
+                                    var role = e.Server.GetRole(id);
+                                    returnstring += "\n" + line.Substring(0, line.IndexOf("role:")+5) + " " + role.Name;
+                                }
+                                returnstring += "\n```";
                             }
                         }
                         else

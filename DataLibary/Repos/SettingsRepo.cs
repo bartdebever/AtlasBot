@@ -70,5 +70,10 @@ namespace DataLibary.Repos
         {
             context.AddOverride(parameter, rank, serverid);
         }
+
+        public List<string> GetAllOverrides(ulong serverid)
+        {
+            return context.GetAllOverrides(serverid);
+        }
     }
 }

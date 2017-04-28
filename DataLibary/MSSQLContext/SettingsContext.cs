@@ -127,5 +127,23 @@ namespace DataLibary.MSSQLContext
             cmd.Parameters.AddWithValue("@rank", Convert.ToInt64(rank));
             cmd.ExecuteNonQuery();
         }
+
+        public List<string> GetAllOverrides(ulong serverid)
+        {
+            List<string> returnstring = new List<string>();
+            string query =
+                "SELECT [RO].id, [RO].DiscordRoleId, [RO].Parameter FROM [RoleOverride] RO INNER JOIN [Server] S ON [S].id = [RO].ServerId WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    returnstring.Add("Id: " + reader.GetInt32(0) + " Replaces: " + reader.GetString(2) + " For role:" +
+                                    reader.GetInt64(1));
+                }
+            }
+            return returnstring;
+        }
     }
 }
