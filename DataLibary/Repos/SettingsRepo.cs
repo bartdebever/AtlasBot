@@ -71,11 +71,14 @@ namespace DataLibary.Repos
             context.AddOverride(parameter, rank, serverid);
         }
 
+        public List<string> GetAllOverridesInformation(ulong serverid)
+        {
+            return context.GetAllOverridesInformation(serverid);
+        }
         public List<string> GetAllOverrides(ulong serverid)
         {
             return context.GetAllOverrides(serverid);
         }
-
         public void RemoveOverride(int id, ulong serverid)
         {
             context.RemoveOverride(id, serverid);

@@ -20,6 +20,7 @@ namespace DataLibary.Data
         void AllowRankAccount(bool value, ulong serverid);
         ulong GetOverride(string parameter, ulong serverid);
         void AddOverride(string parameter, ulong rank, ulong serverid);
+        List<string> GetAllOverridesInformation(ulong serverid);
         List<string> GetAllOverrides(ulong serverid);
         void RemoveOverride(int id, ulong serverid);
     }

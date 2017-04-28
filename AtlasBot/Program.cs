@@ -249,7 +249,7 @@ namespace AtlasBot
                                 int entries = 0;
                                 returnstring = "```";
                                 //Gives a list of all the overrides made by this server.
-                                foreach (string line in settingsRepo.GetAllOverrides(e.Server.Id))
+                                foreach (string line in settingsRepo.GetAllOverridesInformation(e.Server.Id))
                                 {
                                     //await e.Channel.SendMessage(line.Substring(line.IndexOf("role:") + 5, line.Length - line.IndexOf("role:") - 6));
                                     ulong id = Convert.ToUInt64(line.Substring(line.IndexOf("role:") + 5, line.Length - line.IndexOf("role:") - 5));
@@ -563,10 +563,42 @@ namespace AtlasBot
                     .Do(async (e) =>
                     {
                         string returnstring = "error";
+                        string command = e.GetArg("region").Substring(0, e.GetArg("region").IndexOf(" ")).ToLower();
                         SettingsRepo settingsRepo = (new SettingsRepo(new SettingsContext()));
                         if (e.GetArg("region").ToLower() == "help" || e.GetArg("region") == "?")
                         {
                             //Help command
+                        }
+                        else if (command == "remove" ||command == "delete")
+                        {
+                            
+                            foreach (string region in new RegionRepo(new RegionContext()).GetAllRegions())
+                            {
+                                if (region.ToLower() == e.GetArg("region").Substring(e.GetArg("region").IndexOf(" ") + 1, e.GetArg("region").Length - e.GetArg("region").IndexOf(" ") - 1).ToLower())
+                                {
+                                    try
+                                    {
+                                        ulong id = settingsRepo.GetOverride(region.ToLower(), e.Server.Id);
+                                        await e.User.RemoveRoles(e.Server.GetRole(id), e.Server.FindRoles(region.ToLower(), false).First());
+                                        returnstring = "Your role has been removed.";
+                                    }
+                                    catch { }
+                                }
+                            }
+                            try
+                            {
+                                foreach (string role in settingsRepo.GetAllOverrides(e.Server.Id))
+                                {
+                                    var replacement = e.Server.GetRole(Convert.ToUInt64(role.Split(':').Last()));
+                                    if (e.GetArg("region").Substring(e.GetArg("region").IndexOf(" ") + 1, e.GetArg("region").Length - e.GetArg("region").IndexOf(" ") - 1).ToLower() == replacement.Name.ToLower())
+                                    {
+                                        await e.User.RemoveRoles(replacement);
+                                        returnstring = "Your role has been removed";
+                                    }
+                                }
+                            }
+                            catch { }
+                            
                         }
                         else if (e.GetArg("region").ToLower() == "list")
                         {
@@ -574,9 +606,29 @@ namespace AtlasBot
                                 settingsRepo.RegionByAccount(e.Server.Id) == true)
                             {
                                 returnstring = "Assignable regions on this server:\n```";
+                                List<string> overrides = new List<string>();
+                                try
+                                {
+                                    overrides = settingsRepo.GetAllOverrides(e.Server.Id);
+                                } catch { }
                                 foreach (string region in new RegionRepo(new RegionContext()).GetAllRegions())
                                 {
-                                    returnstring += "\n- " + region;
+                                    bool found = false;
+                                    if (overrides != null)
+                                    {
+                                        foreach (string over in overrides)
+                                        {
+                                            if (region.ToLower() == over.Substring(0, over.IndexOf(":")).ToLower())
+                                            {
+                                                returnstring += "\n- " + e.Server.GetRole(Convert.ToUInt64(over.Substring(over.IndexOf(":") + 1, over.Length - over.IndexOf(":") - 1))).Name;
+                                                found = true;
+                                            }
+                                        }
+                                    }
+                                    if (found == false)
+                                    {
+                                        returnstring += "\n- " + region;
+                                    }
                                 }
                                 returnstring += "```";
                             }
@@ -626,7 +678,7 @@ namespace AtlasBot
                                                 returnstring = "Your role has been given";
                                             }
                                         }
-                                        
+
                                     }
                                 }
                             }
@@ -654,6 +706,16 @@ namespace AtlasBot
                                             returnstring = "Your role has been given";
                                             found = true;
                                         }
+                                    }
+                                }
+                                foreach (string role in settingsRepo.GetAllOverrides(e.Server.Id))
+                                {
+                                    var replacement = e.Server.GetRole(Convert.ToUInt64(role.Substring(role.IndexOf(":") + 1, role.Length - role.IndexOf(":") - 1)));
+                                    if (e.GetArg("region").ToLower() == replacement.Name.ToLower())
+                                    {
+                                        await e.User.AddRoles(replacement);
+                                        returnstring = "Your role has been given";
+                                        found = true;
                                     }
                                 }
                                 if (found == false)

@@ -150,7 +150,7 @@ namespace DataLibary.MSSQLContext
             cmd.ExecuteNonQuery();
         }
 
-        public List<string> GetAllOverrides(ulong serverid)
+        public List<string> GetAllOverridesInformation(ulong serverid)
         {
             List<string> returnstring = new List<string>();
             string query =
@@ -175,6 +175,23 @@ namespace DataLibary.MSSQLContext
             cmd.Parameters.AddWithValue("@Serverid", Convert.ToInt64(serverid));
             cmd.Parameters.AddWithValue("@Overrideid", id);
             cmd.ExecuteNonQuery();
+        }
+
+        public List<string> GetAllOverrides(ulong serverid)
+        {
+            List<string> returnstring = new List<string>();
+            string query =
+                "SELECT [RO].id, [RO].DiscordRoleId, [RO].Parameter FROM [RoleOverride] RO INNER JOIN [Server] S ON [S].id = [RO].ServerId WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    returnstring.Add(reader.GetString(2)+":"+reader.GetInt64(1).ToString());
+                }
+            }
+            return returnstring;
         }
     }
 }
