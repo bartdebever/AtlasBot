@@ -46,12 +46,34 @@ namespace DataLibary.MSSQLContext
 
         public bool RegionByParameter(ulong serverid)
         {
-            throw new NotImplementedException();
+            string query =
+               "SELECT [SS].RegionCommand FROM [ServerSettings] SS INNER JOIN [Server] S ON [SS].serverid = [S].id WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return reader.GetBoolean(0);
+                }
+            }
+            return false;
         }
 
         public bool RegionByAccount(ulong serverid)
         {
-            throw new NotImplementedException();
+            string query =
+               "SELECT [SS].RegionAccountCommand FROM [ServerSettings] SS INNER JOIN [Server] S ON [SS].serverid = [S].id WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return reader.GetBoolean(0);
+                }
+            }
+            return false;
         }
 
         public bool MasteryPointsByAccount(ulong serverid)

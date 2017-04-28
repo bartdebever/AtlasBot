@@ -12,5 +12,6 @@ namespace DataLibary.Data
     {
         int GetRegionId(Region region);
         int GetRegionId(User user);
+        List<string> GetAllRegions();
     }
 }

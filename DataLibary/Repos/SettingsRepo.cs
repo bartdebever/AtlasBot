@@ -28,7 +28,7 @@ namespace DataLibary.Repos
 
         public bool RegionByParameter(ulong serverid)
         {
-            return RegionByParameter(serverid);
+            return context.RegionByParameter(serverid);
         }
 
         public bool RegionByAccount(ulong serverid)

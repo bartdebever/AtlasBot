@@ -41,5 +41,20 @@ namespace DataLibary.MSSQLContext
             }
             throw new Exception("User or region not found");
         }
+
+        public List<string> GetAllRegions()
+        {
+            List<string> result = new List<string>();
+            string query = "SELECT [R].Short FROM [Region] R";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    result.Add(reader.GetString(0));
+                }
+            }
+            return result;
+        }
     }
 }

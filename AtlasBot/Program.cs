@@ -52,6 +52,7 @@ namespace AtlasBot
                 InviteLink();
                 ClaimAccount();
                 GetRank();
+                GetRegion();
                 ChangeType();
                 ChangeCommandAllowed();
                 OverrideSystem();
@@ -549,6 +550,120 @@ namespace AtlasBot
                                         returnstring = "The server doesn't allow this action.";
                                     }
                                 }
+                            }
+                        }
+                        await e.Channel.SendMessage(returnstring);
+                    });
+            }
+
+            private void GetRegion()
+            {
+                commands.CreateCommand("region")
+                    .Parameter("region", ParameterType.Unparsed)
+                    .Do(async (e) =>
+                    {
+                        string returnstring = "error";
+                        SettingsRepo settingsRepo = (new SettingsRepo(new SettingsContext()));
+                        if (e.GetArg("region").ToLower() == "help" || e.GetArg("region") == "?")
+                        {
+                            //Help command
+                        }
+                        else if (e.GetArg("region").ToLower() == "list")
+                        {
+                            if (settingsRepo.RegionByParameter(e.Server.Id) == true ||
+                                settingsRepo.RegionByAccount(e.Server.Id) == true)
+                            {
+                                returnstring = "Assignable regions on this server:\n```";
+                                foreach (string region in new RegionRepo(new RegionContext()).GetAllRegions())
+                                {
+                                    returnstring += "\n- " + region;
+                                }
+                                returnstring += "```";
+                            }
+                            else
+                            {
+                                returnstring = "This action is not allowed on this server";
+                            }
+                        }
+                        else
+                        {
+                            if (settingsRepo.RegionByAccount(e.Server.Id) == true && e.GetArg("region") == "")
+                            {
+                                Summoner summoner = null;
+                                try
+                                {
+                                    DataLibary.Models.User user =
+                                        new UserRepo(new UserContext()).GetUserByDiscord(e.User.Id);
+                                    summoner =
+                                        new SummonerAPI().GetSummoner(
+                                            new SummonerRepo(new SummonerContext()).GetSummonerByUserId(user),
+                                            ToolKit.LeagueAndDatabase.GetRegionFromDatabaseId(
+                                                new RegionRepo(new RegionContext()).GetRegionId(user)
+                                            ));
+                                }
+                                catch
+                                {
+                                    returnstring =
+                                        "Please register your account by using -ClaimAccount *Region SummonerName*";
+                                }
+                                //summoner will be null when the item does not excist within the database.
+                                //This is only done so there will be a proper returnmessage send to the user.
+                                if (summoner != null)
+                                {
+                                    foreach (string region in new RegionRepo(new RegionContext()).GetAllRegions())
+                                    {
+                                        if (region.ToLower() == summoner.Region.ToString().ToLower())
+                                        {
+                                            try
+                                            {
+                                                await e.User.AddRoles(
+                                                    e.Server.GetRole(settingsRepo.GetOverride(region.ToLower(), e.Server.Id)));
+                                                returnstring = "Your role has been given";
+                                            }
+                                            catch
+                                            {
+                                                await e.User.AddRoles(e.Server.FindRoles(region, false).First());
+                                                returnstring = "Your role has been given";
+                                            }
+                                        }
+                                        
+                                    }
+                                }
+                            }
+                            else if (e.GetArg("region") == "")
+                            {
+                                returnstring = "This action is not allowed on this server.";
+                            }
+                            else if (settingsRepo.RegionByParameter(e.Server.Id) == true)
+                            {
+                                bool found = false;
+                                foreach (string region in new RegionRepo(new RegionContext()).GetAllRegions())
+                                {
+                                    if (e.GetArg("region").ToLower() == region.ToLower())
+                                    {
+                                        try
+                                        {
+                                            await e.User.AddRoles(
+                                                e.Server.GetRole(settingsRepo.GetOverride(region.ToLower(), e.Server.Id)));
+                                            returnstring = "Your role has been given";
+                                            found = true;
+                                        }
+                                        catch
+                                        {
+                                            await e.User.AddRoles(e.Server.FindRoles(region, false).First());
+                                            returnstring = "Your role has been given";
+                                            found = true;
+                                        }
+                                    }
+                                }
+                                if (found == false)
+                                {
+                                    returnstring = "No role found called " + e.GetArg("region");
+                                }
+                            }
+                            else
+                            {
+                                returnstring = "This action is not allowed on this server.";
                             }
                         }
                         await e.Channel.SendMessage(returnstring);

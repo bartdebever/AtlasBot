@@ -27,5 +27,10 @@ namespace DataLibary.Repos
         {
             return context.GetRegionId(user);
         }
+
+        public List<string> GetAllRegions()
+        {
+            return context.GetAllRegions();
+        }
     }
 }
