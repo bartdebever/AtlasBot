@@ -189,8 +189,25 @@ namespace AtlasBot
                                     }
                                     if (id != 0)
                                     {
-                                        settingsRepo.AddOverride(e.GetArg("Parameter").ToString().ToLower(),id
+                                        if (e.GetArg("Parameter").IndexOf(" ") == 0)
+                                        {
+                                            settingsRepo.AddOverride(e.GetArg("Parameter").ToString().ToLower().Remove(0,1), id
                                          , e.Server.Id);
+                                        }
+                                        else if (e.GetArg("Paramter").IndexOf(" ") == (e.GetArg("Paramter").Length))
+                                        {
+                                            settingsRepo.AddOverride(
+                                                e.GetArg("Parameter")
+                                                    .ToString()
+                                                    .ToLower()
+                                                    .Remove(e.GetArg("Parameter").Length, 1), id
+                                                , e.Server.Id);
+                                        }
+                                        else
+                                        {
+                                            settingsRepo.AddOverride(e.GetArg("Parameter").ToString().ToLower(), id, e.Server.Id);
+                                        }
+                                        
                                         returnstring = "Override has been saved";
                                     }
                                     
