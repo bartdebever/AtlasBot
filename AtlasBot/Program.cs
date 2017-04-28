@@ -198,14 +198,15 @@ namespace AtlasBot
                                     }
                                     catch
                                     {
-                                         returnstring = "Role " + e.GetArg("role") + " not found";
-                                    }
+                                        throw new Exception("Role not found");
+                                        }
                                     if (id != 0)
                                     {
                                         if (e.GetArg("Parameter").IndexOf(" ") == 0)
                                         {
-                                            settingsRepo.AddOverride(e.GetArg("Parameter").ToString().ToLower().Remove(0,1), id
-                                         , e.Server.Id);
+                                            settingsRepo.AddOverride(
+                                                e.GetArg("Parameter").ToString().ToLower().Remove(0, 1), id
+                                                , e.Server.Id);
                                         }
                                         else if (e.GetArg("Parameter").IndexOf(" ") == (e.GetArg("Parameter").Length))
                                         {
@@ -218,12 +219,17 @@ namespace AtlasBot
                                         }
                                         else
                                         {
-                                            settingsRepo.AddOverride(e.GetArg("Parameter").ToString().ToLower(), id, e.Server.Id);
+                                            settingsRepo.AddOverride(e.GetArg("Parameter").ToString().ToLower(), id,
+                                                e.Server.Id);
                                         }
-                                        
+
                                         returnstring = "Override has been saved";
                                     }
-                                    
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    returnstring = ex.Message;
                                 }
                                 catch
                                 {
@@ -233,6 +239,7 @@ namespace AtlasBot
                             }
                             else if (e.GetArg("CommandType").ToLower() == "list")
                             {
+                                int entries = 0;
                                 returnstring = "```";
                                 //Gives a list of all the overrides made by this server.
                                 foreach (string line in settingsRepo.GetAllOverrides(e.Server.Id))
@@ -241,8 +248,13 @@ namespace AtlasBot
                                     ulong id = Convert.ToUInt64(line.Substring(line.IndexOf("role:") + 5, line.Length - line.IndexOf("role:") - 5));
                                     var role = e.Server.GetRole(id);
                                     returnstring += "\n" + line.Substring(0, line.IndexOf("role:")+5) + " " + role.Name;
+                                    entries++;
                                 }
                                 returnstring += "\n```";
+                                if (entries == 0)
+                                {
+                                    returnstring = "There are no overrides for this server";
+                                }
                             }
                         }
                         else
