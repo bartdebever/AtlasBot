@@ -330,6 +330,39 @@ namespace AtlasBot
                     .Do(async (e) =>
                     {
                         string returnstring = "error"; SettingsRepo settingsRepo = (new SettingsRepo(new SettingsContext()));
+                        if (e.GetArg("rank").ToLower() == "list")
+                        {
+                            if (settingsRepo.RankByAccount(e.Server.Id) == true ||
+                                settingsRepo.RankByParameter(e.Server.Id) == true)
+                            {
+                                returnstring = "Assignable roles on this server:";
+                                if (settingsRepo.RankCommandType(e.Server.Id) == CommandType.Basic)
+                                {
+                                    foreach (string r in Ranks.BasicRanks())
+                                    {
+                                        returnstring += "\n- " + r;
+                                    }
+                                }
+                                else if (settingsRepo.RankCommandType(e.Server.Id) == CommandType.PerQueue)
+                                {
+                                    foreach (string r in Ranks.QueueRanks())
+                                    {
+                                        returnstring += "\n- " + r;
+                                    }
+                                }
+                                else if (settingsRepo.RankCommandType(e.Server.Id) == CommandType.Division)
+                                {
+                                    foreach (string r in Ranks.BasicRanks())
+                                    {
+                                        returnstring += "\n- " + r + " V to I";
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                returnstring = "The server does not allow this feature";
+                            }
+                        }
                         if (e.GetArg("rank") == "?" || e.GetArg("rank").ToLower() == "help")
                         {
                             returnstring = "Use the base command -rank to get a rank assigned as your role.";

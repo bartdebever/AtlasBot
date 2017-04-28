@@ -31,11 +31,11 @@ namespace DataLibary.Models
                 {
                     if (i == 0)
                     {
-                        result.Add("solo " + s);
+                        result.Add("Solo " + s);
                     }
                     else if (i == 1)
                     {
-                        result.Add("flex " + s);
+                        result.Add("Flex " + s);
                     }
                     else if (i == 2)
                     {
