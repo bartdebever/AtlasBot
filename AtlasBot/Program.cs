@@ -172,6 +172,12 @@ namespace AtlasBot
                             if (e.GetArg("CommandType").ToLower() == "help" || e.GetArg("CommandType") == "?")
                             {
                                 //Gives all of the information about -Override and its overloads
+                                returnstring += "**With this command you can add custom ranks to your server.**" +
+                                                "\nUse the format: *-Override Add \"RoleName\" Parameter*" +
+                                                "\nYou can find out what parameters you can use by using one of the following commands:" +
+                                                "\n*-Rank List, -Region List, -Role List, -Mastery List*" +
+                                                "\n\nYou can also find out what overrides you have with -Override List." +
+                                                "\nThese overrides can be removed using *-Override remove <id>*.";
                             }
                             else if (e.GetArg("CommandType").ToLower() == "remove")
                             {
