@@ -331,7 +331,63 @@ namespace AtlasBot
                     .Do(async (e) =>
                     {
                         string returnstring = "error"; SettingsRepo settingsRepo = (new SettingsRepo(new SettingsContext()));
-                        if (e.GetArg("rank").ToLower() == "list")
+                        if (e.GetArg("rank").Split(' ').First() == "delete" ||
+                            e.GetArg("rank").Split(' ').First() == "remove")
+                        {
+                            foreach (string region in Ranks.BasicRanks())
+                            {
+                                if (region.ToLower() == e.GetArg("rank").Substring(e.GetArg("rank").IndexOf(" ") + 1, e.GetArg("rank").Length - e.GetArg("rank").IndexOf(" ") - 1).ToLower())
+                                {
+                                    try
+                                    {
+                                        ulong id = settingsRepo.GetOverride(region.ToLower(), e.Server.Id);
+                                        await e.User.RemoveRoles(e.Server.GetRole(id), e.Server.FindRoles(region.ToLower(), false).First());
+                                        returnstring = "Your role has been removed.";
+                                    }
+                                    catch { }
+                                }
+                            }
+                            foreach (string region in Ranks.QueueRanks())
+                            {
+                                if (region.ToLower() == e.GetArg("rank").Substring(e.GetArg("rank").IndexOf(" ") + 1, e.GetArg("rank").Length - e.GetArg("rank").IndexOf(" ") - 1).ToLower())
+                                {
+                                    try
+                                    {
+                                        ulong id = settingsRepo.GetOverride(region.ToLower(), e.Server.Id);
+                                        await e.User.RemoveRoles(e.Server.GetRole(id), e.Server.FindRoles(region.ToLower(), false).First());
+                                        returnstring = "Your role has been removed.";
+                                    }
+                                    catch { }
+                                }
+                            }
+                            foreach (string region in Ranks.DivisionRanks())
+                            {
+                                if (region.ToLower() == e.GetArg("rank").Substring(e.GetArg("rank").IndexOf(" ") + 1, e.GetArg("rank").Length - e.GetArg("rank").IndexOf(" ") - 1).ToLower())
+                                {
+                                    try
+                                    {
+                                        ulong id = settingsRepo.GetOverride(region.ToLower(), e.Server.Id);
+                                        await e.User.RemoveRoles(e.Server.GetRole(id), e.Server.FindRoles(region.ToLower(), false).First());
+                                        returnstring = "Your role has been removed.";
+                                    }
+                                    catch { }
+                                }
+                            }
+                            try
+                            {
+                                foreach (string role in settingsRepo.GetAllOverrides(e.Server.Id))
+                                {
+                                    var replacement = e.Server.GetRole(Convert.ToUInt64(role.Split(':').Last()));
+                                    if (e.GetArg("rank").Substring(e.GetArg("rank").IndexOf(" ") + 1, e.GetArg("rank").Length - e.GetArg("rank").IndexOf(" ") - 1).ToLower() == replacement.Name.ToLower())
+                                    {
+                                        await e.User.RemoveRoles(replacement);
+                                        returnstring = "Your role has been removed";
+                                    }
+                                }
+                            }
+                            catch { }
+                        }
+                        else if (e.GetArg("rank").ToLower() == "list")
                         {
                             if (settingsRepo.RankByAccount(e.Server.Id) == true ||
                                 settingsRepo.RankByParameter(e.Server.Id) == true)
@@ -364,7 +420,7 @@ namespace AtlasBot
                                 returnstring = "The server does not allow this feature";
                             }
                         }
-                        if (e.GetArg("rank") == "?" || e.GetArg("rank").ToLower() == "help")
+                        else if (e.GetArg("rank") == "?" || e.GetArg("rank").ToLower() == "help")
                         {
                             returnstring = "Use the base command -rank to get a rank assigned as your role.";
                             if (settingsRepo.RankByAccount(e.Server.Id) == true)
@@ -433,7 +489,8 @@ namespace AtlasBot
                                             try
                                             {
                                                 await e.User.AddRoles(
-                                                    e.Server.GetRole(settingsRepo.GetOverride(rank.ToLower(), e.Server.Id)));
+                                                    e.Server.GetRole(settingsRepo.GetOverride(rank.ToLower(),
+                                                        e.Server.Id)));
                                             }
                                             catch
                                             {
@@ -463,7 +520,8 @@ namespace AtlasBot
                                             try
                                             {
                                                 string rank = "Solo " +
-                                                              new RankAPI().GetRankingSimple(summoner, Queue.RankedSolo5x5);
+                                                              new RankAPI().GetRankingSimple(summoner,
+                                                                  Queue.RankedSolo5x5);
                                                 try
                                                 {
                                                     await e.User.AddRoles(
@@ -474,11 +532,15 @@ namespace AtlasBot
                                                     await e.User.AddRoles(e.Server.FindRoles(rank, false).First());
                                                 }
                                             }
-                                            catch { Console.WriteLine(e.User.Name + "doesn't have a soloq rank"); }
+                                            catch
+                                            {
+                                                Console.WriteLine(e.User.Name + "doesn't have a soloq rank");
+                                            }
                                             try
                                             {
                                                 string rank = "Flex " +
-                                                              new RankAPI().GetRankingSimple(summoner, Queue.RankedFlexSR);
+                                                              new RankAPI().GetRankingSimple(summoner,
+                                                                  Queue.RankedFlexSR);
                                                 try
                                                 {
                                                     await e.User.AddRoles(
@@ -489,11 +551,15 @@ namespace AtlasBot
                                                     await e.User.AddRoles(e.Server.FindRoles(rank, false).First());
                                                 }
                                             }
-                                            catch { Console.WriteLine(e.User.Name + "doesn't have a flex rank"); }
+                                            catch
+                                            {
+                                                Console.WriteLine(e.User.Name + "doesn't have a flex rank");
+                                            }
                                             try
                                             {
                                                 string rank = "3v3 " +
-                                                              new RankAPI().GetRankingSimple(summoner, Queue.RankedFlexTT);
+                                                              new RankAPI().GetRankingSimple(summoner,
+                                                                  Queue.RankedFlexTT);
                                                 try
                                                 {
                                                     await e.User.AddRoles(
@@ -504,7 +570,10 @@ namespace AtlasBot
                                                     await e.User.AddRoles(e.Server.FindRoles(rank, false).First());
                                                 }
                                             }
-                                            catch { Console.WriteLine(e.User.Name + "doesn't have a 3v3 rank"); }
+                                            catch
+                                            {
+                                                Console.WriteLine(e.User.Name + "doesn't have a 3v3 rank");
+                                            }
                                             returnstring = "Your ranks have been granted.";
                                         }
                                     }
@@ -513,45 +582,52 @@ namespace AtlasBot
                                         returnstring = "The server doesn't allow this action.";
                                     }
                                 }
+                            }
+                            else
+                            {
+                                //Check settings and give ranks according to the parameter
+                                if (settingsRepo.RankByParameter(e.Server.Id) == true)
+                                {
+                                    bool found = false;
+                                    List<string> filter = new List<string>();
+                                    if (settingsRepo.RankCommandType(e.Server.Id) == CommandType.Basic)
+                                    {
+                                        filter = Ranks.BasicRanks();
+                                    }
+
+                                    else if (settingsRepo.RankCommandType(e.Server.Id) == CommandType.PerQueue)
+                                    {
+                                        filter = Ranks.QueueRanks();
+                                    }
+                                    foreach (string rank in filter)
+                                    {
+                                        if (e.GetArg("rank").ToLower() == rank.ToLower())
+                                        {
+                                            try
+                                            {
+                                                await e.User.AddRoles(
+                                                    e.Server.GetRole(settingsRepo.GetOverride(rank, e.Server.Id)));
+                                            }
+                                            catch
+                                            {
+                                                await e.User.AddRoles(e.Server.FindRoles(rank, false).First());
+                                            }
+                                            returnstring = "Your rank has been granted.";
+                                            found = true;
+                                        }
+                                    }
+                                    if (found == false)
+                                    {
+                                        returnstring = "Didn't find the rank called " + e.GetArg("rank");
+                                    }
+                                }
                                 else
                                 {
-                                    //Check settings and give ranks according to the parameter
-                                    if (settingsRepo.RankByParameter(e.Server.Id) == true)
-                                    {
-                                        bool found = false;
-                                        List<string> filter = new List<string>();
-                                        if (settingsRepo.RankCommandType(e.Server.Id) == CommandType.Basic) { filter = Ranks.BasicRanks(); }
-
-                                        else if (settingsRepo.RankCommandType(e.Server.Id) == CommandType.PerQueue) { filter = Ranks.QueueRanks(); }
-                                        foreach (string rank in filter)
-                                        {
-                                            if (e.GetArg("rank").ToLower() == rank.ToLower())
-                                            {
-                                                try
-                                                {
-                                                    await e.User.AddRoles(
-                                                        e.Server.GetRole(settingsRepo.GetOverride(rank, e.Server.Id)));
-                                                }
-                                                catch
-                                                {
-                                                    await e.User.AddRoles(e.Server.FindRoles(rank, false).First());
-                                                }
-                                                returnstring = "Your rank has been granted.";
-                                                found = true;
-                                            }
-                                        }
-                                        if (found == false)
-                                        {
-                                            returnstring = "Didn't find the rank called " + e.GetArg("rank");
-                                        }
-                                    }
-                                    else
-                                    {
-                                        returnstring = "The server doesn't allow this action.";
-                                    }
+                                    returnstring = "The server doesn't allow this action.";
                                 }
                             }
                         }
+                        
                         await e.Channel.SendMessage(returnstring);
                     });
             }

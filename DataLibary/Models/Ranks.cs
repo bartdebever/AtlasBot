@@ -44,7 +44,29 @@ namespace DataLibary.Models
                 }
             }
             return result;
+        }
 
+        public static List<string> DivisionRanks()
+        {
+            List<string> result = new List<string>();
+            foreach (string rank in BasicRanks())
+            {
+                if (rank != "Master" && rank != "Challenger")
+                {
+                    result.Add(rank + "V");
+                    result.Add(rank + "IV");
+                    result.Add(rank + "III");
+                    result.Add(rank + "II");
+                    result.Add(rank + "I");
+
+                }
+                else
+                {
+                    result.Add(rank);
+                }
+                
+            }
+            return result;
         }
     }
 }
