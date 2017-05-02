@@ -254,7 +254,15 @@ namespace AtlasBot
                                     //await e.Channel.SendMessage(line.Substring(line.IndexOf("role:") + 5, line.Length - line.IndexOf("role:") - 6));
                                     ulong id = Convert.ToUInt64(line.Substring(line.IndexOf("role:") + 5, line.Length - line.IndexOf("role:") - 5));
                                     var role = e.Server.GetRole(id);
-                                    returnstring += "\n" + line.Substring(0, line.IndexOf("role:")+5) + " " + role.Name;
+                                    try
+                                    {
+                                        returnstring += "\n" + line.Substring(0, line.IndexOf("role:") + 5) + " " +
+                                                        role.Name;
+                                    }
+                                    catch
+                                    {
+                                        new SettingsRepo(new SettingsContext()).RemoveOverride(Convert.ToInt32(line.Split(' ')[1]), e.Server.Id);
+                                    }
                                     entries++;
                                 }
                                 returnstring += "\n```";
@@ -639,7 +647,13 @@ namespace AtlasBot
                     .Do(async (e) =>
                     {
                         string returnstring = "error";
-                        string command = e.GetArg("region").Substring(0, e.GetArg("region").IndexOf(" ")).ToLower();
+                        string command = "";
+                        try
+                        {
+                            command = e.GetArg("region").Substring(0, e.GetArg("region").IndexOf(" ")).ToLower();
+                        }
+                        catch { }
+                        
                         SettingsRepo settingsRepo = (new SettingsRepo(new SettingsContext()));
                         if (e.GetArg("region").ToLower() == "help" || e.GetArg("region") == "?")
                         {
@@ -650,15 +664,19 @@ namespace AtlasBot
                             
                             foreach (string region in new RegionRepo(new RegionContext()).GetAllRegions())
                             {
-                                if (region.ToLower() == e.GetArg("region").Substring(e.GetArg("region").IndexOf(" ") + 1, e.GetArg("region").Length - e.GetArg("region").IndexOf(" ") - 1).ToLower())
+                                if (region.ToLower() == e.GetArg("region").Split(' ').Last().ToLower())
                                 {
                                     try
                                     {
                                         ulong id = settingsRepo.GetOverride(region.ToLower(), e.Server.Id);
-                                        await e.User.RemoveRoles(e.Server.GetRole(id), e.Server.FindRoles(region.ToLower(), false).First());
+                                        await e.User.RemoveRoles(e.Server.GetRole(id));
                                         returnstring = "Your role has been removed.";
                                     }
-                                    catch { }
+                                    catch
+                                    {
+                                        await e.User.RemoveRoles(e.Server.FindRoles(region.ToLower(), false).First());
+                                        returnstring = "Your role has been removed.";
+                                    }
                                 }
                             }
                             try
