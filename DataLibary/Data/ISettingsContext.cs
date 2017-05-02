@@ -18,6 +18,9 @@ namespace DataLibary.Data
         CommandType RankCommandType(ulong serverid);
         void SetRankType(CommandType type, ulong serverid);
         void AllowRankAccount(bool value, ulong serverid);
+        void AllowRankParameter(bool value, ulong serverid);
+        void ChangeRegionAccount(bool value, ulong serverid);
+        void ChangeRegionParameter(bool value, ulong serverid);
         ulong GetOverride(string parameter, ulong serverid);
         void AddOverride(string parameter, ulong rank, ulong serverid);
         List<string> GetAllOverridesInformation(ulong serverid);

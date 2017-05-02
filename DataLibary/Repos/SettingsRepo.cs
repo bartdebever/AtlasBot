@@ -61,6 +61,20 @@ namespace DataLibary.Repos
             context.AllowRankAccount(value, serverid);
         }
 
+        public void ToggleRankParameter(bool value, ulong serverid)
+        {
+            context.AllowRankParameter(value, serverid);
+        }
+
+        public void ToggleRegionAccount(bool value, ulong serverid)
+        {
+            context.ChangeRegionAccount(value, serverid);
+        }
+
+        public void ToggleRegionParameter(bool value, ulong serverid)
+        {
+            context.ChangeRegionParameter(value, serverid);
+        }
         public ulong GetOverride(string parameter, ulong serverid)
         {
             return context.GetOverride(parameter, serverid);

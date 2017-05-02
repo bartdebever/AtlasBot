@@ -202,5 +202,35 @@ namespace DataLibary.MSSQLContext
             cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
             cmd.ExecuteNonQuery();
         }
+
+        public void AllowRankParameter(bool value, ulong serverid)
+        {
+            string query =
+                "UPDATE [ServerSettings] SET [ServerSettings].RankCommand = @Value FROM [ServerSettings] INNER JOIN [Server] S ON [S].id = [ServerSettings].serverid WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Value", value);
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            cmd.ExecuteNonQuery();
+        }
+
+        public void ChangeRegionAccount(bool value, ulong serverid)
+        {
+            string query =
+                "UPDATE [ServerSettings] SET [ServerSettings].RegionAccountCommand = @Value FROM [ServerSettings] INNER JOIN [Server] S ON [S].id = [ServerSettings].serverid WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Value", value);
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            cmd.ExecuteNonQuery();
+        }
+
+        public void ChangeRegionParameter(bool value, ulong serverid)
+        {
+            string query =
+                "UPDATE [ServerSettings] SET [ServerSettings].RegionCommand = @Value FROM [ServerSettings] INNER JOIN [Server] S ON [S].id = [ServerSettings].serverid WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Value", value);
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            cmd.ExecuteNonQuery();
+        }
     }
 }

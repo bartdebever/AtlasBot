@@ -174,27 +174,67 @@ namespace AtlasBot
             {
                 commands.CreateCommand("Command")
                     .Parameter("Command", ParameterType.Required)
-                    .Parameter("Value", ParameterType.Required)
+                    .Parameter("Value", ParameterType.Optional)
                     .Do(async (e)=>
                 {
                     string returnstring = "error";
-                    if (new ServerRepo(new ServerContext()).IsAdmin(e.User.Id, e.Server.Id) == true)
+                    if (e.GetArg("Command").ToLower() == "help" || e.GetArg("Command").ToLower() == "?")
                     {
-                        if (e.GetArg("Command").ToLower() == "rank")
-                        {
-                            bool value;
-                            bool.TryParse(e.GetArg("Value"), out value);
-                            new SettingsRepo(new SettingsContext()).ToggleAccountRank(value, e.Server.Id);
-                            returnstring = "Rank has been changed to " + value.ToString();
-                        }
+                        returnstring =
+                            "Use this command to change the behavior of your server. You can allow and deny the following features:" +
+                            "\n- Regionaccount: Allows the user to type -region to get a region role assigned." +
+                            "\n- Regionparameter: Allow the user to type -region <region> to get a region role assinged." +
+                            "\n- Rankaccount: Allow the user to type -rank to get a rank role assinged." +
+                            "\n- Rankparameter: Allow the user to type -rank <rank> to get a rank role assinged" +
+                            "\n\nPlease use the format -Command <Command> <Value>, example: *-Command rankaccount true*";
                     }
                     else
                     {
-                        returnstring = "You don't have permission to do this.";
+                        bool value = false;
+                        if (bool.TryParse(e.GetArg("Value"), out value))
+                        {
+                            if (new ServerRepo(new ServerContext()).IsAdmin(e.User.Id, e.Server.Id))
+                            {
+                                if (e.GetArg("Command").ToLower() == "rankaccount")
+                                {
+
+                                    new SettingsRepo(new SettingsContext()).ToggleAccountRank(value, e.Server.Id);
+                                    returnstring = "Rank by account has been changed to " + value.ToString();
+                                }
+                                else if (e.GetArg("Command").ToLower() == "rankparameter")
+                                {
+                                    new SettingsRepo(new SettingsContext()).ToggleRankParameter(value, e.Server.Id);
+                                    returnstring = "Rank by parameter has been changed to " + value.ToString();
+                                }
+                                else if (e.GetArg("Command").ToLower() == "regionaccount")
+                                {
+                                    new SettingsRepo(new SettingsContext()).ToggleRegionAccount(value, e.Server.Id);
+                                    returnstring = "Region by account has been changed to " + value.ToString();
+                                }
+                                else if (e.GetArg("Command").ToLower() == "regionparameter")
+                                {
+                                    new SettingsRepo(new SettingsContext()).ToggleRegionParameter(value, e.Server.Id);
+                                    returnstring = "Region by parameter has been changed to " + value.ToString();
+                                }
+                                else
+                                {
+                                    returnstring = "Command not found, use -command help to get a list of commands.";
+                                }
+                            }
+                            else
+                            {
+                                returnstring = "You don't have permission to do this.";
+                            }
+                        }
+                        else
+                        {
+                            returnstring = "Please put use a right value: True, False, 1 or 0.";
+                        }
                     }
                     await e.Channel.SendMessage(returnstring);
                 });
             }
+
 
             private void OverrideSystem()
             {
