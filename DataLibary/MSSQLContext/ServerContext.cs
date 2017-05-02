@@ -57,5 +57,20 @@ namespace DataLibary.MSSQLContext
             }
             return false;
         }
+
+        public List<ulong> GetAllServerIds()
+        {
+            List<ulong> result = new List<ulong>();
+            string query = "SELECT DiscordServerId FROM [Server]";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    result.Add(Convert.ToUInt64(reader.GetInt64(0)));
+                }
+            }
+            return result;
+        }
     }
 }

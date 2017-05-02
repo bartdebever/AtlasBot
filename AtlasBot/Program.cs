@@ -8,6 +8,7 @@ using DataLibary.MSSQLContext;
 using DataLibary.Repos;
 using Discord;
 using Discord.Commands;
+using Nito.AsyncEx;
 using RiotLibary.Roles;
 using RiotSharp;
 using RiotSharp.SummonerEndpoint;
@@ -56,6 +57,7 @@ namespace AtlasBot
                 ChangeType();
                 ChangeCommandAllowed();
                 OverrideSystem();
+                CheckForNewServer();
                 BotUser.ExecuteAndWait(async () =>
                 {
                     await BotUser.Connect(Keys.Keys.discordKey, TokenType.Bot);
@@ -68,16 +70,8 @@ namespace AtlasBot
             {
                 BotUser.JoinedServer += async (s, u) =>
                 {
-                    ulong serverid = u.Server.Id;
-                    ulong ownerid = u.Server.Owner.Id;
-                    string servername = u.Server.Name;
-                    string key = RandomStringGenerator();
-                    new ServerRepo(new ServerContext()).AddServer(serverid, ownerid, servername, key);
-                    Console.WriteLine(servername + " has added AtlasBot to their server");
-                    AdminLog(servername + " has added the bot. Owner: " + u.Server.Owner.ToString());
-                    DMBort(servername + ": " + u.Server.Owner.ToString() + " Key: " + key);
-                    await u.Server.Owner.SendMessage(
-                        "Thank you for adding AtlasBot to your server!\nFor safety reasons we need verification from Bort that this is allowed.\nPlease use the command *-verify <key>* to verify your server!\nBort will contact you soon with your key.");
+                    AddServer(u.Server);
+                    await u.Server.DefaultChannel.SendMessage("New server has been detected!");
                 };
             }
 
@@ -90,6 +84,51 @@ namespace AtlasBot
                         new ServerRepo(new ServerContext()).VerifyServerSQL(e.User.Id, e.GetArg("Key"));
                         await e.Channel.SendMessage("Server has been verified!");
                     });
+            }
+
+            private void CheckForNewServer()
+            {
+                BotUser.Ready += async (s, u) =>
+                {
+                    foreach (Discord.Server server in BotUser.Servers)
+                    {
+                        bool found = false;
+                        foreach (ulong id in new ServerRepo(new ServerContext()).GetAllServerIds())
+                        {
+                            if (server.Id == id)
+                            {
+                                found = true;
+                            }
+                        }
+                        if (found == false)
+                        {
+                            try
+                            {
+                                await server.DefaultChannel.SendMessage("New server found");
+                            }
+                            catch { }
+                            
+                            AddServer(server);
+                        }
+
+                    }
+                };
+            }
+
+            private void AddServer(Discord.Server server)
+            {
+                    ulong serverid = server.Id;
+                    ulong ownerid = server.Owner.Id;
+                    string servername = server.Name;
+                    string key = RandomStringGenerator();
+                    new ServerRepo(new ServerContext()).AddServer(serverid, ownerid, servername, key);
+                    new SettingsRepo(new SettingsContext()).CreateSettings(serverid);
+                    Console.WriteLine(servername + " has added AtlasBot to their server");
+                    AdminLog(servername + " has added the bot. Owner: " + server.Owner.ToString());
+                    DMBort(servername + ": " + server.Owner.ToString() + " Key: " + key);
+                    server.Owner.SendMessage(
+                        "Thank you for adding AtlasBot to your server!\nFor safety reasons we need verification from Bort that this is allowed.\nPlease use the command *-verify <key>* to verify your server!\nBort will contact you soon with your key.");
+
             }
             #endregion ServerJoining
 
@@ -657,7 +696,26 @@ namespace AtlasBot
                         SettingsRepo settingsRepo = (new SettingsRepo(new SettingsContext()));
                         if (e.GetArg("region").ToLower() == "help" || e.GetArg("region") == "?")
                         {
-                            //Help command
+                            if (settingsRepo.RegionByAccount(e.Server.Id) == true ||
+                                settingsRepo.RegionByParameter(e.Server.Id) == true)
+                            {
+                                returnstring = "You can use the -Region command to assign a region role to yourself.";
+                                if (settingsRepo.RegionByAccount(e.Server.Id) == true)
+                                {
+                                    returnstring +=
+                                        "\nYou can use *-Region* to get your region based on your bound League of Legends account.";
+                                }
+                                if (settingsRepo.RegionByParameter(e.Server.Id) == true)
+                                {
+                                    returnstring +=
+                                        "\nYou can use *-Region <League Region>* to assign a region to yourself.\nUse *-Region list* to see all the regions on this server.";
+                                }
+                            }
+
+                            else
+                            {
+                                returnstring = "This action is not permitted on this server.";
+                            }
                         }
                         else if (command == "remove" ||command == "delete")
                         {
@@ -839,12 +897,12 @@ namespace AtlasBot
             private string RandomStringGenerator()
             {
                 Guid g = Guid.NewGuid();
-                string GuidString = Convert.ToBase64String(g.ToByteArray());
-                GuidString = GuidString.Replace("=", "");
-                GuidString = GuidString.Replace("+", "");
-                GuidString = GuidString.Replace("/", "");
-                GuidString = GuidString.Substring(0, 10);
-                return GuidString;
+                string guidString = Convert.ToBase64String(g.ToByteArray());
+                guidString = guidString.Replace("=", "");
+                guidString = guidString.Replace("+", "");
+                guidString = guidString.Replace("/", "");
+                guidString = guidString.Substring(0, 10);
+                return guidString;
             }
         }
     }

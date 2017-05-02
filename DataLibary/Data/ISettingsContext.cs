@@ -23,5 +23,6 @@ namespace DataLibary.Data
         List<string> GetAllOverridesInformation(ulong serverid);
         List<string> GetAllOverrides(ulong serverid);
         void RemoveOverride(int id, ulong serverid);
+        void CreateSettings(ulong serverid);
     }
 }

@@ -35,5 +35,10 @@ namespace DataLibary.Models
         {
             return context.IsAdmin(user, server);
         }
+
+        public List<ulong> GetAllServerIds()
+        {
+            return context.GetAllServerIds();
+        }
     }
 }

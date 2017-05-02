@@ -83,5 +83,10 @@ namespace DataLibary.Repos
         {
             context.RemoveOverride(id, serverid);
         }
+
+        public void CreateSettings(ulong serverid)
+        {
+            context.CreateSettings(serverid);
+        }
     }
 }
