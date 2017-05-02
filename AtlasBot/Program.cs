@@ -88,7 +88,7 @@ namespace AtlasBot
 
             private void CheckForNewServer()
             {
-                BotUser.Ready += async (s, u) =>
+                BotUser.ServerAvailable += async (s, u) =>
                 {
                     foreach (Discord.Server server in BotUser.Servers)
                     {
@@ -122,12 +122,12 @@ namespace AtlasBot
                     string servername = server.Name;
                     string key = RandomStringGenerator();
                     new ServerRepo(new ServerContext()).AddServer(serverid, ownerid, servername, key);
-                    new SettingsRepo(new SettingsContext()).CreateSettings(serverid);
                     Console.WriteLine(servername + " has added AtlasBot to their server");
                     AdminLog(servername + " has added the bot. Owner: " + server.Owner.ToString());
                     DMBort(servername + ": " + server.Owner.ToString() + " Key: " + key);
                     server.Owner.SendMessage(
                         "Thank you for adding AtlasBot to your server!\nFor safety reasons we need verification from Bort that this is allowed.\nPlease use the command *-verify <key>* to verify your server!\nBort will contact you soon with your key.");
+                new SettingsRepo(new SettingsContext()).CreateSettings(serverid);
 
             }
             #endregion ServerJoining

@@ -197,7 +197,7 @@ namespace DataLibary.MSSQLContext
         public void CreateSettings(ulong serverid)
         {
             string query =
-                "INSERT INTO [SS] FROM [ServerSettings] SS INNER JOIN [Server] S ON [SS].ServerId = [S].Id VALUES ([S].Id, 0, NULL, 0, 1, 0, 0, NULL, 0, 0, NULL, 0,0,0 NULL WHERE [S].DiscordServerId = @Id";
+                "INSERT INTO [ServerSettings] VALUES ((SELECT [S].Id as serverid FROM  [Server] S  WHERE [S].DiscordServerId = @Id), 0, NULL, 0, 1, 0, 0, NULL, 0, 0, NULL, 0,0,0, NULL)";
             SqlCommand cmd = new SqlCommand(query, Database.Connection());
             cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
             cmd.ExecuteNonQuery();
