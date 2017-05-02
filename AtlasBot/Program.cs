@@ -417,6 +417,7 @@ namespace AtlasBot
                     .Parameter("rank", ParameterType.Unparsed)
                     .Do(async (e) =>
                     {
+                        try { OverrideDeletion(e.Server); } catch { }
                         string returnstring = "error"; SettingsRepo settingsRepo = (new SettingsRepo(new SettingsContext()));
                         if (e.GetArg("rank").Split(' ').First() == "delete" ||
                             e.GetArg("rank").Split(' ').First() == "remove")
@@ -725,6 +726,7 @@ namespace AtlasBot
                     .Parameter("region", ParameterType.Unparsed)
                     .Do(async (e) =>
                     {
+                        try {OverrideDeletion(e.Server); } catch { }
                         string returnstring = "error";
                         string command = "";
                         try
@@ -923,7 +925,29 @@ namespace AtlasBot
                         await e.Channel.SendMessage(returnstring);
                     });
             }
+
+            private void OverrideDeletion(Discord.Server server)
+            {
+                string thisshouldntbeneededbutiguessitis = "";
+                SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
+                foreach (string line in settingsRepo.GetAllOverrides(server.Id))
+                {
+                    ulong id = Convert.ToUInt64(line.Substring(line.IndexOf("role:") + 5, line.Length - line.IndexOf("role:") - 5));
+                    var role = server.GetRole(id);
+                    try
+                    {
+                        thisshouldntbeneededbutiguessitis = role.Name;
+                    }
+                    catch
+                    {
+                        new SettingsRepo(new SettingsContext()).RemoveOverride(Convert.ToInt32(line.Split(' ')[1]), server.Id);
+                    }
+                }
+            }
             #endregion
+
+            #region  logging
+
             private void DMBort(string message)
             {
                 BotUser.GetServer(291643233682063370).FindUsers("Bort", true).First().SendMessage(message);
@@ -933,6 +957,9 @@ namespace AtlasBot
             {
                 BotUser.GetServer(291643233682063370).GetChannel(291643340678627328).SendMessage(message);
             }
+
+            #endregion
+
 
             private string RandomStringGenerator()
             {
