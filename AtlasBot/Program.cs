@@ -8,6 +8,7 @@ using DataLibary.MSSQLContext;
 using DataLibary.Repos;
 using Discord;
 using Discord.Commands;
+using Languages;
 using Nito.AsyncEx;
 using RiotLibary.Roles;
 using RiotSharp;
@@ -924,15 +925,32 @@ namespace AtlasBot
                                     {
                                         try
                                         {
-                                            await e.User.AddRoles(
-                                                e.Server.GetRole(settingsRepo.GetOverride(region.ToLower(), e.Server.Id)));
-                                            returnstring = "Your role has been given";
+                                            Discord.Role r =
+                                                e.Server.GetRole(settingsRepo.GetOverride(region.ToLower(), e.Server.Id));
+                                            if (settingsRepo.IsRoleDisabled(r.Name.ToLower(), e.Server.Id))
+                                            {
+                                                returnstring = Eng_Default.RoleHasBeenDisabled();
+                                            }
+                                            else
+                                            {
+                                                await e.User.AddRoles();
+                                                returnstring = Eng_Default.RoleHasBeenGiven(r.Name);
+                                            }
+                                            
                                             found = true;
                                         }
                                         catch
                                         {
-                                            await e.User.AddRoles(e.Server.FindRoles(region, false).First());
-                                            returnstring = "Your role has been given";
+                                            Discord.Role r = e.Server.FindRoles(region, false).First();
+                                            if (settingsRepo.IsRoleDisabled(r.Name.ToLower(), e.Server.Id))
+                                            {
+                                                returnstring = Eng_Default.RoleHasBeenDisabled();
+                                            }
+                                            else
+                                            {
+                                                await e.User.AddRoles();
+                                                returnstring = Eng_Default.RoleHasBeenGiven(r.Name);
+                                            }
                                             found = true;
                                         }
                                     }
@@ -1009,26 +1027,3 @@ namespace AtlasBot
         }
     }
 }
-
-//championApi.Get5MainChampions(sumApi.GetSummoner(username, Region.euw), Region.euw).ForEach(champ =>
-//{
-//    Console.WriteLine(champ.Name + ": " + champ.Count);
-//});
-//SummonerAPI sumApi = new SummonerAPI();
-//ChampionAPI championApi = new ChampionAPI();
-//MasteryAPI masteryApi = new MasteryAPI();
-//Console.WriteLine("Type a username");
-//            string username = Console.ReadLine();
-//Summoner sum = sumApi.GetSummoner(username, Region.euw);
-//Console.WriteLine(masteryApi.GetPoints(sum, championApi.GetChampion("Thresh")));
-//            Console.ReadLine();
-
-
-//Guid g = Guid.NewGuid();
-//string GuidString = Convert.ToBase64String(g.ToByteArray());
-//GuidString = GuidString.Replace("=", "");
-//            GuidString = GuidString.Replace("+", "");
-//            GuidString = GuidString.Replace("/", "");
-//            GuidString = GuidString.Substring(0, 10);
-//            Console.WriteLine(GuidString);
-//            Console.ReadLine();

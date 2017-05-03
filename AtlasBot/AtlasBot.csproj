@@ -116,6 +116,10 @@
       <Project>{48857361-D3CB-4DCC-B89B-F43CCB85F147}</Project>
       <Name>Keys</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Languages\Languages.csproj">
+      <Project>{5f6bf3f3-eb3a-4e27-ae3e-7891ff1e42a0}</Project>
+      <Name>Languages</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RiotLibary\RiotLibary.csproj">
       <Project>{77a519a7-c7c4-4331-bb30-075db13f18d9}</Project>
       <Name>RiotLibary</Name>

@@ -72,5 +72,10 @@ namespace Languages
         {
             return user + " has registered as: " + leagueaccount + " on region: " + region + ".";
         }
+
+        public static string RoleHasBeenDisabled()
+        {
+            return "This role has been disabled to be given as parameter, claim it by account instead.";
+        }
     }
 }
