@@ -27,5 +27,9 @@ namespace DataLibary.Data
         List<string> GetAllOverrides(ulong serverid);
         void RemoveOverride(int id, ulong serverid);
         void CreateSettings(ulong serverid);
+        List<string> GetDisabledRoles(ulong serverid);
+        bool IsRoleDisabled(string parameter, ulong serverid);
+        void AddRoleDisable(string parameter, ulong serverid);
+        void RemoveRoleDisable(int id, ulong serverid);
     }
 }

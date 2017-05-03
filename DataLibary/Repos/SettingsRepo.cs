@@ -102,5 +102,25 @@ namespace DataLibary.Repos
         {
             context.CreateSettings(serverid);
         }
+
+        public List<string> GetDisabledRoles(ulong serverid)
+        {
+            return context.GetDisabledRoles(serverid);
+        }
+
+        public bool IsRoleDisabled(string parameter, ulong serverid)
+        {
+            return context.IsRoleDisabled(parameter, serverid);
+        }
+
+        public void AddRoleDisable(string parameter, ulong serverid)
+        {
+            context.AddRoleDisable(parameter, serverid);
+        }
+
+        public void RemoveRoleDisable(int id, ulong serverid)
+        {
+            context.RemoveRoleDisable(id, serverid);
+        }
     }
 }

@@ -232,5 +232,59 @@ namespace DataLibary.MSSQLContext
             cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
             cmd.ExecuteNonQuery();
         }
+
+        public List<string> GetDisabledRoles(ulong serverid)
+        {
+            List<string> result = new List<string>();
+            string query =
+                "SELECT [DR].Id, [DR].Parameter FROM [RoleDisable] DR INNER JOIN [Server] S ON [S].id = [DR].Serverid WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    result.Add("Id: " + reader.GetInt32(0)+ " disables " + reader.GetString(1));
+                }
+            }
+            return result;
+        }
+
+        public bool IsRoleDisabled(string parameter, ulong serverid)
+        {
+            string query =
+                "SELECT CASE WHEN EXISTS (SELECT [RD].Id FROM [RoleDisable] RD INNER JOIN [Server] S ON [RD].Serverid = [S].Id WHERE [RD].parameter = @parameter AND [S].DiscordServerId = @id) THEN 1 ELSE 0 END;";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@parameter", parameter);
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return reader.GetBoolean(0);
+                }
+            }
+            return false;
+        }
+
+        public void AddRoleDisable(string parameter, ulong serverid)
+        {
+            string query =
+                "INSERT INTO [RoleDisable] VALUES((SELECT [S].id FROM [Server] S WHERE [S].DiscordServerId = @Id), @parameter)";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@parameter", parameter);
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            cmd.ExecuteNonQuery();
+        }
+
+        public void RemoveRoleDisable(int id, ulong serverid)
+        {
+            string query =
+                "DELETE [RoleDisable] WHERE [RoleDisable].Id = @Id AND [RoleDisable].ServerId = (SELECT [S].id FROM [Server] S WHERE [S].DiscordServerId = @ServerId);";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", id);
+            cmd.Parameters.AddWithValue("@ServerId", Convert.ToInt64(serverid));
+            cmd.ExecuteNonQuery();
+        }
     }
 }

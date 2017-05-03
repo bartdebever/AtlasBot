@@ -234,8 +234,6 @@ namespace AtlasBot
                     await e.Channel.SendMessage(returnstring);
                 });
             }
-
-
             private void OverrideSystem()
             {
                 //Temporary name Override, needs a better name like CustomRole, just programming it now for the functionallity

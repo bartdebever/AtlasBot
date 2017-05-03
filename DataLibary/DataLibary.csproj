@@ -71,7 +71,6 @@
   <ItemGroup>
     <Compile Include="Database.cs" />
     <Compile Include="Data\ICoachContext.cs" />
-    <Compile Include="Data\ICommandContext.cs" />
     <Compile Include="Data\IRankContext.cs" />
     <Compile Include="Data\IRegionContext.cs" />
     <Compile Include="Data\IRoleContext.cs" />
@@ -81,7 +80,6 @@
     <Compile Include="Data\IUserContext.cs" />
     <Compile Include="Models\AtlasAdmin.cs" />
     <Compile Include="Models\Coach.cs" />
-    <Compile Include="Models\Command.cs" />
     <Compile Include="Models\CommandType.cs" />
     <Compile Include="Models\Rank.cs" />
     <Compile Include="Models\Ranks.cs" />
