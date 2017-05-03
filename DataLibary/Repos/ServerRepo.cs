@@ -40,5 +40,10 @@ namespace DataLibary.Models
         {
             return context.GetAllServerIds();
         }
+
+        public bool IsServerVerified(ulong serverid)
+        {
+            return context.IsServerVerified(serverid);
+        }
     }
 }

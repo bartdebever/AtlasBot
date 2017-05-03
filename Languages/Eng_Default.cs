@@ -145,5 +145,10 @@ namespace Languages
         {
             return "There are no overrides for this server";
         }
+
+        public static string ServerIsNotVerified()
+        {
+            return "This server is not verified, no commands possible till verification";
+        }
     }
 }

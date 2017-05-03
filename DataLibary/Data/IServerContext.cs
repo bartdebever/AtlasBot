@@ -13,5 +13,6 @@ namespace DataLibary.Data
         void AddInviteLink(ulong userid, ulong serverid, string key);
         bool IsAdmin(ulong userid, ulong server);
         List<ulong> GetAllServerIds();
+        bool IsServerVerified(ulong serverid);
     }
 }

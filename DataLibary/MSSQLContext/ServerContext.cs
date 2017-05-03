@@ -72,5 +72,20 @@ namespace DataLibary.MSSQLContext
             }
             return result;
         }
+
+        public bool IsServerVerified(ulong serverid)
+        {
+            string query = "SELECT [S].verified FROM [Server] S WHERE [S].DiscordServerId = @Id;";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return reader.GetBoolean(0);
+                }
+            }
+            return false;
+        }
     }
 }
