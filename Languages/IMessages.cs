@@ -11,8 +11,8 @@ namespace Languages
     {
         string NotAllowed();
         string AccountVerified();
-        string ServerVerified(string server);
-        string VerifyServer(string token);
+        string ServerVerified();
+        string VerifyServer();
         string RoleHasBeenGiven(string role);
         string RolesHaveBeenGiven();
         string ServerDoesNotAllow();

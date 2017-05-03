@@ -261,7 +261,7 @@ namespace DataLibary.MSSQLContext
             {
                 while (reader.Read())
                 {
-                    return reader.GetBoolean(0);
+                    return Convert.ToBoolean(reader.GetInt32(0));
                 }
             }
             return false;

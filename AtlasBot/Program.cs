@@ -257,7 +257,7 @@ namespace AtlasBot
                                                 "\n\nYou can also find out what overrides you have with -Override List." +
                                                 "\nThese overrides can be removed using *-Override remove <id>*.";
                             }
-                            else if (e.GetArg("CommandType").ToLower() == "remove")
+                            else if (e.GetArg("CommandType").ToLower() == "remove" && e.GetArg("Parameter").ToLower() != "disable")
                             {
                                 try
                                 {
@@ -270,61 +270,72 @@ namespace AtlasBot
                                 }
                                 
                             }
+                            else if ((e.GetArg("CommandType").ToLower() == "remove" || e.GetArg("CommandType").ToLower() == "delete") &&
+                                e.GetArg("Parameter").ToLower() == "disable")
+                            {
+                                settingsRepo.RemoveRoleDisable(Convert.ToInt32(e.GetArg("Role")), e.Server.Id);
+                            }
                             else if (e.GetArg("CommandType").ToLower() == "add")
                             {
                                 //Adds an override to the system
-                                try
+                                if (e.GetArg("Parameter").ToLower() == "disable")
                                 {
-                                    ulong id = 0;
+                                    settingsRepo.AddRoleDisable(e.GetArg("Role"), e.Server.Id);
+                                }
+                                else
+                                {
                                     try
                                     {
-                                        id = e.Server.FindRoles(e.GetArg("Role"), false).First().Id;
+                                        ulong id = 0;
+                                        try
+                                        {
+                                            id = e.Server.FindRoles(e.GetArg("Role"), false).First().Id;
+                                        }
+                                        catch
+                                        {
+                                            throw new Exception("Role not found");
+                                        }
+                                        if (id != 0)
+                                        {
+                                            if (e.GetArg("Parameter").IndexOf(" ") == 0)
+                                            {
+                                                settingsRepo.AddOverride(
+                                                    e.GetArg("Parameter").ToString().ToLower().Remove(0, 1), id
+                                                    , e.Server.Id);
+                                            }
+                                            else if (e.GetArg("Parameter").IndexOf(" ") == (e.GetArg("Parameter").Length))
+                                            {
+                                                settingsRepo.AddOverride(
+                                                    e.GetArg("Parameter")
+                                                        .ToString()
+                                                        .ToLower()
+                                                        .Remove(e.GetArg("Parameter").Length, 1), id
+                                                    , e.Server.Id);
+                                            }
+                                            else
+                                            {
+                                                settingsRepo.AddOverride(e.GetArg("Parameter").ToString().ToLower(), id,
+                                                    e.Server.Id);
+                                            }
+
+                                            returnstring = "Override has been saved";
+                                        }
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        returnstring = ex.Message;
                                     }
                                     catch
                                     {
-                                        throw new Exception("Role not found");
-                                        }
-                                    if (id != 0)
-                                    {
-                                        if (e.GetArg("Parameter").IndexOf(" ") == 0)
-                                        {
-                                            settingsRepo.AddOverride(
-                                                e.GetArg("Parameter").ToString().ToLower().Remove(0, 1), id
-                                                , e.Server.Id);
-                                        }
-                                        else if (e.GetArg("Parameter").IndexOf(" ") == (e.GetArg("Parameter").Length))
-                                        {
-                                            settingsRepo.AddOverride(
-                                                e.GetArg("Parameter")
-                                                    .ToString()
-                                                    .ToLower()
-                                                    .Remove(e.GetArg("Parameter").Length, 1), id
-                                                , e.Server.Id);
-                                        }
-                                        else
-                                        {
-                                            settingsRepo.AddOverride(e.GetArg("Parameter").ToString().ToLower(), id,
-                                                e.Server.Id);
-                                        }
-
-                                        returnstring = "Override has been saved";
+                                        returnstring = "Override has failed to save";
                                     }
-
                                 }
-                                catch (Exception ex)
-                                {
-                                    returnstring = ex.Message;
-                                }
-                                catch
-                                {
-                                    returnstring = "Override has failed to save";
-                                }
-                                
                             }
                             else if (e.GetArg("CommandType").ToLower() == "list")
                             {
                                 int entries = 0;
-                                returnstring = "```";
+                                returnstring = "```\nOverrides:";
                                 //Gives a list of all the overrides made by this server.
                                 foreach (string line in settingsRepo.GetAllOverridesInformation(e.Server.Id))
                                 {
@@ -341,6 +352,13 @@ namespace AtlasBot
                                         new SettingsRepo(new SettingsContext()).RemoveOverride(Convert.ToInt32(line.Split(' ')[1]), e.Server.Id);
                                     }
                                     entries++;
+                                }
+                                returnstring += "\nDisables:";
+                                foreach (string line in settingsRepo.GetDisabledRoles(e.Server.Id))
+                                {
+                                    returnstring += "\n" + line;
+                                    entries++;
+
                                 }
                                 returnstring += "\n```";
                                 if (entries == 0)
@@ -691,14 +709,33 @@ namespace AtlasBot
                                         {
                                             try
                                             {
-                                                await e.User.AddRoles(
-                                                    e.Server.GetRole(settingsRepo.GetOverride(rank, e.Server.Id)));
+                                                Discord.Role r =
+                                                    e.Server.GetRole(settingsRepo.GetOverride(rank, e.Server.Id));
+                                                if (!settingsRepo.IsRoleDisabled(r.Name.ToLower(), e.Server.Id))
+                                                {
+                                                    await e.User.AddRoles(r);
+                                                    returnstring = "Your rank has been granted.";
+                                                }
+                                                else
+                                                {
+                                                    returnstring = "This role has been disabled to get per parameter.";
+                                                }
                                             }
                                             catch
                                             {
-                                                await e.User.AddRoles(e.Server.FindRoles(rank, false).First());
+                                                Discord.Role r = e.Server.FindRoles(rank, false).First();
+                                                if (!settingsRepo.IsRoleDisabled(r.Name.ToLower(), e.Server.Id))
+                                                {
+                                                    await e.User.AddRoles(r);
+                                                    returnstring = "Your rank has been granted.";
+                                                }
+                                                else
+                                                {
+                                                    returnstring = "This role has been disabled to get per parameter.";
+                                                }
+                                                
                                             }
-                                            returnstring = "Your rank has been granted.";
+                                            
                                             found = true;
                                         }
                                     }
