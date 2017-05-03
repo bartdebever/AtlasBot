@@ -83,7 +83,7 @@ namespace AtlasBot
                     .Do(async (e) =>
                     {
                         new ServerRepo(new ServerContext()).VerifyServerSQL(e.User.Id, e.GetArg("Key"));
-                        await e.Channel.SendMessage("Server has been verified!");
+                        await e.Channel.SendMessage(Eng_Default.ServerVerified());
                     });
             }
 
@@ -126,8 +126,7 @@ namespace AtlasBot
                     Console.WriteLine(servername + " has added AtlasBot to their server");
                     AdminLog(servername + " has added the bot. Owner: " + server.Owner.ToString());
                     DMBort(servername + ": " + server.Owner.ToString() + " Key: " + key);
-                    server.Owner.SendMessage(
-                        "Thank you for adding AtlasBot to your server!\nFor safety reasons we need verification from Bort that this is allowed.\nPlease use the command *-verify <key>* to verify your server!\nBort will contact you soon with your key.");
+                    server.Owner.SendMessage(Eng_Default.VerifyServer());
                 new SettingsRepo(new SettingsContext()).CreateSettings(serverid);
 
             }
@@ -141,7 +140,7 @@ namespace AtlasBot
                     .Do(async (e) =>
                     {
                         new ServerRepo(new ServerContext()).AddInviteLink(e.User.Id, e.Server.Id, e.GetArg("InviteLink"));
-                        await e.Channel.SendMessage("Invite link has been set!");
+                        await e.Channel.SendMessage(Eng_Default.InviteLinkSet(e.GetArg("InviteLink")));
                     });
             }
 
@@ -160,12 +159,12 @@ namespace AtlasBot
                                 CommandType result;
                                 CommandType.TryParse(e.GetArg("CommandType"), out result);
                                 new SettingsRepo(new SettingsContext()).SetRankType(result, e.Server.Id);
-                                returnstring = "Command type changed to " + e.GetArg("CommandType");
+                                returnstring = Eng_Default.CommandTypeChange("rank",e.GetArg("CommandType"));
                             }
                         }
                         else
                         {
-                            returnstring = "You are not permitted to do this.";
+                            returnstring = Eng_Default.NotAllowed();
                         }
                         await e.Channel.SendMessage(returnstring);
                     });
@@ -200,36 +199,36 @@ namespace AtlasBot
                                 {
 
                                     new SettingsRepo(new SettingsContext()).ToggleAccountRank(value, e.Server.Id);
-                                    returnstring = "Rank by account has been changed to " + value.ToString();
+                                    returnstring = Eng_Default.CommandPermsChanged("Rank by account", value.ToString());
                                 }
                                 else if (e.GetArg("Command").ToLower() == "rankparameter")
                                 {
                                     new SettingsRepo(new SettingsContext()).ToggleRankParameter(value, e.Server.Id);
-                                    returnstring = "Rank by parameter has been changed to " + value.ToString();
+                                    returnstring = Eng_Default.CommandPermsChanged("Rank by parameter", value.ToString());
                                 }
                                 else if (e.GetArg("Command").ToLower() == "regionaccount")
                                 {
                                     new SettingsRepo(new SettingsContext()).ToggleRegionAccount(value, e.Server.Id);
-                                    returnstring = "Region by account has been changed to " + value.ToString();
+                                    returnstring = Eng_Default.CommandPermsChanged("Region by account", value.ToString());
                                 }
                                 else if (e.GetArg("Command").ToLower() == "regionparameter")
                                 {
                                     new SettingsRepo(new SettingsContext()).ToggleRegionParameter(value, e.Server.Id);
-                                    returnstring = "Region by parameter has been changed to " + value.ToString();
+                                    returnstring = Eng_Default.CommandPermsChanged("Region by parameter", value.ToString());
                                 }
                                 else
                                 {
-                                    returnstring = "Command not found, use -command help to get a list of commands.";
+                                    returnstring = Eng_Default.PermsCommandNotFound();
                                 }
                             }
                             else
                             {
-                                returnstring = "You don't have permission to do this.";
+                                returnstring = Eng_Default.NotAllowed();
                             }
                         }
                         else
                         {
-                            returnstring = "Please put use a right value: True, False, 1 or 0.";
+                            returnstring = Eng_Default.InvalidBoolValue();
                         }
                     }
                     await e.Channel.SendMessage(returnstring);
@@ -263,11 +262,11 @@ namespace AtlasBot
                                 try
                                 {
                                     settingsRepo.RemoveOverride(Convert.ToInt32(e.GetArg("Role")), e.Server.Id);
-                                    returnstring = "Override removed successfully";
+                                    returnstring = Eng_Default.OverrideRemoved();
                                 }
                                 catch
                                 {
-                                    returnstring = "Could not remove override with id " + e.GetArg("Role");
+                                    returnstring = Eng_Default.OverrideFailedToRemoved(e.GetArg("Role"));
                                 }
                                 
                             }
@@ -319,7 +318,7 @@ namespace AtlasBot
                                                     e.Server.Id);
                                             }
 
-                                            returnstring = "Override has been saved";
+                                            returnstring = Eng_Default.OverrideAdded();
                                         }
 
                                     }
@@ -329,7 +328,7 @@ namespace AtlasBot
                                     }
                                     catch
                                     {
-                                        returnstring = "Override has failed to save";
+                                        returnstring = Eng_Default.OverrideFailedToAdd();
                                     }
                                 }
                             }
@@ -364,13 +363,13 @@ namespace AtlasBot
                                 returnstring += "\n```";
                                 if (entries == 0)
                                 {
-                                    returnstring = "There are no overrides for this server";
+                                    returnstring = Eng_Default.NoOverrides();
                                 }
                             }
                         }
                         else
                         {
-                            returnstring = "You are not permitted to do this.";
+                            returnstring = Eng_Default.NotAllowed();
                         }
                         await e.Channel.SendMessage(returnstring);
                     });
@@ -408,19 +407,20 @@ namespace AtlasBot
                             }
                             sumRepo.AddSummoner(userRepo.GetUserIdByDiscord((e.User.Id)), riotid,
                                 new RegionContext().GetRegionId(region), token);
-                            returnmessage = "Please rename one of your masterypages to: " + sumRepo.GetToken(userRepo.GetUserByDiscord((e.User.Id)), riotid).ToString();
+                            returnmessage = Eng_Default.RenameMasteryPage(sumRepo.GetToken(userRepo.GetUserByDiscord((e.User.Id)), riotid).ToString());
                         }
                         else
                         {
-                            returnmessage = "Please rename one of your masterypages to: " + sumRepo.GetToken(userRepo.GetUserByDiscord((e.User.Id)), riotid) +
-                                            "\nIt may take a little for the RiotAPI to update, please stay patient!";
+                            returnmessage =
+                                Eng_Default.RenameMasteryPageLong(
+                                    sumRepo.GetToken(userRepo.GetUserByDiscord((e.User.Id)), riotid));
                             string token2 = sumRepo.GetToken(userRepo.GetUserByDiscord((e.User.Id)), riotid);
                             foreach (var page in new SummonerAPI().GetSummonerMasteryPages(summonername, region))
                             {
                             if (page.Name.ToLower() == token2.ToLower())
                             {
                                 sumRepo.VerifySummoner(userRepo.GetUserByDiscord((e.User.Id)), riotid);
-                                returnmessage = "Your account has been verified";
+                                returnmessage = Eng_Default.AccountVerified();
                             }
                         }
                         }
@@ -447,7 +447,7 @@ namespace AtlasBot
                                     {
                                         ulong id = settingsRepo.GetOverride(region.ToLower(), e.Server.Id);
                                         await e.User.RemoveRoles(e.Server.GetRole(id), e.Server.FindRoles(region.ToLower(), false).First());
-                                        returnstring = "Your role has been removed.";
+                                        returnstring = Eng_Default.RoleHasBeenRemoved(region);
                                     }
                                     catch { }
                                 }
@@ -460,7 +460,7 @@ namespace AtlasBot
                                     {
                                         ulong id = settingsRepo.GetOverride(region.ToLower(), e.Server.Id);
                                         await e.User.RemoveRoles(e.Server.GetRole(id), e.Server.FindRoles(region.ToLower(), false).First());
-                                        returnstring = "Your role has been removed.";
+                                        returnstring = Eng_Default.RoleHasBeenRemoved(region);
                                     }
                                     catch { }
                                 }
@@ -473,7 +473,7 @@ namespace AtlasBot
                                     {
                                         ulong id = settingsRepo.GetOverride(region.ToLower(), e.Server.Id);
                                         await e.User.RemoveRoles(e.Server.GetRole(id), e.Server.FindRoles(region.ToLower(), false).First());
-                                        returnstring = "Your role has been removed.";
+                                        returnstring = Eng_Default.RoleHasBeenRemoved(region);
                                     }
                                     catch { }
                                 }
@@ -486,7 +486,7 @@ namespace AtlasBot
                                     if (e.GetArg("rank").Substring(e.GetArg("rank").IndexOf(" ") + 1, e.GetArg("rank").Length - e.GetArg("rank").IndexOf(" ") - 1).ToLower() == replacement.Name.ToLower())
                                     {
                                         await e.User.RemoveRoles(replacement);
-                                        returnstring = "Your role has been removed";
+                                        returnstring = Eng_Default.RoleHasBeenRemoved(role);
                                     }
                                 }
                             }
@@ -522,7 +522,7 @@ namespace AtlasBot
                             }
                             else
                             {
-                                returnstring = "The server does not allow this feature";
+                                returnstring = Eng_Default.ServerDoesNotAllow();
                             }
                         }
                         else if (e.GetArg("rank") == "?" || e.GetArg("rank").ToLower() == "help")
@@ -601,7 +601,7 @@ namespace AtlasBot
                                             {
                                                 await e.User.AddRoles(e.Server.FindRoles(rank, false).First());
                                             }
-                                            returnstring = "Your rank has been granted.";
+                                            returnstring = Eng_Default.RoleHasBeenGiven(rank);
                                         }
                                         else if (settingsRepo.RankCommandType(e.Server.Id) == CommandType.Division)
                                         {
@@ -617,7 +617,7 @@ namespace AtlasBot
                                                 await e.User.AddRoles(e.Server.FindRoles(rank, false).First());
                                             }
 
-                                            returnstring = "Your rank has been granted.";
+                                            returnstring = Eng_Default.RoleHasBeenGiven(rank);
                                         }
                                         else if (settingsRepo.RankCommandType(e.Server.Id) == CommandType.PerQueue)
                                         {
@@ -679,12 +679,12 @@ namespace AtlasBot
                                             {
                                                 Console.WriteLine(e.User.Name + "doesn't have a 3v3 rank");
                                             }
-                                            returnstring = "Your ranks have been granted.";
+                                            returnstring = Eng_Default.RolesHaveBeenGiven();
                                         }
                                     }
                                     else
                                     {
-                                        returnstring = "The server doesn't allow this action.";
+                                        returnstring = Eng_Default.ServerDoesNotAllow();
                                     }
                                 }
                             }
@@ -715,11 +715,11 @@ namespace AtlasBot
                                                 if (!settingsRepo.IsRoleDisabled(r.Name.ToLower(), e.Server.Id))
                                                 {
                                                     await e.User.AddRoles(r);
-                                                    returnstring = "Your rank has been granted.";
+                                                    returnstring = Eng_Default.RoleHasBeenGiven(r.Name);
                                                 }
                                                 else
                                                 {
-                                                    returnstring = "This role has been disabled to get per parameter.";
+                                                    returnstring = Eng_Default.RoleHasBeenDisabled();
                                                 }
                                             }
                                             catch
@@ -728,11 +728,11 @@ namespace AtlasBot
                                                 if (!settingsRepo.IsRoleDisabled(r.Name.ToLower(), e.Server.Id))
                                                 {
                                                     await e.User.AddRoles(r);
-                                                    returnstring = "Your rank has been granted.";
+                                                    returnstring = Eng_Default.RoleHasBeenGiven(r.Name);
                                                 }
                                                 else
                                                 {
-                                                    returnstring = "This role has been disabled to get per parameter.";
+                                                    returnstring = Eng_Default.RoleHasBeenDisabled();
                                                 }
                                                 
                                             }
@@ -742,12 +742,12 @@ namespace AtlasBot
                                     }
                                     if (found == false)
                                     {
-                                        returnstring = "Didn't find the rank called " + e.GetArg("rank");
+                                        returnstring = Eng_Default.RoleNotFound(e.GetArg("rank"));
                                     }
                                 }
                                 else
                                 {
-                                    returnstring = "The server doesn't allow this action.";
+                                    returnstring = Eng_Default.ServerDoesNotAllow();
                                 }
                             }
                         }
@@ -792,7 +792,7 @@ namespace AtlasBot
 
                             else
                             {
-                                returnstring = "This action is not permitted on this server.";
+                                returnstring = Eng_Default.ServerDoesNotAllow();
                             }
                         }
                         else if (command == "remove" ||command == "delete")
@@ -806,12 +806,12 @@ namespace AtlasBot
                                     {
                                         ulong id = settingsRepo.GetOverride(region.ToLower(), e.Server.Id);
                                         await e.User.RemoveRoles(e.Server.GetRole(id));
-                                        returnstring = "Your role has been removed.";
+                                        returnstring = Eng_Default.RoleHasBeenRemoved(region);
                                     }
                                     catch
                                     {
                                         await e.User.RemoveRoles(e.Server.FindRoles(region.ToLower(), false).First());
-                                        returnstring = "Your role has been removed.";
+                                        returnstring = Eng_Default.RoleHasBeenRemoved(region);
                                     }
                                 }
                             }
@@ -823,7 +823,7 @@ namespace AtlasBot
                                     if (e.GetArg("region").Substring(e.GetArg("region").IndexOf(" ") + 1, e.GetArg("region").Length - e.GetArg("region").IndexOf(" ") - 1).ToLower() == replacement.Name.ToLower())
                                     {
                                         await e.User.RemoveRoles(replacement);
-                                        returnstring = "Your role has been removed";
+                                        returnstring = Eng_Default.RoleHasBeenRemoved(role);
                                     }
                                 }
                             }
@@ -864,7 +864,7 @@ namespace AtlasBot
                             }
                             else
                             {
-                                returnstring = "This action is not allowed on this server";
+                                returnstring = Eng_Default.ServerDoesNotAllow();
                             }
                         }
                         else
@@ -885,8 +885,7 @@ namespace AtlasBot
                                 }
                                 catch
                                 {
-                                    returnstring =
-                                        "Please register your account by using -ClaimAccount *Region SummonerName*";
+                                    returnstring = Eng_Default.RegisterAccount();
                                 }
                                 //summoner will be null when the item does not excist within the database.
                                 //This is only done so there will be a proper returnmessage send to the user.
@@ -900,12 +899,12 @@ namespace AtlasBot
                                             {
                                                 await e.User.AddRoles(
                                                     e.Server.GetRole(settingsRepo.GetOverride(region.ToLower(), e.Server.Id)));
-                                                returnstring = "Your role has been given";
+                                                returnstring = Eng_Default.RoleHasBeenGiven(region);
                                             }
                                             catch
                                             {
                                                 await e.User.AddRoles(e.Server.FindRoles(region, false).First());
-                                                returnstring = "Your role has been given";
+                                                returnstring = Eng_Default.RoleHasBeenGiven(region);
                                             }
                                         }
 
@@ -914,7 +913,7 @@ namespace AtlasBot
                             }
                             else if (e.GetArg("region") == "")
                             {
-                                returnstring = "This action is not allowed on this server.";
+                                returnstring = Eng_Default.ServerDoesNotAllow();
                             }
                             else if (settingsRepo.RegionByParameter(e.Server.Id) == true)
                             {
@@ -961,18 +960,18 @@ namespace AtlasBot
                                     if (e.GetArg("region").ToLower() == replacement.Name.ToLower())
                                     {
                                         await e.User.AddRoles(replacement);
-                                        returnstring = "Your role has been given";
+                                        returnstring = Eng_Default.RoleHasBeenGiven(role);
                                         found = true;
                                     }
                                 }
                                 if (found == false)
                                 {
-                                    returnstring = "No role found called " + e.GetArg("region");
+                                    returnstring = Eng_Default.RoleNotFound(e.GetArg("region"));
                                 }
                             }
                             else
                             {
-                                returnstring = "This action is not allowed on this server.";
+                                returnstring = Eng_Default.ServerDoesNotAllow();
                             }
                         }
                         await e.Channel.SendMessage(returnstring);
