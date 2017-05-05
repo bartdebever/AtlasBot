@@ -45,5 +45,30 @@ namespace DataLibary.Models
         {
             return context.IsServerVerified(serverid);
         }
+
+        public string GetServerDescription(ulong serverid)
+        {
+            return context.GetServerDescription(serverid);
+        }
+
+        public void SetServerGescriptiong(ulong serverid, string description)
+        {
+            context.SetServerDecription(serverid, description);
+        }
+
+        public string InviteLink(ulong serverid)
+        {
+            return context.InviteLink(serverid);
+        }
+
+        public string ServerName(ulong serverid)
+        {
+            return context.ServerName(serverid);
+        }
+
+        public void SetServerName(ulong serverid, string name)
+        {
+            context.SetServerName(serverid, name);
+        }
     }
 }

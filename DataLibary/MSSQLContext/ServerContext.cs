@@ -87,5 +87,69 @@ namespace DataLibary.MSSQLContext
             }
             return false;
         }
+
+        public string GetServerDescription(ulong serverid)
+        {
+            string query = "SELECT [S].Description FROM [Server] S WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return reader.GetString(0);
+                }
+            }
+            return null;
+        }
+
+        public void SetServerDecription(ulong serverid, string description)
+        {
+            string query =
+                "UPDATE [Server] SET [Server].Description = @description WHERE [Server].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            cmd.Parameters.AddWithValue("@description", description);
+            cmd.ExecuteNonQuery();
+        }
+
+        public string InviteLink(ulong serverid)
+        {
+            string query = "SELECT [S].InviteLink FROM [Server] S WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return reader.GetString(0);
+                }
+            }
+            return null;
+        }
+
+        public string ServerName(ulong serverid)
+        {
+            string query = "SELECT [S].ServerName FROM [Server] S WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return reader.GetString(0);
+                }
+            }
+            return null;
+        }
+
+        public void SetServerName(ulong serverid, string name)
+        {
+            string query = "UPDATE [Server] SET ServerName = @Name WHERE DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            cmd.Parameters.AddWithValue("@Name", name);
+            cmd.ExecuteNonQuery();
+        }
     }
 }

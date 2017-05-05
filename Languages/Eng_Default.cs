@@ -150,5 +150,15 @@ namespace Languages
         {
             return "This server is not verified, no commands possible till verification";
         }
+
+        public static string DescriptionTooLong()
+        {
+            return "Description is too long, please supply one with 500 characters or less.";
+        }
+
+        public static string DescriptionSet()
+        {
+            return "Description has been set";
+        }
     }
 }
