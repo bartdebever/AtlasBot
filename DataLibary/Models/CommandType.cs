@@ -11,6 +11,8 @@ namespace DataLibary.Models
         Basic = 1,
         Division = 2,
         Full = 3,
-        PerQueue = 4
+        PerQueue = 4,
+        Main = 5,
+        Mains = 6
     }
 }

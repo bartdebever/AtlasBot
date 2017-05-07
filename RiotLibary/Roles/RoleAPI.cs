@@ -7,7 +7,6 @@ using DataLibary.Models;
 using RiotLibary.Exceptions;
 using RiotSharp;
 using RiotSharp.SummonerEndpoint;
-using Role = DataLibary.Models.Role;
 
 namespace RiotLibary.Roles
 {
@@ -15,7 +14,7 @@ namespace RiotLibary.Roles
     {
         private RiotApi api = RiotApi.GetInstance(Keys.Keys.riotKey);
         private StaticRiotApi sApi = StaticRiotApi.GetInstance(Keys.Keys.riotKey);
-        public DataLibary.Models.Role GetRole(Summoner summoner)
+        public string GetRole(Summoner summoner)
         { 
             int[] roles = new int[6] {0,0,0,0,0,0};
             try
@@ -52,27 +51,27 @@ namespace RiotLibary.Roles
                 });
                 if (roles.ToList().IndexOf(roles.Max()) == 0)
                 {
-                    return Role.Top;
+                    return "Top";
                 }
                 else if (roles.ToList().IndexOf(roles.Max()) == 1)
                 {
-                    return Role.Jungle;
+                    return "Jungle";
                 }
                 else if (roles.ToList().IndexOf(roles.Max()) == 2)
                 {
-                    return Role.Mid;
+                    return "Mid";
                 }
                 else if (roles.ToList().IndexOf(roles.Max()) == 3)
                 {
-                    return Role.ADC;
+                    return "ADC";
                 }
                 else if (roles.ToList().IndexOf(roles.Max()) == 4)
                 {
-                    return Role.Support;
+                    return "Support";
                 }
                 else if (roles.ToList().IndexOf(roles.Max()) == 5)
                 {
-                    return Role.Fill;
+                    return "Fill";
                 }
             }
             catch { throw new NoRankedGamesException();}

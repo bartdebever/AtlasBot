@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using DataLibary.Models;
 using RiotSharp;
 using RiotSharp.ChampionEndpoint;
-using Role = DataLibary.Models.Role;
 
 namespace DataLibary.Data
 {

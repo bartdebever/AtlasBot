@@ -64,6 +64,7 @@ namespace AtlasBot
                 Description();
                 CheckForNewServer();
                 GetRoles();
+                GetRole();
                 Update();
                 JoiningRoleGive();
                 BotUser.ExecuteAndWait(async () =>
@@ -1178,6 +1179,82 @@ namespace AtlasBot
                     });
             }
 
+            private void GetRole()
+            {
+                commands.CreateCommand("Role")
+                    .Do(async (e) =>
+                    {
+                        string returnstring = "";
+                        SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
+                        if (new ServerRepo(new ServerContext()).IsServerVerified(e.Server.Id))
+                        {
+                            if (settingsRepo.RoleByAccount(e.Server.Id))
+                            {
+                                List<string> filter = new List<string>();
+                                if (settingsRepo.RoleCommandType(e.Server.Id) == CommandType.Basic)
+                                {
+                                    filter = Roles.NormalRoles();
+                                }
+                                else if (settingsRepo.RoleCommandType(e.Server.Id) == CommandType.Main)
+                                {
+                                    filter = Roles.MainRoles();
+                                }
+                                else if (settingsRepo.RoleCommandType(e.Server.Id) == CommandType.Mains)
+                                {
+                                    filter = Roles.MainsRoles();
+                                }
+
+                                Summoner summoner = null;
+                                try
+                                {
+                                    DataLibary.Models.User user =
+                                        new UserRepo(new UserContext()).GetUserByDiscord(e.User.Id);
+                                    summoner =
+                                        new SummonerAPI().GetSummoner(
+                                            new SummonerRepo(new SummonerContext()).GetSummonerByUserId(user),
+                                            ToolKit.LeagueAndDatabase.GetRegionFromDatabaseId(
+                                                new RegionRepo(new RegionContext()).GetRegionId(user)
+                                            ));
+                                }
+                                catch
+                                {
+                                    returnstring = Eng_Default.RegisterAccount();
+                                }
+                                //summoner will be null when the item does not excist within the database.
+                                //This is only done so there will be a proper returnmessage send to the user.
+                                if (summoner != null)
+                                {
+                                    string mainrole = new RoleAPI().GetRole(summoner);
+                                    foreach (string role in filter)
+                                    {
+                                        if (role.Contains(mainrole))
+                                        {
+                                            try
+                                            {
+                                                ulong id = settingsRepo.GetOverride(role, e.Server.Id);
+                                                await e.User.AddRoles(e.Server.GetRole(id));
+                                                returnstring = Eng_Default.RoleHasBeenGiven(role);
+                                            }
+                                            catch
+                                            {
+                                                await e.User.AddRoles(e.Server.FindRoles(role, false).First());
+                                                returnstring = Eng_Default.RoleHasBeenGiven(role);
+                                            }
+                                        }
+                                    }
+
+                                }
+                                    
+                            } 
+                        }
+                        else
+                        {
+                            returnstring = Eng_Default.ServerIsNotVerified();
+                        }
+                        await e.Channel.SendMessage(returnstring);
+                    });
+            }
+
             private async void GetRoles(Discord.Server server, Discord.User discorduser)
             {
                 SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
@@ -1341,6 +1418,64 @@ namespace AtlasBot
 
                         }
                     }
+                }
+                if (settingsRepo.RoleByAccount(server.Id))
+                {
+                    List<string> filter = new List<string>();
+                    if (settingsRepo.RoleCommandType(server.Id) == CommandType.Basic)
+                    {
+                        filter = Roles.NormalRoles();
+                    }
+                    else if (settingsRepo.RoleCommandType(server.Id) == CommandType.Main)
+                    {
+                        filter = Roles.MainRoles();
+                    }
+                    else if (settingsRepo.RoleCommandType(server.Id) == CommandType.Mains)
+                    {
+                        filter = Roles.MainsRoles();
+                    }
+
+                    Summoner summoner = null;
+                    try
+                    {
+                        DataLibary.Models.User user =
+                            new UserRepo(new UserContext()).GetUserByDiscord(discorduser.Id);
+                        summoner =
+                            new SummonerAPI().GetSummoner(
+                                new SummonerRepo(new SummonerContext()).GetSummonerByUserId(user),
+                                ToolKit.LeagueAndDatabase.GetRegionFromDatabaseId(
+                                    new RegionRepo(new RegionContext()).GetRegionId(user)
+                                ));
+                    }
+                    catch
+                    {
+                        
+                    }
+                    //summoner will be null when the item does not excist within the database.
+                    //This is only done so there will be a proper returnmessage send to the user.
+                    if (summoner != null)
+                    {
+                        string mainrole = new RoleAPI().GetRole(summoner);
+                        foreach (string role in filter)
+                        {
+                            if (role.Contains(mainrole))
+                            {
+                                try
+                                {
+                                    ulong id = settingsRepo.GetOverride(role, server.Id);
+                                    await discorduser.AddRoles(server.GetRole(id));
+                                    
+                                }
+                                catch
+                                {
+                                    await discorduser.AddRoles(server.FindRoles(role, false).First());
+                                    
+                                }
+                            }
+                        }
+
+                    }
+
                 }
             }
 

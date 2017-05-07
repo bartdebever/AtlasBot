@@ -286,5 +286,83 @@ namespace DataLibary.MSSQLContext
             cmd.Parameters.AddWithValue("@ServerId", Convert.ToInt64(serverid));
             cmd.ExecuteNonQuery();
         }
+
+        public bool RoleByParameter(ulong serverid)
+        {
+            string query =
+              "SELECT [SS].RoleParameterCommand FROM [ServerSettings] SS INNER JOIN [Server] S ON [SS].serverid = [S].id WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return reader.GetBoolean(0);
+                }
+            }
+            return false;
+        }
+
+        public bool RoleByAccount(ulong serverid)
+        {
+            string query =
+              "SELECT [SS].RoleAccountCommand FROM [ServerSettings] SS INNER JOIN [Server] S ON [SS].serverid = [S].id WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return reader.GetBoolean(0);
+                }
+            }
+            return false;
+        }
+
+        public void ChangeRoleAccount(bool value, ulong serverid)
+        {
+            string query =
+                "UPDATE [ServerSettings] SET [ServerSettings].RoleAccountCommand = @Value FROM [ServerSettings] INNER JOIN [Server] S ON [S].id = [ServerSettings].serverid WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Value", value);
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            cmd.ExecuteNonQuery();
+        }
+
+        public void ChangeRoleParameter(bool value, ulong serverid)
+        {
+            string query =
+                "UPDATE [ServerSettings] SET [ServerSettings].RoleParameterCommand = @Value FROM [ServerSettings] INNER JOIN [Server] S ON [S].id = [ServerSettings].serverid WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Value", value);
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            cmd.ExecuteNonQuery();
+        }
+
+        public CommandType RoleCommandType(ulong serverid)
+        {
+            string query =
+                "SELECT RoleCommandType FROM [ServerSettings] SS INNER JOIN [Server] S ON [S].id = [SS].serverid WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return (CommandType)reader.GetInt32(0);
+                }
+            }
+            throw new Exception("Server not found");
+        }
+
+        public void SetRoleType(CommandType type, ulong serverid)
+        {
+            string query =
+                "UPDATE [ServerSettings] SET [ServerSettings].RoleCommandType = @Type FROM [ServerSettings] INNER JOIN [Server] S ON [S].id = [ServerSettings].serverid WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            cmd.Parameters.AddWithValue("@Type", (int)type);
+            cmd.ExecuteNonQuery();
+        }
     }
 }

@@ -13,14 +13,20 @@ namespace DataLibary.Data
         bool RankByAccount(ulong serverid);
         bool RegionByParameter(ulong serverid);
         bool RegionByAccount(ulong serverid);
+        bool RoleByParameter(ulong serverid);
+        bool RoleByAccount(ulong serverid);
         bool MasteryPointsByAccount(ulong serverid);
         bool MasteryLevelByAccount(ulong serverid);
         CommandType RankCommandType(ulong serverid);
+        CommandType RoleCommandType(ulong serverid);
         void SetRankType(CommandType type, ulong serverid);
+        void SetRoleType(CommandType type, ulong serverid);
         void AllowRankAccount(bool value, ulong serverid);
         void AllowRankParameter(bool value, ulong serverid);
         void ChangeRegionAccount(bool value, ulong serverid);
         void ChangeRegionParameter(bool value, ulong serverid);
+        void ChangeRoleAccount(bool value, ulong serverid);
+        void ChangeRoleParameter(bool value, ulong serverid);
         ulong GetOverride(string parameter, ulong serverid);
         void AddOverride(string parameter, ulong rank, ulong serverid);
         List<string> GetAllOverridesInformation(ulong serverid);
@@ -31,5 +37,6 @@ namespace DataLibary.Data
         bool IsRoleDisabled(string parameter, ulong serverid);
         void AddRoleDisable(string parameter, ulong serverid);
         void RemoveRoleDisable(int id, ulong serverid);
+        
     }
 }

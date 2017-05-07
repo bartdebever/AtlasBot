@@ -122,5 +122,34 @@ namespace DataLibary.Repos
         {
             context.RemoveRoleDisable(id, serverid);
         }
+        public bool RoleByParameter(ulong serverid)
+        {
+            return context.RoleByParameter(serverid);
+        }
+
+        public bool RoleByAccount(ulong serverid)
+        {
+
+            return context.RoleByAccount(serverid);
+        }
+
+        public void ChangeRoleAccount(bool value, ulong serverid)
+        {
+            context.ChangeRoleAccount(value, serverid);
+        }
+
+        public void ChangeRoleParameter(bool value, ulong serverid)
+        {
+            context.ChangeRoleParameter(value, serverid);
+        }
+
+        public CommandType RoleCommandType(ulong serverid)
+        {
+            return context.RoleCommandType(serverid);
+        }
+        public void SetRoleType(CommandType type, ulong serverid)
+        {
+            context.SetRoleType(type, serverid);
+        }
     }
 }
