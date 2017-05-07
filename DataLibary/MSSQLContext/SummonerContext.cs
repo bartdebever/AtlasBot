@@ -43,7 +43,7 @@ namespace DataLibary.MSSQLContext
 
         public int GetSummonerByUserId(User user)
         {
-            string query = "SELECT Riotid FROM [Summoner] WHERE UserId = @userid";
+            string query = "SELECT Riotid FROM [Summoner] WHERE UserId = @userid AND Verified = 1";
             SqlCommand cmd = new SqlCommand(query, Database.Connection());
             cmd.Parameters.AddWithValue("@userid", user.Id);
             using ( SqlDataReader reader = cmd.ExecuteReader())
@@ -59,7 +59,7 @@ namespace DataLibary.MSSQLContext
         public List<int> GetSummonersByRegion(int regionid)
         {
             List<int> result = new List<int>();
-            string query = "SELECT Riotid FROM [Summoner] WHERE RegionId = @regionid";
+            string query = "SELECT Riotid FROM [Summoner] WHERE RegionId = @regionid AND Verified = true";
             SqlCommand cmd = new SqlCommand(query, Database.Connection());
             cmd.Parameters.AddWithValue("@regionid", regionid);
             using (SqlDataReader reader = cmd.ExecuteReader())
