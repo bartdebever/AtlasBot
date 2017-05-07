@@ -290,7 +290,7 @@ namespace DataLibary.MSSQLContext
         public bool RoleByParameter(ulong serverid)
         {
             string query =
-              "SELECT [SS].RoleParameterCommand FROM [ServerSettings] SS INNER JOIN [Server] S ON [SS].serverid = [S].id WHERE [S].DiscordServerId = @Id";
+              "SELECT [SS].RoleCommand FROM [ServerSettings] SS INNER JOIN [Server] S ON [SS].serverid = [S].id WHERE [S].DiscordServerId = @Id";
             SqlCommand cmd = new SqlCommand(query, Database.Connection());
             cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
             using (SqlDataReader reader = cmd.ExecuteReader())

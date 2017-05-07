@@ -64,6 +64,7 @@ namespace AtlasBot
                 Description();
                 CheckForNewServer();
                 GetRoles();
+                GetRoleParameter();
                 GetRole();
                 Update();
                 JoiningRoleGive();
@@ -1231,7 +1232,7 @@ namespace AtlasBot
                                         {
                                             try
                                             {
-                                                ulong id = settingsRepo.GetOverride(role, e.Server.Id);
+                                                ulong id = settingsRepo.GetOverride(role.ToLower(), e.Server.Id);
                                                 await e.User.AddRoles(e.Server.GetRole(id));
                                                 returnstring = Eng_Default.RoleHasBeenGiven(role);
                                             }
@@ -1251,6 +1252,82 @@ namespace AtlasBot
                         {
                             returnstring = Eng_Default.ServerIsNotVerified();
                         }
+                        await e.Channel.SendMessage(returnstring);
+                    });
+            }
+
+            private void GetRoleParameter()
+            {
+                commands.CreateCommand("Role")
+                    .Parameter("Role", ParameterType.Required)
+                    .Parameter("Optional", ParameterType.Optional)
+                    .Do(async (e) =>
+                    {
+
+                        string returnstring = "";
+                        if (new ServerRepo(new ServerContext()).IsServerVerified(e.Server.Id))
+                        {
+                            SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
+                            if (e.GetArg("Role").ToLower() == "?")
+                            {
+
+                            }
+                            else if (e.GetArg("Role").ToLower() == "list")
+                            {
+
+                            }
+                            else if (e.GetArg("Role").ToLower() == "remove")
+                            {
+
+                            }
+                            else
+                            {
+
+                                if (settingsRepo.RoleByParameter(e.Server.Id))
+                                {
+                                    List<string> filter = new List<string>();
+                                    if (settingsRepo.RoleCommandType(e.Server.Id) == CommandType.Basic)
+                                    {
+                                        filter = Roles.NormalRoles();
+                                    }
+                                    else if (settingsRepo.RoleCommandType(e.Server.Id) == CommandType.Main)
+                                    {
+                                        filter = Roles.MainRoles();
+                                    }
+                                    else if (settingsRepo.RoleCommandType(e.Server.Id) == CommandType.Mains)
+                                    {
+                                        filter = Roles.MainsRoles();
+                                    }
+                                    foreach (string role in filter)
+                                    {
+                                        if (role.ToLower().Contains(e.GetArg("Role").ToLower()))
+                                        {
+                                            try
+                                            {
+                                                ulong id = settingsRepo.GetOverride(role.ToLower(), e.Server.Id);
+                                                await e.User.AddRoles(e.Server.GetRole(id));
+                                                returnstring = Eng_Default.RoleHasBeenGiven(role);
+                                            }
+                                            catch
+                                            {
+                                                await e.User.AddRoles(e.Server.FindRoles(role, false).First());
+                                                returnstring = Eng_Default.RoleHasBeenGiven(role);
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    returnstring = Eng_Default.ServerDoesNotAllow();
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            returnstring = Eng_Default.ServerIsNotVerified();
+                        }
+                       
                         await e.Channel.SendMessage(returnstring);
                     });
             }
@@ -1462,7 +1539,7 @@ namespace AtlasBot
                             {
                                 try
                                 {
-                                    ulong id = settingsRepo.GetOverride(role, server.Id);
+                                    ulong id = settingsRepo.GetOverride(role.ToLower(), server.Id);
                                     await discorduser.AddRoles(server.GetRole(id));
                                     
                                 }
