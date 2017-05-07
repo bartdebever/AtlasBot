@@ -65,6 +65,7 @@ namespace AtlasBot
                 CheckForNewServer();
                 GetRoles();
                 GetRoleParameter();
+                Legal();
                 GetRole();
                 Update();
                 JoiningRoleGive();
@@ -125,7 +126,7 @@ namespace AtlasBot
                 };
             }
 
-            private void AddServer(Discord.Server server)
+            private async void AddServer(Discord.Server server)
             {
                     ulong serverid = server.Id;
                     ulong ownerid = server.Owner.Id;
@@ -135,7 +136,7 @@ namespace AtlasBot
                     Console.WriteLine(servername + " has added AtlasBot to their server");
                     AdminLog(servername + " has added the bot. Owner: " + server.Owner.ToString());
                     DMBort(servername + ": " + server.Owner.ToString() + " Key: " + key);
-                    server.Owner.SendMessage(Eng_Default.VerifyServer());
+                    await server.Owner.SendMessage(Eng_Default.VerifyServer());
                 new SettingsRepo(new SettingsContext()).CreateSettings(serverid);
 
             }
@@ -264,6 +265,24 @@ namespace AtlasBot
                                     new SettingsRepo(new SettingsContext()).SetRankType(result, e.Server.Id);
                                     returnstring = Eng_Default.CommandTypeChange("rank", e.GetArg("CommandType"));
                                 }
+                                else if (e.GetArg("Type").ToLower() == "role")
+                                {
+                                    CommandType result;
+                                    try
+                                    {
+                                        CommandType.TryParse(e.GetArg("CommandType"), out result);
+                                        new SettingsRepo(new SettingsContext()).SetRoleType(result, e.Server.Id);
+                                        returnstring = Eng_Default.CommandTypeChange("rank", e.GetArg("CommandType"));
+                                    }
+                                    catch
+                                    {
+                                        returnstring = "Correct commandtypes for Role are:" +
+                                                       "\n**Basic**: Just simple Top, Jungle, Mid, ADC, Support" +
+                                                       "\n**Main**: Makes it Top-Main, Jungle-Main, etc" +
+                                                       "\n**Mains**: Makes it Top-Mains, Jungle-Mains, etc";
+                                    }
+                                    
+                                }
                             }
                             else
                             {
@@ -298,6 +317,8 @@ namespace AtlasBot
                                 "\n- Regionparameter: Allow the user to type -region <region> to get a region role assinged." +
                                 "\n- Rankaccount: Allow the user to type -rank to get a rank role assinged." +
                                 "\n- Rankparameter: Allow the user to type -rank <rank> to get a rank role assinged" +
+                                "\n- Roleaccount: Allow the user to type -role and get a role assigned that fits their main role in League of Legends" +
+                                "\n- Roleparameter: Allow the user to type -role <role> to get that role assigned"+
                                 "\n\nPlease use the format -Command <Command> <Value>, example: *-Command rankaccount true*";
                         }
                         else
@@ -330,6 +351,18 @@ namespace AtlasBot
                                     {
                                         new SettingsRepo(new SettingsContext()).ToggleRegionParameter(value, e.Server.Id);
                                         returnstring = Eng_Default.CommandPermsChanged("Region by parameter",
+                                            value.ToString());
+                                    }
+                                    else if (e.GetArg("Command").ToLower() == "roleaccount")
+                                    {
+                                        new SettingsRepo(new SettingsContext()).ChangeRoleAccount(value, e.Server.Id);
+                                        returnstring = Eng_Default.CommandPermsChanged("Role by account",
+                                            value.ToString());
+                                    }
+                                    else if (e.GetArg("Command").ToLower() == "roleparameter")
+                                    {
+                                        new SettingsRepo(new SettingsContext()).ChangeRoleParameter(value, e.Server.Id);
+                                        returnstring = Eng_Default.CommandPermsChanged("Role by parameter",
                                             value.ToString());
                                     }
                                     else
@@ -1612,9 +1645,9 @@ namespace AtlasBot
 
             #region  logging
 
-            private  void DMBort(string message)
+            private  async void DMBort(string message)
             {
-                BotUser.GetServer(291643233682063370).FindUsers("Bort", true).First().SendMessage(message);
+                await BotUser.GetServer(291643233682063370).FindUsers("Bort", true).First().SendMessage(message);
             }
 
             private void AdminLog(string message)
@@ -1640,6 +1673,15 @@ namespace AtlasBot
                         await e.Channel.SendMessage("Updated sucessfully");
                     });
                 
+            }
+
+            private void Legal()
+            {
+                commands.CreateCommand("legal")
+                    .Do(async (e) =>
+                    {
+                        await e.Channel.SendMessage("AtlasBot isn’t endorsed by Riot Games and doesn’t reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.");
+                    });
             }
             private string RandomStringGenerator()
             {
