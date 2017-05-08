@@ -1301,36 +1301,74 @@ namespace AtlasBot
                         if (new ServerRepo(new ServerContext()).IsServerVerified(e.Server.Id))
                         {
                             SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
-                            if (e.GetArg("Role").ToLower() == "?")
+                            List<string> filter = new List<string>();
+                            if (e.GetArg("Role").ToLower() == "?" || e.GetArg("Role").ToLower() == "help")
                             {
-
-                            }
-                            else if (e.GetArg("Role").ToLower() == "list")
-                            {
-
-                            }
-                            else if (e.GetArg("Role").ToLower() == "remove")
-                            {
-
-                            }
-                            else
-                            {
-
-                                if (settingsRepo.RoleByParameter(e.Server.Id))
+                                if (settingsRepo.RoleByParameter(e.Server.Id) || settingsRepo.RoleByAccount(e.Server.Id))
                                 {
-                                    List<string> filter = new List<string>();
-                                    if (settingsRepo.RoleCommandType(e.Server.Id) == CommandType.Basic)
+                                    returnstring = "You can use -Role to assign a role based on a League of Legends role.";
+                                    if (settingsRepo.RoleByAccount(e.Server.Id))
                                     {
-                                        filter = Roles.NormalRoles();
+                                        returnstring +=
+                                            "\nYou can use *-Role* to get your role automatically assigned based on your linked League of Legends account.";
                                     }
-                                    else if (settingsRepo.RoleCommandType(e.Server.Id) == CommandType.Main)
+                                    if (settingsRepo.RoleByParameter(e.Server.Id))
                                     {
-                                        filter = Roles.MainRoles();
+                                        returnstring += "\nYou can use *-Role <Role>* to assgined yourself a role." +
+                                                        "\nFor all assignable roles use -Role list.";
+                                        
                                     }
-                                    else if (settingsRepo.RoleCommandType(e.Server.Id) == CommandType.Mains)
+                                }
+                            }
+
+                            if (settingsRepo.RoleByParameter(e.Server.Id))
+                                {
+                                if (settingsRepo.RoleCommandType(e.Server.Id) == CommandType.Basic)
+                                {
+                                    filter = Roles.NormalRoles();
+                                }
+                                else if (settingsRepo.RoleCommandType(e.Server.Id) == CommandType.Main)
+                                {
+                                    filter = Roles.MainRoles();
+                                }
+                                else if (settingsRepo.RoleCommandType(e.Server.Id) == CommandType.Mains)
+                                {
+                                    filter = Roles.MainsRoles();
+                                }
+
+                                
+                                if (e.GetArg("Role").ToLower() == "list")
+                                {
+                                    returnstring = "These roles are getable on the server:```";
+                                    foreach (string role in filter)
                                     {
-                                        filter = Roles.MainsRoles();
+                                        returnstring += "\n- " + role;
                                     }
+                                    returnstring += "```";
+                                }
+                                else if (e.GetArg("Role").ToLower() == "remove")
+                                    {
+                                        foreach (string role in filter)
+                                        {
+                                            if (role.ToLower().Contains(e.GetArg("Optional").ToLower()))
+                                            {
+                                                try
+                                                {
+                                                    await e.User.RemoveRoles(
+                                                        e.Server.GetRole(settingsRepo.GetOverride(role.ToLower(),
+                                                            e.Server.Id)));
+                                                    await e.User.RemoveRoles(e.Server.FindRoles(role, false).First());
+                                                    returnstring = Eng_Default.RoleHasBeenRemoved(role);
+                                                }
+                                                catch
+                                                {
+                                                    
+                                                }
+                                            }
+                                        }
+                                    }
+                                else
+                                {
                                     foreach (string role in filter)
                                     {
                                         if (role.ToLower().Contains(e.GetArg("Role").ToLower()))
@@ -1349,10 +1387,10 @@ namespace AtlasBot
                                         }
                                     }
                                 }
-                                else
-                                {
-                                    returnstring = Eng_Default.ServerDoesNotAllow();
-                                }
+                            }
+                            else if (e.GetArg("Role").ToLower() != "?" && e.GetArg("Role").ToLower() != "help")
+                            {
+                                returnstring = Eng_Default.ServerDoesNotAllow();
                             }
 
                         }
