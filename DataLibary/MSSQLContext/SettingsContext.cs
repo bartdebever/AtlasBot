@@ -78,12 +78,34 @@ namespace DataLibary.MSSQLContext
 
         public bool MasteryPointsByAccount(ulong serverid)
         {
-            throw new NotImplementedException();
+            string query =
+               "SELECT [SS].MasteryAccountCommand FROM [ServerSettings] SS INNER JOIN [Server] S ON [SS].serverid = [S].id WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return reader.GetBoolean(0);
+                }
+            }
+            return false; 
         }
 
         public bool MasteryLevelByAccount(ulong serverid)
         {
-            throw new NotImplementedException();
+            string query =
+               "SELECT [SS].MasteryCommand FROM [ServerSettings] SS INNER JOIN [Server] S ON [SS].serverid = [S].id WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return reader.GetBoolean(0);
+                }
+            }
+            return false;
         }
 
         public CommandType RankCommandType(ulong serverid)
