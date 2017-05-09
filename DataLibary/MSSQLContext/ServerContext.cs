@@ -180,7 +180,44 @@ namespace DataLibary.MSSQLContext
 
         public void RemoveAdmin(ulong userid, ulong serverid)
         {
-            throw new NotImplementedException();
+            string query =
+                "DELETE [ServerAdmin] WHERE DiscordId = @userid AND (SELECT [S].Id FROM [Server] S WHERE [S].DiscordServerId = @serverid)";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@userid", Convert.ToInt64(userid));
+            cmd.Parameters.AddWithValue("@serverid", Convert.ToInt64(serverid));
+            cmd.ExecuteNonQuery();
+        }
+
+        public DateTime GetLastRefreshDate(ulong serverid)
+        {
+            string query = "SELECT [S].LastUpdate FROM [Server] S WHERE [S].DiscordServerId = @serverid";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@serverid", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    try
+                    {
+                        return Convert.ToDateTime(reader.GetDateTime(0));
+                    }
+                    catch
+                    {
+                        
+                    }
+                    
+                }
+            }
+            return new DateTime(1998, 2, 13);
+        }
+
+        public void SetLastRefreshDate(ulong serverid, DateTime date)
+        {
+            string query = "UPDATE [Server] SET LastUpdate = @Date WHERE DiscordServerId = @serverid";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Date", date);
+            cmd.Parameters.AddWithValue("@serverid", Convert.ToInt64(serverid));
+            cmd.ExecuteNonQuery();
         }
     }
 }

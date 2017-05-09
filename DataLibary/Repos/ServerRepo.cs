@@ -83,5 +83,14 @@ namespace DataLibary.Models
         {
             context.RemoveAdmin(userid, serverid);
         }
+        public DateTime GetLastupdateDateServer(ulong serverid)
+        {
+            return context.GetLastRefreshDate(serverid);
+        }
+
+        public void SetUpdateDateServer(ulong serverid, DateTime date)
+        {
+            context.SetLastRefreshDate(serverid, date);
+        }
     }
 }

@@ -1439,7 +1439,7 @@ namespace AtlasBot
                     });
             }
 
-            private async void GetRoles(Discord.Server server, Discord.User discorduser)
+            private void GetRoles(Discord.Server server, Discord.User discorduser)
             {
                 SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
                 if (settingsRepo.RankByAccount(server.Id) == true)
@@ -1470,13 +1470,13 @@ namespace AtlasBot
                                 Queue.RankedSolo5x5);
                             try
                             {
-                                await discorduser.AddRoles(
+                                discorduser.AddRoles(
                                     server.GetRole(settingsRepo.GetOverride(rank.ToLower(),
                                         server.Id)));
                             }
                             catch
                             {
-                                await discorduser.AddRoles(server.FindRoles(rank, false).First());
+                                discorduser.AddRoles(server.FindRoles(rank, false).First());
                             }
                             
                         }
@@ -1487,12 +1487,12 @@ namespace AtlasBot
                                     .ToLower();
                             try
                             {
-                                await discorduser.AddRoles(
+                                discorduser.AddRoles(
                                     server.GetRole(settingsRepo.GetOverride(rank, server.Id)));
                             }
                             catch
                             {
-                                await discorduser.AddRoles(server.FindRoles(rank, false).First());
+                                discorduser.AddRoles(server.FindRoles(rank, false).First());
                             }
 
                             
@@ -1507,12 +1507,12 @@ namespace AtlasBot
                                                   Queue.RankedSolo5x5);
                                 try
                                 {
-                                    await discorduser.AddRoles(
+                                    discorduser.AddRoles(
                                         server.GetRole(settingsRepo.GetOverride(rank, server.Id)));
                                 }
                                 catch
                                 {
-                                    await discorduser.AddRoles(server.FindRoles(rank, false).First());
+                                    discorduser.AddRoles(server.FindRoles(rank, false).First());
                                 }
                             }
                             catch
@@ -1526,12 +1526,12 @@ namespace AtlasBot
                                                   Queue.RankedFlexSR);
                                 try
                                 {
-                                    await discorduser.AddRoles(
+                                    discorduser.AddRoles(
                                         server.GetRole(settingsRepo.GetOverride(rank, server.Id)));
                                 }
                                 catch
                                 {
-                                    await discorduser.AddRoles(server.FindRoles(rank, false).First());
+                                    discorduser.AddRoles(server.FindRoles(rank, false).First());
                                 }
                             }
                             catch
@@ -1545,12 +1545,12 @@ namespace AtlasBot
                                                   Queue.RankedFlexTT);
                                 try
                                 {
-                                    await discorduser.AddRoles(
+                                    discorduser.AddRoles(
                                         server.GetRole(settingsRepo.GetOverride(rank, server.Id)));
                                 }
                                 catch
                                 {
-                                    await discorduser.AddRoles(server.FindRoles(rank, false).First());
+                                    discorduser.AddRoles(server.FindRoles(rank, false).First());
                                 }
                             }
                             catch
@@ -1589,13 +1589,13 @@ namespace AtlasBot
                             {
                                 try
                                 {
-                                    await discorduser.AddRoles(
+                                    discorduser.AddRoles(
                                         server.GetRole(settingsRepo.GetOverride(region.ToLower(), server.Id)));
                                     
                                 }
                                 catch
                                 {
-                                    await discorduser.AddRoles(server.FindRoles(region, false).First());
+                                    discorduser.AddRoles(server.FindRoles(region, false).First());
                                     
                                 }
                             }
@@ -1647,12 +1647,12 @@ namespace AtlasBot
                                 try
                                 {
                                     ulong id = settingsRepo.GetOverride(role.ToLower(), server.Id);
-                                    await discorduser.AddRoles(server.GetRole(id));
+                                    discorduser.AddRoles(server.GetRole(id));
                                     
                                 }
                                 catch
                                 {
-                                    await discorduser.AddRoles(server.FindRoles(role, false).First());
+                                    discorduser.AddRoles(server.FindRoles(role, false).First());
                                     
                                 }
                             }
@@ -1736,6 +1736,8 @@ namespace AtlasBot
                 commands.CreateCommand("Update")
                 .Do(async (e) =>
                     {
+                        string returnstring = "";
+                        ServerRepo serverRepo = new ServerRepo(new ServerContext());
                         //if user = atlasadmin
                         //foreach (Discord.Server server in BotUser.Servers)
                         //{
@@ -1746,12 +1748,35 @@ namespace AtlasBot
                         //}
                         if (new ServerRepo(new ServerContext()).IsAdmin(e.User.Id, e.Server.Id))
                         {
-                            foreach (Discord.User user in e.Server.Users)
+                            if ((serverRepo.GetLastupdateDateServer(e.Server.Id) < DateTime.Today))
                             {
-                                GetRoles(e.Server, user);
+                                foreach (Discord.User user in e.Server.Users)
+                                {
+                                    try
+                                    {
+                                        GetRoles(e.Server, user);
+                                    }
+                                    catch
+                                    {
+                                        Console.WriteLine("Failed to give roles, account not registered.");
+                                    }
+                                    
+                                    
+                                }
+                                serverRepo.SetUpdateDateServer(e.Server.Id, DateTime.Today);
+                                returnstring = "Update successfull.";
                             }
+                            else
+                            {
+                                returnstring = "Please wait for one day to update your server again.";  
+                            }
+                            
                         }
-                        await e.Channel.SendMessage("Updated sucessfully");
+                        else
+                        {
+                            
+                        }
+                        await e.Channel.SendMessage(returnstring);
                     });
                 
             }

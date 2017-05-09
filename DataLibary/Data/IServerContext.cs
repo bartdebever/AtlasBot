@@ -22,5 +22,7 @@ namespace DataLibary.Data
         void AddAdmin(ulong userid, ulong serverid);
         List<string> ListAdmins(ulong serverid);
         void RemoveAdmin(ulong userid, ulong serverid);
+        DateTime GetLastRefreshDate(ulong serverid);
+        void SetLastRefreshDate(ulong serverid, DateTime date);
     }
 }
