@@ -123,5 +123,55 @@ namespace DataLibary.MSSQLContext
                 LeagueAndDatabase.GetRegionFromString(reader["short"].ToString())
                 );
         }
+
+        public DateTime GetLastRefreshDate(ulong userid)
+        {
+            string query =
+                "SELECT LastUpdate FROM [Summoner] S INNER JOIN [User] U ON [S].UserId = [U].Id WHERE [U].DiscordId = @userid";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@userid", Convert.ToInt64(userid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    try
+                    {
+                        return Convert.ToDateTime(reader.GetDateTime(0));
+                    }
+                    catch
+                    {
+
+                    }
+
+                }
+            }
+            return new DateTime(1998, 2, 13);
+        }
+    
+
+        public void SetLastRefreshDate(ulong userid, DateTime date)
+        {
+        string query = "UPDATE [Summoner] SET LastUpdate = @Date WHERE UserId = (SELECT Id FROM [User] WHERE DiscordId = @userid)";
+        SqlCommand cmd = new SqlCommand(query, Database.Connection());
+        cmd.Parameters.AddWithValue("@Date", date);
+        cmd.Parameters.AddWithValue("@userid", Convert.ToInt64(userid));
+        cmd.ExecuteNonQuery();
+        }
+
+        public bool IsAtlasAdmin(ulong userid)
+        {
+            string query =
+                "SELECT CASE WHEN (EXISTS(SELECT [AA].Id FROM [AtlasAdmin] AA INNER JOIN [User] U ON [U].id = [AA].UserId WHERE [U].DiscordId = @userid)) THEN 1 ELSE 0 END";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("userid", Convert.ToInt64(userid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return Convert.ToBoolean(reader.GetInt32(0));
+                }
+            }
+            return false;
+        }
     }
 }

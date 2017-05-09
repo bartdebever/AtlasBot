@@ -1439,7 +1439,7 @@ namespace AtlasBot
                     });
             }
 
-            private void GetRoles(Discord.Server server, Discord.User discorduser)
+            private async void GetRoles(Discord.Server server, Discord.User discorduser)
             {
                 SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
                 if (settingsRepo.RankByAccount(server.Id) == true)
@@ -1470,13 +1470,13 @@ namespace AtlasBot
                                 Queue.RankedSolo5x5);
                             try
                             {
-                                discorduser.AddRoles(
+                               await discorduser.AddRoles(
                                     server.GetRole(settingsRepo.GetOverride(rank.ToLower(),
                                         server.Id)));
                             }
                             catch
                             {
-                                discorduser.AddRoles(server.FindRoles(rank, false).First());
+                                await discorduser.AddRoles(server.FindRoles(rank, false).First());
                             }
                             
                         }
@@ -1487,12 +1487,12 @@ namespace AtlasBot
                                     .ToLower();
                             try
                             {
-                                discorduser.AddRoles(
+                                await discorduser.AddRoles(
                                     server.GetRole(settingsRepo.GetOverride(rank, server.Id)));
                             }
                             catch
                             {
-                                discorduser.AddRoles(server.FindRoles(rank, false).First());
+                                await discorduser.AddRoles(server.FindRoles(rank, false).First());
                             }
 
                             
@@ -1507,12 +1507,12 @@ namespace AtlasBot
                                                   Queue.RankedSolo5x5);
                                 try
                                 {
-                                    discorduser.AddRoles(
+                                    await discorduser.AddRoles(
                                         server.GetRole(settingsRepo.GetOverride(rank, server.Id)));
                                 }
                                 catch
                                 {
-                                    discorduser.AddRoles(server.FindRoles(rank, false).First());
+                                    await discorduser.AddRoles(server.FindRoles(rank, false).First());
                                 }
                             }
                             catch
@@ -1526,12 +1526,12 @@ namespace AtlasBot
                                                   Queue.RankedFlexSR);
                                 try
                                 {
-                                    discorduser.AddRoles(
+                                    await discorduser.AddRoles(
                                         server.GetRole(settingsRepo.GetOverride(rank, server.Id)));
                                 }
                                 catch
                                 {
-                                    discorduser.AddRoles(server.FindRoles(rank, false).First());
+                                    await discorduser.AddRoles(server.FindRoles(rank, false).First());
                                 }
                             }
                             catch
@@ -1545,12 +1545,12 @@ namespace AtlasBot
                                                   Queue.RankedFlexTT);
                                 try
                                 {
-                                    discorduser.AddRoles(
+                                    await discorduser.AddRoles(
                                         server.GetRole(settingsRepo.GetOverride(rank, server.Id)));
                                 }
                                 catch
                                 {
-                                    discorduser.AddRoles(server.FindRoles(rank, false).First());
+                                    await discorduser.AddRoles(server.FindRoles(rank, false).First());
                                 }
                             }
                             catch
@@ -1589,13 +1589,13 @@ namespace AtlasBot
                             {
                                 try
                                 {
-                                    discorduser.AddRoles(
+                                    await discorduser.AddRoles(
                                         server.GetRole(settingsRepo.GetOverride(region.ToLower(), server.Id)));
                                     
                                 }
                                 catch
                                 {
-                                    discorduser.AddRoles(server.FindRoles(region, false).First());
+                                    await discorduser.AddRoles(server.FindRoles(region, false).First());
                                     
                                 }
                             }
@@ -1647,12 +1647,12 @@ namespace AtlasBot
                                 try
                                 {
                                     ulong id = settingsRepo.GetOverride(role.ToLower(), server.Id);
-                                    discorduser.AddRoles(server.GetRole(id));
+                                    await discorduser.AddRoles(server.GetRole(id));
                                     
                                 }
                                 catch
                                 {
-                                    discorduser.AddRoles(server.FindRoles(role, false).First());
+                                    await discorduser.AddRoles(server.FindRoles(role, false).First());
                                     
                                 }
                             }
@@ -1738,15 +1738,28 @@ namespace AtlasBot
                     {
                         string returnstring = "";
                         ServerRepo serverRepo = new ServerRepo(new ServerContext());
-                        //if user = atlasadmin
-                        //foreach (Discord.Server server in BotUser.Servers)
-                        //{
-                        //    foreach (Discord.User user in server.Users)
-                        //    {
-                        //        GetRoles(server, user);
-                        //    }
-                        //}
-                        if (new ServerRepo(new ServerContext()).IsAdmin(e.User.Id, e.Server.Id))
+                        UserRepo userRepo = new UserRepo(new UserContext());
+                        if (userRepo.IsAtlasAdmin(e.User.Id))
+                        {
+                            foreach (Discord.Server server in BotUser.Servers)
+                            {
+                                foreach (Discord.User user in server.Users)
+                                {
+                                    try
+                                    {
+                                        GetRoles(server, user);
+                                    }
+                                    catch
+                                    {
+                                        
+                                    }
+                                    
+                                }
+                            }
+                            returnstring = "System update complete.";
+                        }
+                        
+                        else if (new ServerRepo(new ServerContext()).IsAdmin(e.User.Id, e.Server.Id))
                         {
                             if ((serverRepo.GetLastupdateDateServer(e.Server.Id) < DateTime.Today))
                             {
@@ -1764,7 +1777,7 @@ namespace AtlasBot
                                     
                                 }
                                 serverRepo.SetUpdateDateServer(e.Server.Id, DateTime.Today);
-                                returnstring = "Update successfull.";
+                                returnstring = "Server update successfull.";
                             }
                             else
                             {
@@ -1774,7 +1787,10 @@ namespace AtlasBot
                         }
                         else
                         {
-                            
+                            if (userRepo.GetLastRefreshDate(e.User.Id) > DateTime.Today)
+                            {
+                                returnstring = "implementing soon";
+                            }
                         }
                         await e.Channel.SendMessage(returnstring);
                     });

@@ -17,5 +17,8 @@ namespace DataLibary.Data
         User GetUserByDiscord(ulong discordid);
         int GetUserIdByDiscord(ulong discordid);
         User GetUserByRiotid(int riotid);
+        DateTime GetLastRefreshDate(ulong userid);
+        void SetLastRefreshDate(ulong userid, DateTime date);
+        bool IsAtlasAdmin(ulong userid);
     }
 }

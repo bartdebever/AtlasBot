@@ -14,7 +14,7 @@ namespace DataLibary.MSSQLContext
     {
         public void AddSummoner(int userid, int riotid, int regionid, string token)
         {
-            string query = "INSERT INTO [Summoner] VALUES (@userid, @riotid, @regionid, @token, 0)";
+            string query = "INSERT INTO [Summoner] VALUES (@userid, @riotid, @regionid, @token, 0, null)";
             SqlCommand cmd = new SqlCommand(query, Database.Connection());
             cmd.Parameters.AddWithValue("@userid", userid);
             cmd.Parameters.AddWithValue("@riotid", riotid);

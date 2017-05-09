@@ -50,5 +50,20 @@ namespace DataLibary.Models
         {
             return context.GetUserIdByDiscord(discordid);
         }
+
+        public DateTime GetLastRefreshDate(ulong userid)
+        {
+            return context.GetLastRefreshDate(userid);
+        }
+
+        public void SetLastRefreshDate(ulong userid, DateTime date)
+        {
+            context.SetLastRefreshDate(userid, date);
+        }
+
+        public bool IsAtlasAdmin(ulong userid)
+        {
+            return context.IsAtlasAdmin(userid);
+        }
     }
 }
