@@ -630,6 +630,7 @@ namespace AtlasBot
                                     {
                                         sumRepo.VerifySummoner(userRepo.GetUserByDiscord((e.User.Id)), riotid);
                                         returnmessage = Eng_Default.AccountVerified();
+                                        GetRoles(e.Server, e.User);
                                     }
                                 }
                             }
