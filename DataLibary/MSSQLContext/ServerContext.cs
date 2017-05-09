@@ -12,7 +12,7 @@ namespace DataLibary.MSSQLContext
     {
         public void AddServer(ulong serverid, ulong ownerid, string servername, string key)
         {
-            string query = "INSERT INTO [Server] VALUES(@serverid, null, @ownerid, @servername, null, @key, 0)";
+            string query = "INSERT INTO [Server] VALUES(@serverid, null, @ownerid, @servername, null, @key, 0, null)";
             SqlCommand cmd = new SqlCommand(query, Database.Connection());
             cmd.Parameters.AddWithValue("@serverid", Convert.ToInt64(serverid));
             cmd.Parameters.AddWithValue("@ownerid", Convert.ToInt64(ownerid));

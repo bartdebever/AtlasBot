@@ -71,6 +71,9 @@ namespace AtlasBot
                 GetRole();
                 Update();
                 JoiningRoleGive();
+
+                RemoveTest();
+                RoleTest();
                 BotUser.ExecuteAndWait(async () =>
                 {
                     await BotUser.Connect(Keys.Keys.discordKey, TokenType.Bot);
@@ -202,6 +205,28 @@ namespace AtlasBot
                     });
             }
 
+            private void RoleTest()
+            {
+                commands.CreateCommand("RoleTest")
+                    .Parameter("region")
+                    .Parameter("summonername")
+                    .Do(async (e) =>
+                    {
+                        string returnstring = "";
+                        try
+                        {
+                            SummonerAPI summonerApi = new SummonerAPI();
+                            Region r = LeagueAndDatabase.GetRegionFromString(e.GetArg("region"));
+                            Summoner summoner = summonerApi.GetSummoner(e.GetArg("summonername"), r);
+                            returnstring = new RoleAPI().GetRole(summoner);
+                        }
+                        catch
+                        {
+                            returnstring = "Summoner not found or no ranked games played.";
+                        }
+                        await e.Channel.SendMessage(returnstring);
+                    });
+            }
             private void ServerInfo()
             {
                 commands.CreateCommand("Servers")
@@ -1440,6 +1465,129 @@ namespace AtlasBot
                     });
             }
 
+            private async void GetRankRoles(Discord.Server server, Discord.User discorduser)
+            {
+                SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
+                if (settingsRepo.RankByAccount(server.Id) == true)
+                {
+                    Summoner summoner = null;
+                    try
+                    {
+                        DataLibary.Models.User user =
+                            new UserRepo(new UserContext()).GetUserByDiscord(discorduser.Id);
+                        summoner =
+                            new SummonerAPI().GetSummoner(
+                                new SummonerRepo(new SummonerContext()).GetSummonerByUserId(user),
+                                ToolKit.LeagueAndDatabase.GetRegionFromDatabaseId(
+                                    new RegionRepo(new RegionContext()).GetRegionId(user)
+                                ));
+                    }
+                    catch
+                    {
+
+                    }
+                    //summoner will be null when the item does not excist within the database.
+                    //This is only done so there will be a proper returnmessage send to the user.
+                    if (summoner != null)
+                    {
+                        if (settingsRepo.RankCommandType(server.Id) == CommandType.Basic)
+                        {
+                            string rank = new RankAPI().GetRankingSimple(summoner,
+                                Queue.RankedSolo5x5);
+                            try
+                            {
+                                await discorduser.AddRoles(
+                                     server.GetRole(settingsRepo.GetOverride(rank.ToLower(),
+                                         server.Id)));
+                            }
+                            catch
+                            {
+                                await discorduser.AddRoles(server.FindRoles(rank, false).First());
+                            }
+
+                        }
+                        else if (settingsRepo.RankCommandType(server.Id) == CommandType.Division)
+                        {
+                            string rank =
+                                new RankAPI().GetRankingHarder(summoner, Queue.RankedSolo5x5)
+                                    .ToLower();
+                            try
+                            {
+                                await discorduser.AddRoles(
+                                    server.GetRole(settingsRepo.GetOverride(rank, server.Id)));
+                            }
+                            catch
+                            {
+                                await discorduser.AddRoles(server.FindRoles(rank, false).First());
+                            }
+
+
+                        }
+                        else if (settingsRepo.RankCommandType(server.Id) == CommandType.PerQueue)
+                        {
+                            //Each of these can fail when someone does not have this rank, therefore this isn't in one big Try because it could fail halfway.
+                            try
+                            {
+                                string rank = "Solo " +
+                                              new RankAPI().GetRankingSimple(summoner,
+                                                  Queue.RankedSolo5x5);
+                                try
+                                {
+                                    await discorduser.AddRoles(
+                                        server.GetRole(settingsRepo.GetOverride(rank, server.Id)));
+                                }
+                                catch
+                                {
+                                    await discorduser.AddRoles(server.FindRoles(rank, false).First());
+                                }
+                            }
+                            catch
+                            {
+                                Console.WriteLine(discorduser.Name + "doesn't have a soloq rank");
+                            }
+                            try
+                            {
+                                string rank = "Flex " +
+                                              new RankAPI().GetRankingSimple(summoner,
+                                                  Queue.RankedFlexSR);
+                                try
+                                {
+                                    await discorduser.AddRoles(
+                                        server.GetRole(settingsRepo.GetOverride(rank, server.Id)));
+                                }
+                                catch
+                                {
+                                    await discorduser.AddRoles(server.FindRoles(rank, false).First());
+                                }
+                            }
+                            catch
+                            {
+                                Console.WriteLine(discorduser.Name + "doesn't have a flex rank");
+                            }
+                            try
+                            {
+                                string rank = "3v3 " +
+                                              new RankAPI().GetRankingSimple(summoner,
+                                                  Queue.RankedFlexTT);
+                                try
+                                {
+                                    await discorduser.AddRoles(
+                                        server.GetRole(settingsRepo.GetOverride(rank, server.Id)));
+                                }
+                                catch
+                                {
+                                    await discorduser.AddRoles(server.FindRoles(rank, false).First());
+                                }
+                            }
+                            catch
+                            {
+                                Console.WriteLine(discorduser.Name + "doesn't have a 3v3 rank");
+                            }
+
+                        }
+                    }
+                }
+            }
             private async void GetRoles(Discord.Server server, Discord.User discorduser)
             {
                 SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
@@ -1640,27 +1788,124 @@ namespace AtlasBot
                     //This is only done so there will be a proper returnmessage send to the user.
                     if (summoner != null)
                     {
-                        string mainrole = new RoleAPI().GetRole(summoner);
-                        foreach (string role in filter)
+                        try
                         {
-                            if (role.Contains(mainrole))
+                            string mainrole = new RoleAPI().GetRole(summoner);
+                            foreach (string role in filter)
                             {
-                                try
+                                if (role.Contains(mainrole))
                                 {
-                                    ulong id = settingsRepo.GetOverride(role.ToLower(), server.Id);
-                                    await discorduser.AddRoles(server.GetRole(id));
-                                    
-                                }
-                                catch
-                                {
-                                    await discorduser.AddRoles(server.FindRoles(role, false).First());
-                                    
+                                    try
+                                    {
+                                        ulong id = settingsRepo.GetOverride(role.ToLower(), server.Id);
+                                        await discorduser.AddRoles(server.GetRole(id));
+
+                                    }
+                                    catch
+                                    {
+                                        await discorduser.AddRoles(server.FindRoles(role, false).First());
+
+                                    }
                                 }
                             }
                         }
+                        catch
+                        {
+                            Console.WriteLine("Error in roles");
+                        }
+                        
 
                     }
 
+                }
+            }
+
+            private async void RemoveRoles(Discord.Server server, Discord.User discorduser)
+            {
+                Summoner summoner = null;
+                try
+                {
+                    DataLibary.Models.User user =
+                        new UserRepo(new UserContext()).GetUserByDiscord(discorduser.Id);
+                    summoner =
+                        new SummonerAPI().GetSummoner(
+                            new SummonerRepo(new SummonerContext()).GetSummonerByUserId(user),
+                            ToolKit.LeagueAndDatabase.GetRegionFromDatabaseId(
+                                new RegionRepo(new RegionContext()).GetRegionId(user)
+                            ));
+                }
+                catch
+                {
+                    Console.WriteLine("User is not registered.");
+                }
+                
+                if (summoner != null)
+                {
+                    SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
+                    List<string> filter = new List<string>();
+                    if (settingsRepo.RankCommandType(server.Id) == CommandType.Basic)
+                    {
+                        filter = Ranks.BasicRanks();
+                    }
+                    else if (settingsRepo.RankCommandType(server.Id) == CommandType.PerQueue)
+                    {
+                        filter = Ranks.QueueRanks();
+                    }
+                    else if (settingsRepo.RankCommandType(server.Id) == CommandType.Division)
+                    {
+                        filter = Ranks.DivisionRanks();
+                    }
+                    List<Discord.Role> roles = new List<Discord.Role>();
+                    foreach (Discord.Role role in discorduser.Roles)
+                    {
+                        foreach (string line in filter)
+                        {
+                            if (role.Name.ToLower() == line.ToLower())
+                            {
+                                roles.Add(role);
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    if (server.GetRole(settingsRepo.GetOverride(line.ToLower(), server.Id)).Id == role.Id)
+                                    {
+                                        roles.Add(role);
+                                    }
+                                }
+                                catch
+                                {
+                                    //no override
+                                }
+                            }
+                            
+                        }
+                    }
+                    await server.GetUser(discorduser.Id).RemoveRoles(roles.ToArray());
+                    //foreach (string line in filter)
+                    //{
+                    //    Discord.Role r = null;
+                    //    try
+                    //    {
+                    //         r = server.GetRole(settingsRepo.GetOverride(line.ToLower(), server.Id));
+                    //    }
+                    //    catch
+                    //    {
+                    //        try
+                    //        {
+                    //            r = server.FindRoles(line, false).First();
+                    //        }
+                    //        catch { }
+                            
+                    //    }
+                    //    if (r != null)
+                    //    {
+                    //        if (discorduser.HasRole(r))
+                    //        {
+                    //            roles.Add(r);
+                    //        }   
+                    //    }
+                    //}
                 }
             }
 
@@ -1685,9 +1930,11 @@ namespace AtlasBot
                 commands.CreateCommand("GetRoles")
                     .Do(async (e) =>
                     {
+                        await Task.Run(() => RemoveRoles(e.Server, e.User));
                         try
                         {
-                            GetRoles(e.Server, e.User);
+
+                            await Task.Run(() => GetRoles(e.Server, e.User));
                             await e.Channel.SendMessage(Eng_Default.RolesHaveBeenGiven());
                         }
                         catch
@@ -1695,6 +1942,7 @@ namespace AtlasBot
                             await e.Channel.SendMessage(Eng_Default.RegisterAccount());
                         }
                         
+
 
                     });
             }
@@ -1732,6 +1980,15 @@ namespace AtlasBot
 
             #endregion
 
+            private void RemoveTest()
+            {
+                commands.CreateCommand("RemoveTest")
+                    .Do(async (e) =>
+                    {
+                        RemoveRoles(e.Server, e.User);
+                        await e.Channel.SendMessage("Done!");
+                    });
+            }
             private void Update()
             {
                 commands.CreateCommand("Update")
@@ -1746,9 +2003,10 @@ namespace AtlasBot
                             {
                                 foreach (Discord.User user in server.Users)
                                 {
+                                    await Task.Run(() => RemoveRoles(server, user));
                                     try
                                     {
-                                        GetRoles(server, user);
+                                        await Task.Run(() => GetRankRoles(server, user));
                                     }
                                     catch
                                     {

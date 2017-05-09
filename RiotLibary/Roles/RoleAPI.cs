@@ -75,8 +75,8 @@ namespace RiotLibary.Roles
                 }
             }
             catch { }
-            
-            throw new NoRankedGamesException("No roles found");
+
+            return null;
         }
     }
 }
