@@ -70,5 +70,18 @@ namespace DataLibary.Models
         {
             context.SetServerName(serverid, name);
         }
+        public void AddAdmin(ulong userid, ulong serverid)
+        {
+            context.AddAdmin(userid, serverid);
+        }
+        public List<string> ListAdmins(ulong serverid)
+        {
+            return context.ListAdmins(serverid);
+        }
+
+        public void RemoveAdmin(ulong userid, ulong serverid)
+        {
+            context.RemoveAdmin(userid, serverid);
+        }
     }
 }

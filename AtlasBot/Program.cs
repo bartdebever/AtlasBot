@@ -9,6 +9,7 @@ using DataLibary.Models;
 using DataLibary.MSSQLContext;
 using DataLibary.Repos;
 using Discord;
+using Discord.API.Client.Rest;
 using Discord.Commands;
 using Languages;
 using Nito.AsyncEx;
@@ -63,6 +64,7 @@ namespace AtlasBot
                 ServerInfo();
                 Description();
                 CheckForNewServer();
+                Admin();
                 GetRoles();
                 GetRoleParameter();
                 Legal();
@@ -245,6 +247,40 @@ namespace AtlasBot
                     });
             }
 
+            private void Admin()
+            {
+                commands.CreateCommand("Admin")
+                    .Parameter("CommandType")
+                    .Parameter("User", ParameterType.Optional)
+                    .Do(async (e) =>
+                    {
+                        string returnstring = "";
+                        if (e.User.Id == e.Server.Owner.Id && e.GetArg("CommandType").ToLower() == "add")
+                        {
+                            new ServerRepo(new ServerContext()).AddAdmin(e.Message.MentionedUsers.First().Id, e.Server.Id);
+                            returnstring = "Admin has been added";
+                        }
+                        else if (e.User.Id == e.Server.Owner.Id && e.GetArg("CommandType").ToLower() == "list")
+                        {
+                            returnstring = "Admins on " + e.Server.Name + ":```";
+                            foreach (string admin in new ServerRepo(new ServerContext()).ListAdmins(e.Server.Id))
+                            {
+                                returnstring += "\n-" +e.Server.GetUser(Convert.ToUInt64(admin)).Name;
+                            }
+                            returnstring += "```";
+                        }
+                        else if (e.User.Id == e.Server.Owner.Id && e.GetArg("CommandType").ToLower() == "remove")
+                        {
+                            new ServerRepo(new ServerContext()).RemoveAdmin(e.Message.MentionedUsers.First().Id, e.Server.Id);
+                            returnstring = e.Message.MentionedUsers.First().Name + " has been removed from admin.";
+                        }
+                        else
+                        {
+                            returnstring = Eng_Default.NotAllowed();
+                        }
+                        await e.Channel.SendMessage(returnstring);
+                    });
+            }
             private void ChangeType()
             {
                 commands.CreateCommand("CommandType")
@@ -1701,11 +1737,18 @@ namespace AtlasBot
                 .Do(async (e) =>
                     {
                         //if user = atlasadmin
-                        foreach (Discord.Server server in BotUser.Servers)
+                        //foreach (Discord.Server server in BotUser.Servers)
+                        //{
+                        //    foreach (Discord.User user in server.Users)
+                        //    {
+                        //        GetRoles(server, user);
+                        //    }
+                        //}
+                        if (new ServerRepo(new ServerContext()).IsAdmin(e.User.Id, e.Server.Id))
                         {
-                            foreach (Discord.User user in server.Users)
+                            foreach (Discord.User user in e.Server.Users)
                             {
-                                GetRoles(server, user);
+                                GetRoles(e.Server, user);
                             }
                         }
                         await e.Channel.SendMessage("Updated sucessfully");

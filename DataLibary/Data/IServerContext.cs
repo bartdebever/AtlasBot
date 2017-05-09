@@ -19,6 +19,8 @@ namespace DataLibary.Data
         string InviteLink(ulong serverid);
         string ServerName(ulong serverid);
         void SetServerName(ulong serverid, string name);
-
+        void AddAdmin(ulong userid, ulong serverid);
+        List<string> ListAdmins(ulong serverid);
+        void RemoveAdmin(ulong userid, ulong serverid);
     }
 }

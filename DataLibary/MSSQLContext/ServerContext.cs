@@ -151,5 +151,36 @@ namespace DataLibary.MSSQLContext
             cmd.Parameters.AddWithValue("@Name", name);
             cmd.ExecuteNonQuery();
         }
+
+        public void AddAdmin(ulong userid, ulong serverid)
+        {
+            string query = "INSERT INTO [ServerAdmin] VALUES (@User, (SELECT [S].Id FROM [Server] S WHERE [S].DiscordServerId = @Server))";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Server", Convert.ToInt64(serverid));
+            cmd.Parameters.AddWithValue("@User", Convert.ToInt64(userid));
+            cmd.ExecuteNonQuery();
+        }
+
+        public List<string> ListAdmins(ulong serverid)
+        {
+            List<string> result = new List<string>();
+            string query =
+                "SELECT [SA].DiscordId FROM [ServerAdmin] SA WHERE [SA].ServerId = (SELECT [S].id FROM [server] s WHERE [S].DiscordServerId = @serverid)";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@serverid", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    result.Add(reader.GetInt64(0).ToString());
+                }
+            }
+            return result;
+        }
+
+        public void RemoveAdmin(ulong userid, ulong serverid)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

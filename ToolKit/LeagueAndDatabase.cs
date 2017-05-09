@@ -28,29 +28,53 @@ namespace ToolKit
             {
                 return Region.euw;
             }
-            else if (id == 2)
+            else if (id == 6)
             {
                 return Region.na;
             }
-            else if (id == 3)
+            else if (id == 2)
             {
                 return Region.eune;
             }
-            else if (id == 4)
+            else if (id == 7)
             {
                 return Region.oce;
             }
-            else if (id == 5)
+            else if (id == 4)
             {
                 return Region.lan;
             }
-            else if (id == 6)
+            else if (id == 5)
             {
                 return Region.las;
             }
-            else if (id == 7)
+            else if (id == 3)
             {
                 return Region.br;
+            }
+            else if (id == 8)
+            {
+                return Region.ru;
+            }
+            else if (id == 9)
+            {
+                return Region.tr;
+            }
+            else if (id == 10)
+            {
+                return Region.jp;
+            }
+            else if (id == 11)
+            {
+                return Region.oce;
+            }
+            else if (id == 12)
+            {
+                return Region.kr;
+            }
+            else if (id == 13)
+            {
+                return Region.global;
             }
             return Region.euw;
 
