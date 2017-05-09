@@ -118,7 +118,7 @@ namespace Languages
 
         public static string RenameMasteryPage(string key)
         {
-            return "Please rename one of your masterypages to: " + key + ".";
+            return "Please rename one of your masterypages to: " + key + ". Use this command again when you have done this.";
         }
 
         public static string OverrideAdded()
