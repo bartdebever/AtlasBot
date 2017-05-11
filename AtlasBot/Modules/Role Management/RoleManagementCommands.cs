@@ -113,10 +113,18 @@ namespace AtlasBot.Modules.Role_Management
             commands.CreateCommand("GetRoles")
                 .Do(async (e) =>
                 {
-                    await Task.Run(() => new RoleManagementTrigger(BotUser, commands).RemoveRoles(e.Server, e.User));
+                    
                     try
                     {
-
+                        DataLibary.Models.User user =
+                        new UserRepo(new UserContext()).GetUserByDiscord(e.User.Id);
+                        Summoner summoner =
+                            new SummonerAPI().GetSummoner(
+                                new SummonerRepo(new SummonerContext()).GetSummonerByUserId(user),
+                                ToolKit.LeagueAndDatabase.GetRegionFromDatabaseId(
+                                    new RegionRepo(new RegionContext()).GetRegionId(user)
+                                ));
+                        await Task.Run(() => new RoleManagementTrigger(BotUser, commands).RemoveRoles(e.Server, e.User));
                         await Task.Run(() => GetRoles(e.Server, e.User));
                         await e.Channel.SendMessage(Eng_Default.RolesHaveBeenGiven());
                     }
@@ -161,8 +169,8 @@ namespace AtlasBot.Modules.Role_Management
                         try
                         {
                             await discorduser.AddRoles(
-                                 server.GetRole(settingsRepo.GetOverride(rank.ToLower(),
-                                     server.Id)));
+                                server.GetRole(settingsRepo.GetOverride(rank.ToLower(),
+                                    server.Id)));
                         }
                         catch
                         {
@@ -250,7 +258,7 @@ namespace AtlasBot.Modules.Role_Management
 
                     }
                 }
-            }
+                }
             if (settingsRepo.RegionByAccount(server.Id))
             {
                 Summoner summoner = null;
