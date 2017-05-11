@@ -75,5 +75,10 @@ namespace RiotLibary.Roles
         {
             return api.GetChampion(Region.euw, GetChampionId(name));
         }
+
+        public string GetChampionName(int id)
+        {
+            return sApi.GetChampion(Region.eune, id).Name;
+        }
     }
 }

@@ -206,6 +206,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modules\Administrative\ManagementTools.cs" />
+    <Compile Include="Modules\Logging\Log.cs" />
+    <Compile Include="Modules\Mastery\MasteryCommands.cs" />
+    <Compile Include="Modules\Rank\RankCommands.cs" />
+    <Compile Include="Modules\Region\RegionCommands.cs" />
+    <Compile Include="Modules\Role Management\RoleManagementCommands.cs" />
+    <Compile Include="Modules\Role Management\RoleManagementTrigger.cs" />
+    <Compile Include="Modules\Roles\RoleCommand.cs" />
+    <Compile Include="Modules\Server\ServerInfoCommands.cs" />
+    <Compile Include="Modules\Server\ServerManagement.cs" />
+    <Compile Include="Modules\User\AccountManagementCommands.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -234,6 +245,10 @@
       <Project>{56827137-d90d-4475-9050-0cc22e254c47}</Project>
       <Name>ToolKit</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Modules\Coach\" />
+    <Folder Include="Modules\Matchmaking\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />

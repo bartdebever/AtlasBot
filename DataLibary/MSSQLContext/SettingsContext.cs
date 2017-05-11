@@ -386,5 +386,96 @@ namespace DataLibary.MSSQLContext
             cmd.Parameters.AddWithValue("@Type", (int)type);
             cmd.ExecuteNonQuery();
         }
+
+        public int GetChampionId(ulong serverid)
+        {
+            string query =
+                "SELECT [SS].ChampionMastery FROM [ServerSettings] SS INNER JOIN [Server] S ON [S].id = [SS].serverid WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return reader.GetInt32(0);
+                }
+            }
+            return 0;
+        }
+
+        public ulong GetRoleByPoints(ulong serverid, int points)
+        {
+            string query = "SELECT TOP 1 [SP].RoleId FROM [ServerPoints] SP WHERE [SP].Points <= @Points AND [SP].ServerId = (SELECT [S].Id FROM [Server] S WHERE [S].DiscordServerId = @ServerId) ORDER BY [SP].points DESC";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Points", points);
+            cmd.Parameters.AddWithValue("@ServerId", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return Convert.ToUInt64(reader.GetInt64(0));
+                }
+            }
+            return 0;
+
+        }
+
+        public void AddRoleByPoints(ulong roleid, ulong serverid, int points)
+        {
+            string query =
+                "INSERT INTO [ServerPoints] VALUES((SELECT [S].Id FROM [Server] S WHERE [S].DiscordServerId = @ServerId), @Points, @RoleId)";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@ServerId", Convert.ToInt64(serverid));
+            cmd.Parameters.AddWithValue("@Points", points);
+            cmd.Parameters.AddWithValue("@RoleId", Convert.ToInt64(roleid));
+            cmd.ExecuteNonQuery();
+        }
+
+        public void SetChampionId(ulong serverid, int championid)
+        {
+            string query =
+                "UPDATE [ServerSettings] SET ChampionMastery = @championid WHERE ServerId = (SELECT [S].Id FROM [Server] S WHERE [S].DiscordServerId = @ServerId)";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@ServerId", Convert.ToInt64(serverid));
+            cmd.Parameters.AddWithValue("@championid", championid);
+            cmd.ExecuteNonQuery();
+        }
+
+        public void RemoveRoleByPoints(ulong serverid, int points)
+        {
+            string query =
+                "DELETE [ServerPoints] WHERE Points = @Points AND ServerId = (SELECT [S].Id FROM [Server] S WHERE [S].DiscordServerId = @ServerId)";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@ServerId", Convert.ToInt64(serverid));
+            cmd.Parameters.AddWithValue("@Points", points);
+            cmd.ExecuteNonQuery();
+        }
+
+        public List<string> GetAllMasteryRoles(ulong serverid)
+        {
+            List<string> result = new List<string>();
+            string query =
+                "SELECT [SP].RoleId, [SP].Points FROM [ServerPoints] SP WHERE [SP].ServerId = (SELECT [S].Id FROM [Server] S WHERE [S].DiscordServerId = @ServerId)";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@ServerId", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    result.Add(reader.GetInt32(1).ToString() + ":" + reader.GetInt64(0).ToString());
+                }
+            }
+            return result;
+        }
+
+        public void ChangeMasteryAccount(bool value, ulong serverid)
+        {
+            string query =
+                "UPDATE [ServerSettings] SET [ServerSettings].MasteryAccountCommand = @Value FROM [ServerSettings] INNER JOIN [Server] S ON [S].id = [ServerSettings].serverid WHERE [S].DiscordServerId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Value", value);
+            cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
+            cmd.ExecuteNonQuery();
+        }
     }
 }

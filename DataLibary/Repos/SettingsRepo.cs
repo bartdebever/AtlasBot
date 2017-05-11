@@ -151,5 +151,39 @@ namespace DataLibary.Repos
         {
             context.SetRoleType(type, serverid);
         }
+
+        public int GetChampionId(ulong serverid)
+        {
+            return context.GetChampionId(serverid);
+        }
+
+        public ulong GetRoleByPoints(ulong serverid, int points)
+        {
+            return context.GetRoleByPoints(serverid, points);
+        }
+
+        public void SetRoleByPoints(ulong roleid, ulong serverid, int points)
+        {
+            context.AddRoleByPoints(roleid, serverid, points);
+        }
+
+        public void RemoveRoleByPoints(ulong serverid, int points)
+        {
+            context.RemoveRoleByPoints(serverid, points);
+        }
+
+        public void SetChampionId(ulong serverid, int championid)
+        {
+            context.SetChampionId(serverid, championid);
+        }
+        public List<string> GetAllMasteryRoles(ulong serverid)
+        {
+            return context.GetAllMasteryRoles(serverid);
+        }
+        public void ChangeMasteryAccount(bool value, ulong serverid)
+        {
+            context.ChangeMasteryAccount(value, serverid);
+        }
     }
 }
+
