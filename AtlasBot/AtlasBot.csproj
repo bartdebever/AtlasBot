@@ -214,6 +214,7 @@
     <Compile Include="Modules\Role Management\RoleManagementCommands.cs" />
     <Compile Include="Modules\Role Management\RoleManagementTrigger.cs" />
     <Compile Include="Modules\Roles\RoleCommand.cs" />
+    <Compile Include="Modules\Roles\Universal Role.cs" />
     <Compile Include="Modules\Server\ServerInfoCommands.cs" />
     <Compile Include="Modules\Server\ServerManagement.cs" />
     <Compile Include="Modules\User\AccountManagementCommands.cs" />

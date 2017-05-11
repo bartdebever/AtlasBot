@@ -76,7 +76,9 @@ namespace AtlasBot
                 serverManagement.VerifyServer();
                 serverInfoCommands.InviteLink();
                 amc.ClaimAccount();
+                amc.Claim();
                 rankCommands.GetRank();
+                new Universal_Role(BotUser, commands).UniversalTest();
                 regionCommands.GetRegion();
                 roleCommand.GetRole();
                 rmc.Update();

@@ -354,7 +354,7 @@ namespace DataLibary.MSSQLContext
         public void ChangeRoleParameter(bool value, ulong serverid)
         {
             string query =
-                "UPDATE [ServerSettings] SET [ServerSettings].RoleParameterCommand = @Value FROM [ServerSettings] INNER JOIN [Server] S ON [S].id = [ServerSettings].serverid WHERE [S].DiscordServerId = @Id";
+                "UPDATE [ServerSettings] SET [ServerSettings].RoleCommand = @Value FROM [ServerSettings] INNER JOIN [Server] S ON [S].id = [ServerSettings].serverid WHERE [S].DiscordServerId = @Id";
             SqlCommand cmd = new SqlCommand(query, Database.Connection());
             cmd.Parameters.AddWithValue("@Value", value);
             cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));

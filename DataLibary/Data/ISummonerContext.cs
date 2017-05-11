@@ -16,6 +16,7 @@ namespace DataLibary.Data
         void VerifySummoner(User user, int riotid);
         string GetToken(User user, int riotid);
         int GetSummonerByUserId(User user);
+        int GetUnverifiedSummonerByUserId(ulong userid);
         List<int> GetSummonersByRegion(int regionid);
         bool IsSummonerInSystem(int riotid);
     }

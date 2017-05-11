@@ -12,6 +12,7 @@ using Discord;
 using Discord.Commands;
 using Languages;
 using RiotLibary.Roles;
+using RiotSharp.SummonerEndpoint;
 using ToolKit;
 
 namespace AtlasBot.Modules.User
@@ -92,13 +93,34 @@ namespace AtlasBot.Modules.User
             commands.CreateCommand("Claim")
                 .Do(async (e) =>
                 {
+                   Summoner summoner =
+                        new SummonerAPI().GetSummoner(
+                            new SummonerRepo(new SummonerContext()).GetUnverifiedSummonerByUserId(e.User.Id),
+                            ToolKit.LeagueAndDatabase.GetRegionFromDatabaseId(
+                                new RegionRepo(new RegionContext()).GetRegionId(new UserRepo(new UserContext()).GetUserByDiscord(e.User.Id))
+                            ));
+                    SummonerRepo sumRepo = new SummonerRepo(new SummonerContext());
+                    UserRepo userRepo = new UserRepo(new UserContext());
                     string returnmessage = "An error happened.";
                     if (new ServerRepo(new ServerContext()).IsServerVerified(e.Server.Id))
                     {
-                        
+                        returnmessage =
+                                Eng_Default.RenameMasteryPageLong(
+                                    sumRepo.GetToken(userRepo.GetUserByDiscord((e.User.Id)), Convert.ToInt32(summoner.Id)));
+                        string token2 = sumRepo.GetToken(userRepo.GetUserByDiscord((e.User.Id)), Convert.ToInt32(summoner.Id));
+                        foreach (var page in new SummonerAPI().GetSummonerMasteryPages(summoner.Name, summoner.Region))
+                        {
+                            if (page.Name.ToLower() == token2.ToLower())
+                            {
+                                sumRepo.VerifySummoner(userRepo.GetUserByDiscord((e.User.Id)), Convert.ToInt32(summoner.Id));
+                                returnmessage = Eng_Default.AccountVerified();
+                                new RoleManagementCommands(BotUser, commands).GetRoles(e.Server, e.User);
+                            }
+                        }
                     }
                     await e.Channel.SendMessage(returnmessage);
                 });
         }
     }
 }
+

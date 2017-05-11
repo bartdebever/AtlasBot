@@ -109,5 +109,21 @@ namespace DataLibary.MSSQLContext
             }
             return false;
         }
+
+        public int GetUnverifiedSummonerByUserId(ulong userid)
+        {
+            string query = "SELECT Riotid FROM [Summoner] INNER JOIN [User] U ON [U].id = [Summoner].userid WHERE DiscordId = @userid AND verified = 0";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@userid", Convert.ToInt64(userid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return reader.GetInt32(0);
+                }
+            }
+            throw new Exception("Summoner not found");
+        }
     }
+    
 }

@@ -51,5 +51,9 @@ namespace DataLibary.Repos
         {
             return context.IsSummonerInSystem(riotid);
         }
+        public int GetUnverifiedSummonerByUserId(ulong userid)
+        {
+            return context.GetUnverifiedSummonerByUserId(userid);
+        }
     }
 }
