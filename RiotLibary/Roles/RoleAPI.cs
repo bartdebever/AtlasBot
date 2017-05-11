@@ -14,6 +14,12 @@ namespace RiotLibary.Roles
     {
         private RiotApi api = RiotApi.GetInstance(Keys.Keys.riotKey);
         private StaticRiotApi sApi = StaticRiotApi.GetInstance(Keys.Keys.riotKey);
+
+        public int GetGamesPlayed(Summoner summoner)
+        {
+            return
+                api.GetMatchList(summoner.Region, summoner.Id, null, null, null, new DateTime(2016, 12, 7)).TotalGames;
+        }
         public string GetRole(Summoner summoner)
         { 
             int[] roles = new int[6] {0,0,0,0,0,0};

@@ -72,6 +72,9 @@ namespace AtlasBot
                 MasteryCommands masteryCommands = new MasteryCommands(BotUser, commands);
                 ServerManagement serverManagement = new ServerManagement(BotUser, commands);
                 RankCommands rankCommands = new RankCommands(BotUser, commands);
+                SummonerInfo summonerInfo = new SummonerInfo(commands);
+                summonerInfo.SelfInfo();
+                summonerInfo.OtherInfo();
                 serverManagement.ServerAdded();
                 serverManagement.VerifyServer();
                 serverInfoCommands.InviteLink();

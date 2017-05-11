@@ -17,7 +17,7 @@ namespace RiotLibary.Roles
 
         public string GetRankingHarder(Summoner summoner, Queue queue)
         {
-            string result = "";
+            string result = null;
             summoner.GetLeagues().ForEach(stat =>
             {
                 if (stat.Queue == queue)

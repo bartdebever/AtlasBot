@@ -48,7 +48,7 @@ namespace RiotLibary.Roles
             champs.Sort();
             for (int i = 0; i < ChampCount; i++)
             {
-                champs[i].Name = sApi.GetChampion(summoner.Region, Convert.ToInt32(champs[i].Id)).Name;
+                champs[i].Name = sApi.GetChampion(Region.eune, Convert.ToInt32(champs[i].Id)).Name;
                 result.Add(champs[i]);
             }
             return result;
