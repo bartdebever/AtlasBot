@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AtlasBot.Modules.Roles;
+using AtlasBot.Modules.Role_Management;
 using DataLibary.Models;
 using DataLibary.MSSQLContext;
 using DataLibary.Repos;
@@ -24,7 +26,6 @@ namespace AtlasBot.Modules.User
             this.BotUser = botUser;
             this.commands = commands;
         }
-
         public void ClaimAccount()
         {
             commands.CreateCommand("ClaimAccount")
@@ -72,7 +73,7 @@ namespace AtlasBot.Modules.User
                                 {
                                     sumRepo.VerifySummoner(userRepo.GetUserByDiscord((e.User.Id)), riotid);
                                     returnmessage = Eng_Default.AccountVerified();
-                                    new AtlasBot.Program.Bot().GetRoles(e.Server, e.User);
+                                    new RoleManagementCommands(BotUser, commands).GetRoles(e.Server, e.User);
                                 }
                             }
                         }
@@ -82,6 +83,20 @@ namespace AtlasBot.Modules.User
                         returnmessage = Eng_Default.ServerIsNotVerified();
                     }
 
+                    await e.Channel.SendMessage(returnmessage);
+                });
+        }
+
+        public void Claim()
+        {
+            commands.CreateCommand("Claim")
+                .Do(async (e) =>
+                {
+                    string returnmessage = "An error happened.";
+                    if (new ServerRepo(new ServerContext()).IsServerVerified(e.Server.Id))
+                    {
+                        
+                    }
                     await e.Channel.SendMessage(returnmessage);
                 });
         }

@@ -19,6 +19,12 @@ namespace AtlasBot.Modules.Region
     {
         private DiscordClient BotUser;
         private CommandService commands;
+
+        public RegionCommands(DiscordClient BotUser, CommandService commands)
+        {
+            this.BotUser = BotUser;
+            this.commands = commands;
+        }
         public void GetRegion()
         {
             commands.CreateCommand("region")
