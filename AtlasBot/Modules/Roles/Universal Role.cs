@@ -44,23 +44,15 @@ namespace AtlasBot.Modules.Roles
                     {
                         try
                         {
-                            var temp =
-                                server.GetRole(settingsRepo.GetOverride(rank, server.Id));
-                            if (!settingsRepo.IsRoleDisabled(temp.Name.ToLower(), server.Id))
-                            {
-                                return temp;
-
-                            }
+                            
+                             return server.GetRole(settingsRepo.GetOverride(rank, server.Id));
+                            
 
                         }
                         catch
                         {
-                            var temp = server.FindRoles(rank, false).First();
-                            if (!settingsRepo.IsRoleDisabled(temp.Name.ToLower(), server.Id))
-                            {
-                                return temp;
-
-                            }
+                            return server.FindRoles(rank, false).First();
+                            
                             
                         }
                     }
@@ -116,19 +108,11 @@ namespace AtlasBot.Modules.Roles
                     {
                         try
                         {
-                            var temp =
-                                server.GetRole(settingsRepo.GetOverride(region.ToLower(), server.Id));
-                            if (settingsRepo.IsRoleDisabled(temp.Name.ToLower(), server.Id))
-                            {
-                                
-                            }
-                            else
-                            {
-                                return temp;
-                                
-                            }
+                            
+                            return server.GetRole(settingsRepo.GetOverride(region.ToLower(), server.Id));
+                            
 
-                           
+
                         }
                         catch
                         {
@@ -146,37 +130,52 @@ namespace AtlasBot.Modules.Roles
                         }
                     }
                 }
-                foreach (string role in settingsRepo.GetAllOverrides(server.Id))
+            }
+            foreach (string role in settingsRepo.GetAllOverrides(server.Id))
+            {
+                var temp = server.GetRole(Convert.ToUInt64(role.Substring(role.IndexOf(":") + 1, role.Length - role.IndexOf(":") - 1)));
+                if (parameter.ToLower() == temp.Name.ToLower())
                 {
-                    var temp = server.GetRole(Convert.ToUInt64(role.Substring(role.IndexOf(":") + 1, role.Length - role.IndexOf(":") - 1)));
-                    if (parameter.ToLower() == temp.Name.ToLower())
-                    {
-                        return temp;
-                        
-                    }
+                    return temp;
+
                 }
             }
-
             return r;
         }
 
-        public void UniversalTest()
+        public void UniversalRole()
         {
-            commands.CreateCommand("UniversalTest")
+            commands.CreateCommand("Roles")
                 .Parameter("Parameter", ParameterType.Unparsed)
                 .Do(async (e) =>
                 {
-                    string returnstring = "error";
-                    Discord.Role r = null;
-                    try
+                    string returnstring;
+                    ServerRepo serverRepo = new ServerRepo(new ServerContext());
+                    SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
+                    if (serverRepo.IsServerVerified(e.Server.Id))
                     {
-                        r = RoleSearch(e.Server, e.GetArg("Parameter").ToLower());
-                        await e.User.AddRoles(r);
-                        returnstring = Eng_Default.RoleHasBeenGiven(r.Name);
+                        try
+                        {
+                            Discord.Role r = RoleSearch(e.Server, e.GetArg("Parameter").ToLower());
+                            if (!settingsRepo.IsRoleDisabled(r.Name.ToLower(), e.Server.Id))
+                            {
+                                await e.User.AddRoles(r);
+                                returnstring = Eng_Default.RoleHasBeenGiven(r.Name);
+                            }
+                            else
+                            {
+                                returnstring = Eng_Default.RoleHasBeenDisabled();
+                            }
+                            
+                        }
+                        catch
+                        {
+                            returnstring = Eng_Default.RoleNotFound(e.GetArg("Parameter"));
+                        }
                     }
-                    catch
+                    else
                     {
-                        returnstring = Eng_Default.RoleNotFound(e.GetArg("Parameter"));
+                        returnstring = Eng_Default.ServerIsNotVerified();
                     }
                     await e.Channel.SendMessage(returnstring);
                 });

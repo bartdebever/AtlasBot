@@ -81,7 +81,7 @@ namespace AtlasBot
                 amc.ClaimAccount();
                 amc.Claim();
                 rankCommands.GetRank();
-                new Universal_Role(BotUser, commands).UniversalTest();
+                new Universal_Role(BotUser, commands).UniversalRole();
                 regionCommands.GetRegion();
                 roleCommand.GetRole();
                 rmc.Update();

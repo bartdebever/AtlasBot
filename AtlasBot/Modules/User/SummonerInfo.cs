@@ -25,8 +25,7 @@ namespace AtlasBot.Modules.User
         public string GetInfoShort(Summoner summoner)
         {
             StaticRiotApi staticApi = StaticRiotApi.GetInstance(Keys.Keys.riotKey);
-            string returnstring;
-            returnstring = "**"+summoner.Name + ": **";
+            string returnstring = "**"+summoner.Name + ": **";
             returnstring += "\n**Region:** " + summoner.Region.ToString().ToUpper();
             returnstring += "\n**Level:** " + summoner.Level.ToString();
             if (summoner.Level == 30)
@@ -79,6 +78,7 @@ namespace AtlasBot.Modules.User
             commands.CreateCommand("Info")
                 .Do(async (e) =>
                 {
+                    await e.Channel.SendIsTyping();
                     string returnstring = Eng_Default.RegisterAccount();
                     try
                     {
