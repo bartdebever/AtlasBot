@@ -134,7 +134,7 @@ namespace AtlasBot.Modules.Roles
             foreach (string role in settingsRepo.GetAllOverrides(server.Id))
             {
                 var temp = server.GetRole(Convert.ToUInt64(role.Substring(role.IndexOf(":") + 1, role.Length - role.IndexOf(":") - 1)));
-                if (parameter.ToLower() == temp.Name.ToLower())
+                if (parameter.ToLower() == temp.Name.ToLower() || parameter.ToLower() == role.Split(':').First().ToLower())
                 {
                     return temp;
 
