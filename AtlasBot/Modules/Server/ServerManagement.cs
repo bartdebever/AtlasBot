@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AtlasBot.Modules.Logging;
+using AtlasBot.Modules.Matchmaking;
 using DataLibary.Models;
 using DataLibary.MSSQLContext;
 using DataLibary.Repos;
@@ -47,12 +48,12 @@ namespace AtlasBot.Modules.Server
         {
             BotUser.ServerAvailable += async (s, u) =>
             {
-                foreach (Discord.Server server in BotUser.Servers)
-                {
+                
+                
                     bool found = false;
                     foreach (ulong id in new ServerRepo(new ServerContext()).GetAllServerIds())
                     {
-                        if (server.Id == id)
+                        if (u.Server.Id == id)
                         {
                             found = true;
                         }
@@ -61,15 +62,16 @@ namespace AtlasBot.Modules.Server
                     {
                         try
                         {
-                            await server.DefaultChannel.SendMessage("New server found");
+                            await u.Server.DefaultChannel.SendMessage("New server found");
                         }
                         catch { }
 
-                        AddServer(server);
+                        AddServer(u.Server);
                     }
+                    if(new SettingsContext().lfgStatus(u.Server.Id)) await Task.Run(() => new MatchmakingTrigger(BotUser).RemoveMessages(u.Server));
 
-                }
             };
+            
         }
 
         public async void AddServer(Discord.Server server)

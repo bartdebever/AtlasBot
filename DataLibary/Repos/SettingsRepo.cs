@@ -184,6 +184,25 @@ namespace DataLibary.Repos
         {
             context.ChangeMasteryAccount(value, serverid);
         }
+        public bool lfgStatus(ulong serverid)
+        {
+            return context.lfgStatus(serverid);
+        }
+
+        public ulong GetLfgChannel(ulong serverid)
+        {
+            return context.GetLfgChannel(serverid);
+        }
+
+        public void SetLfgChannel(ulong channelid, ulong serverid)
+        {
+            context.SetLfgChannel(channelid, serverid);
+        }
+
+        public void DisableLfg(ulong serverid)
+        {
+            context.DisableLfg(serverid);
+        }
     }
 }
 

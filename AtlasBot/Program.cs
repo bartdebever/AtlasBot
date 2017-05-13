@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AtlasBot.Modules.Administrative;
 using AtlasBot.Modules.Logging;
 using AtlasBot.Modules.Mastery;
+using AtlasBot.Modules.Matchmaking;
 using AtlasBot.Modules.Rank;
 using AtlasBot.Modules.Region;
 using AtlasBot.Modules.Roles;
@@ -78,6 +79,8 @@ namespace AtlasBot
                 SummonerInfo summonerInfo = new SummonerInfo(commands);
                 BotManagement botManagement = new BotManagement(BotUser, commands);
                 CreateRoles createRoles = new CreateRoles(commands);
+                Matchmaking_Settings matchmakingSettings = new Matchmaking_Settings(commands);
+                matchmakingSettings.ChannelSettings();
                 createRoles.CreateRank();
                 botManagement.SetGame();
                 summonerInfo.SelfInfo();
@@ -105,6 +108,8 @@ namespace AtlasBot
                 roleManagementTrigger.JoiningRoleGive();
                 masteryCommands.GetMasteryPoints();
                 managementTools.AdminMastery();
+
+                Test();
                 BotUser.ExecuteAndWait(async () =>
                 {
                     await BotUser.Connect(Keys.Keys.discordKey, TokenType.Bot);
@@ -127,6 +132,15 @@ namespace AtlasBot
                 guidString = guidString.Replace("/", "");
                 guidString = guidString.Substring(0, 10);
                 return guidString;
+            }
+
+            public void Test()
+            {
+                commands.CreateCommand("Test")
+                    .Do(async (e) =>
+                    {
+                        await e.Channel.SendMessage(e.Server.GetChannel(new SettingsContext().GetLfgChannel(e.Server.Id)).Mention);
+                    });
             }               
         }
     }

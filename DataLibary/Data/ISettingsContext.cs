@@ -44,5 +44,9 @@ namespace DataLibary.Data
         void RemoveRoleByPoints(ulong serverid, int points);
         void SetChampionId(ulong serverid, int championid);
         List<string> GetAllMasteryRoles(ulong serverid);
+        bool lfgStatus(ulong serverid);
+        ulong GetLfgChannel(ulong serverid);
+        void SetLfgChannel(ulong channelid, ulong serverid);
+        void DisableLfg(ulong serverid);
     }
 }

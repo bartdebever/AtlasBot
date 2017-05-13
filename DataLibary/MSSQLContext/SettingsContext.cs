@@ -477,5 +477,56 @@ namespace DataLibary.MSSQLContext
             cmd.Parameters.AddWithValue("@Id", Convert.ToInt64(serverid));
             cmd.ExecuteNonQuery();
         }
+
+        public bool lfgStatus(ulong serverid)
+        {
+            string query =
+                "SELECT CASE WHEN EXISTS(SELECT[SS].LFGChannel FROM[ServerSettings] SS INNER JOIN[Server] S ON[S].Id = [SS].ServerId WHERE[SS].LFGChannel IS NOT NULL AND[S].DiscordServerId = @ServerId) THEN 1 ELSE 0 END";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@ServerId", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return Convert.ToBoolean(reader.GetInt32(0));
+                }
+            }
+            return false;
+        }
+
+        public ulong GetLfgChannel(ulong serverid)
+        {
+            string query =
+                "SELECT[SS].LFGChannel FROM[ServerSettings] SS INNER JOIN[Server] S ON[S].Id = [SS].ServerId WHERE[SS].LFGChannel IS NOT NULL AND[S].DiscordServerId = @ServerId";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@ServerId", Convert.ToInt64(serverid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return Convert.ToUInt64(reader.GetInt64(0));
+                }
+            }
+            return 0;
+        }
+
+        public void SetLfgChannel(ulong channelid, ulong serverid)
+        {
+            string query =
+                "UPDATE [ServerSettings] SET LFGChannel = @ChannelId WHERE serverid = (SELECT [S].Id FROM [Server] S WHERE [S].DiscordServerId = @ServerId)";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@ServerId", Convert.ToInt64(serverid));
+            cmd.Parameters.AddWithValue("@ChannelId", Convert.ToInt64(channelid));
+            cmd.ExecuteNonQuery();
+        }
+
+        public void DisableLfg(ulong serverid)
+        {
+            string query =
+                "UPDATE [ServerSettings] SET LFGChannel = NULL WHERE serverid = (SELECT [S].Id FROM [Server] S WHERE [S].DiscordServerId = @ServerId)";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@ServerId", Convert.ToInt64(serverid));
+            cmd.ExecuteNonQuery();
+        }
     }
 }

@@ -96,7 +96,6 @@ namespace AtlasBot.Modules.Administrative
                                 }
                             }
                         }
-
                         await e.Channel.SendMessage("Roles created");
                     }
                 });
