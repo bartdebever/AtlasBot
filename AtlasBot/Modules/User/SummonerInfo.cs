@@ -28,7 +28,7 @@ namespace AtlasBot.Modules.User
         {
             StaticRiotApi staticApi = StaticRiotApi.GetInstance(Keys.Keys.riotKey);
             string returnstring = "";
-            returnstring += ">**"+summoner.Name + ": **";
+            returnstring += "**"+summoner.Name + ": **";
             returnstring += "\n**Region:** " + summoner.Region.ToString().ToUpper();
             returnstring += "\n**Level:** " + summoner.Level.ToString();
             if (summoner.Level == 30)
@@ -45,7 +45,8 @@ namespace AtlasBot.Modules.User
             }
             try
             {
-                returnstring += "**\nTotal Solo Games Played:** " + new RoleAPI().GetGamesPlayed(summoner) + " games";
+                int gamesplayed = new RoleAPI().GetGamesPlayed(summoner);
+                if (gamesplayed != 0) returnstring += "**\nTotal Solo Games Played:** " + gamesplayed + " games";
                 var champList = new ChampionAPI().Get5MainChampions(summoner);
                 returnstring += "**\nMain ranked champions:**";
                 foreach (var champ in champList)
@@ -71,7 +72,6 @@ namespace AtlasBot.Modules.User
                 }
             }
             catch { }
-            returnstring += "```";
             
             return returnstring;
         }

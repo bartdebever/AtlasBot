@@ -42,7 +42,7 @@ namespace AtlasBot.Modules.User
                         SummonerRepo sumRepo = new SummonerRepo(new SummonerContext());
                         UserRepo userRepo = new UserRepo(new UserContext());
                         int riotid = Convert.ToInt32(new SummonerAPI().GetSummonerId(summonername, region));
-                        string token = new AtlasBot.Program.Bot().RandomStringGenerator();
+                        string token = new StringBuilder().CreateToken();
                         if (
                             sumRepo.IsSummonerInSystem(riotid
                             ) == false
@@ -90,7 +90,7 @@ namespace AtlasBot.Modules.User
 
         public void Claim()
         {
-            commands.CreateCommand("Claim")
+            commands.CreateCommand("ClaimAccount")
                 .Do(async (e) =>
                 {
                    Summoner summoner =

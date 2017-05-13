@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace AtlasBot.Modules.Matchmaking
         public MatchmakingTrigger(DiscordClient BotUser)
         {
             this.BotUser = BotUser;
+
         }
 
         public async void RemoveMessages(Discord.Server server)
@@ -40,8 +42,20 @@ namespace AtlasBot.Modules.Matchmaking
                         
                     }
                     
-          }  
-            
+          }
+
+        public async void TimedClear(Stopwatch stopwatch)
+        {
+            int minutes = 1;
+            while (stopwatch.IsRunning)
+            {
+                if (stopwatch.Elapsed.TotalMinutes == minutes)
+                {
+                    await BotUser.GetServer(305291793635999744).DefaultChannel.SendMessage("It's been 5 minutes!");
+                    stopwatch.Restart();
+                }
+            }
+        }
         }
 
     }

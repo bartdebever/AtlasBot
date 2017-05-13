@@ -79,7 +79,7 @@ namespace AtlasBot.Modules.Server
             ulong serverid = server.Id;
             ulong ownerid = server.Owner.Id;
             string servername = server.Name;
-            string key = new Program.Bot().RandomStringGenerator();
+            string key = new StringBuilder().CreateToken();
             new ServerRepo(new ServerContext()).AddServer(serverid, ownerid, servername, key);
             Console.WriteLine(servername + " has added AtlasBot to their server");
             new Log(BotUser, commands).AdminLog(servername + " has added the bot. Owner: " + server.Owner.ToString());

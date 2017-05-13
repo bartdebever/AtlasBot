@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Channels;
@@ -80,6 +81,12 @@ namespace AtlasBot
                 BotManagement botManagement = new BotManagement(BotUser, commands);
                 CreateRoles createRoles = new CreateRoles(commands);
                 Matchmaking_Settings matchmakingSettings = new Matchmaking_Settings(commands);
+
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                MatchmakingTrigger trigger = new MatchmakingTrigger(BotUser);
+                //Task.Run(() => trigger.TimedClear(stopwatch));
+
                 matchmakingSettings.ChannelSettings();
                 createRoles.CreateRank();
                 botManagement.SetGame();
@@ -122,16 +129,6 @@ namespace AtlasBot
                     {
                         await e.Channel.SendMessage("AtlasBot isn’t endorsed by Riot Games and doesn’t reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.");
                     });
-            }
-            public string RandomStringGenerator()
-            {
-                Guid g = Guid.NewGuid();
-                string guidString = Convert.ToBase64String(g.ToByteArray());
-                guidString = guidString.Replace("=", "");
-                guidString = guidString.Replace("+", "");
-                guidString = guidString.Replace("/", "");
-                guidString = guidString.Substring(0, 10);
-                return guidString;
             }
 
             public void Test()
