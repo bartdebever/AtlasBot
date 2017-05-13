@@ -19,14 +19,17 @@ using DataLibary.Models;
 using DataLibary.MSSQLContext;
 using DataLibary.Repos;
 using Discord;
+using Discord.API.Client;
 using Discord.API.Client.Rest;
 using Discord.Commands;
 using Languages;
 using Nito.AsyncEx;
+using RestSharp.Extensions;
 using RiotLibary.Roles;
 using RiotSharp;
 using RiotSharp.SummonerEndpoint;
 using ToolKit;
+using Message = Discord.API.Client.Message;
 using Region = RiotSharp.Region;
 using Role = Discord.API.Client.Role;
 
@@ -73,6 +76,10 @@ namespace AtlasBot
                 ServerManagement serverManagement = new ServerManagement(BotUser, commands);
                 RankCommands rankCommands = new RankCommands(BotUser, commands);
                 SummonerInfo summonerInfo = new SummonerInfo(commands);
+                BotManagement botManagement = new BotManagement(BotUser, commands);
+                CreateRoles createRoles = new CreateRoles(commands);
+                createRoles.CreateRank();
+                botManagement.SetGame();
                 summonerInfo.SelfInfo();
                 summonerInfo.OtherInfo();
                 serverManagement.ServerAdded();
@@ -120,7 +127,7 @@ namespace AtlasBot
                 guidString = guidString.Replace("/", "");
                 guidString = guidString.Substring(0, 10);
                 return guidString;
-            }
+            }               
         }
     }
 }

@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using DataLibary.Models;
 using DataLibary.MSSQLContext;
 using DataLibary.Repos;
+using Discord.API.Client;
 using Discord.Commands;
 using Languages;
 using RiotLibary.Roles;
 using RiotSharp;
 using RiotSharp.SummonerEndpoint;
+using Message = Discord.Message;
 
 namespace AtlasBot.Modules.User
 {
@@ -25,7 +27,8 @@ namespace AtlasBot.Modules.User
         public string GetInfoShort(Summoner summoner)
         {
             StaticRiotApi staticApi = StaticRiotApi.GetInstance(Keys.Keys.riotKey);
-            string returnstring = "**"+summoner.Name + ": **";
+            string returnstring = "";
+            returnstring += ">**"+summoner.Name + ": **";
             returnstring += "\n**Region:** " + summoner.Region.ToString().ToUpper();
             returnstring += "\n**Level:** " + summoner.Level.ToString();
             if (summoner.Level == 30)
@@ -68,7 +71,7 @@ namespace AtlasBot.Modules.User
                 }
             }
             catch { }
-            
+            returnstring += "```";
             
             return returnstring;
         }
@@ -97,6 +100,7 @@ namespace AtlasBot.Modules.User
                         
                     }
                     await e.Channel.SendMessage(returnstring);
+                    
                 });
         }
         public void OtherInfo()
