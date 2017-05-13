@@ -75,7 +75,7 @@ namespace AtlasBot.Modules.Administrative
                         }
                         if (settingsRepo.RegionByAccount(e.Server.Id) || settingsRepo.RegionByParameter(e.Server.Id))
                         {
-                            foreach(string line in new RegionRepo(new RegionContext()).GetAllRegions())
+                            foreach (string line in new RegionRepo(new RegionContext()).GetAllRegions())
                             {
                                 try
                                 {
@@ -88,15 +88,17 @@ namespace AtlasBot.Modules.Administrative
                                     {
                                         await e.Server.CreateRole(line);
                                     }
-                                    catch {//ignored }
-                                    
+                                    catch
+                                    {
+                                        //ignored
+                                    }
+
                                 }
-                                
                             }
                         }
+
+                        await e.Channel.SendMessage("Roles created");
                     }
-                    
-                    await e.Channel.SendMessage("Roles created");
                 });
             
         }
