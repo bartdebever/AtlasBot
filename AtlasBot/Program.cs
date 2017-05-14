@@ -84,9 +84,10 @@ namespace AtlasBot
 
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
-                MatchmakingTrigger trigger = new MatchmakingTrigger(BotUser);
-                //Task.Run(() => trigger.TimedClear(stopwatch));
-
+                MatchmakingTrigger trigger = new MatchmakingTrigger(BotUser, commands);
+                MatchmakingCommands matchmakingCommands = new MatchmakingCommands(commands, BotUser, trigger);
+                Task.Run(() => trigger.TimedClear(stopwatch));
+                matchmakingCommands.CreateCommands();
                 matchmakingSettings.ChannelSettings();
                 createRoles.CreateRank();
                 botManagement.SetGame();

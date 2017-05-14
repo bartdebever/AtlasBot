@@ -233,10 +233,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Modules\Administrative\BotManagement.cs" />
+    <Compile Include="Modules\Administrative\BotTriggers.cs" />
     <Compile Include="Modules\Administrative\CreateRoles.cs" />
     <Compile Include="Modules\Administrative\ManagementTools.cs" />
     <Compile Include="Modules\Logging\Log.cs" />
     <Compile Include="Modules\Mastery\MasteryCommands.cs" />
+    <Compile Include="Modules\Matchmaking\MatchmakingCommands.cs" />
     <Compile Include="Modules\Matchmaking\MatchmakingTrigger.cs" />
     <Compile Include="Modules\Matchmaking\Matchmaking_Settings.cs" />
     <Compile Include="Modules\Rank\RankCommands.cs" />

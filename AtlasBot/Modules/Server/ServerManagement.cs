@@ -68,7 +68,7 @@ namespace AtlasBot.Modules.Server
 
                         AddServer(u.Server);
                     }
-                    if(new SettingsContext().lfgStatus(u.Server.Id)) await Task.Run(() => new MatchmakingTrigger(BotUser).RemoveMessages(u.Server));
+                   
 
             };
             
