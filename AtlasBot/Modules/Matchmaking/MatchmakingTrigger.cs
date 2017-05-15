@@ -24,10 +24,10 @@ namespace AtlasBot.Modules.Matchmaking
             this.commands = commands;
         }
 
-        public async void QueuePerson(Summoner summoner, Discord.User user, Discord.Server currentserver)
+        public async void QueuePerson(Summoner summoner, Discord.User user, Discord.Server currentserver, string queue)
         {
             SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
-            string queuemessage = "***" + user + " from " + currentserver.Name + " queued up as: ***\n";
+            string queuemessage = "***" + user + " from " + currentserver.Name + " queued up for "+ queue + " as: ***\n";
             queuemessage += new User.SummonerInfo(commands).GetInfoShort(summoner);
             foreach (Discord.Server server in BotUser.Servers)
             {
@@ -72,27 +72,30 @@ namespace AtlasBot.Modules.Matchmaking
         public async void RemoveMessages(Discord.Server server)
         {
             SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
-            
-                
-                    Discord.Channel channel = server.GetChannel(settingsRepo.GetLfgChannel(server.Id));
-                    Discord.Message[] temp = await channel.DownloadMessages(100);
-                    try
-                    {
-                        while (temp.Length > 0)
-                        {
-                            Discord.Message[] messages;
-                            messages = await channel.DownloadMessages(100);
-                            await channel.DeleteMessages(messages);
-                            temp = await channel.DownloadMessages(100);
-                        }
-                        await channel.SendMessage("Queue has been cleared!");
-                    }
-                    catch
-                    {
+            Discord.Channel channel = server.GetChannel(settingsRepo.GetLfgChannel(server.Id));
+            Discord.Message[] temp = await channel.DownloadMessages(100);
+            bool found = false;
+            try
+            {
+
+                while (temp.Length > 1 && temp.Last().Text != "queue has been cleared!")
+                {
+                    await channel.DeleteMessages(temp);
+                    found = true;
+                    temp = await channel.DownloadMessages(100);
+
+                }
+            }
+            catch
+            {
+                found = true;
+            }
+            if (found == true)
+            {
                 await channel.SendMessage("Queue has been cleared!");
             }
-                    
-          }
+
+        }
 
         public  void TimedClear(Stopwatch stopwatch)
         {
@@ -107,7 +110,7 @@ namespace AtlasBot.Modules.Matchmaking
                     
                     
                 }
-                if (stopwatch.Elapsed.TotalMinutes == minutes)
+                if (stopwatch.Elapsed.TotalMinutes >= minutes)
                 {
                     SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
                     foreach (var server in BotUser.Servers)
@@ -117,7 +120,9 @@ namespace AtlasBot.Modules.Matchmaking
                             RemoveMessages(server);
                         }
                     }
-                    stopwatch.Restart();
+                    stopwatch.Stop();
+                    stopwatch.Reset();
+                    stopwatch.Start();
                 }
             }
         }

@@ -10,6 +10,7 @@ using Discord;
 using Discord.Commands;
 using Languages;
 using RiotLibary.Roles;
+using RiotSharp;
 using RiotSharp.SummonerEndpoint;
 
 namespace AtlasBot.Modules.Matchmaking
@@ -34,29 +35,31 @@ namespace AtlasBot.Modules.Matchmaking
             ClearQueues();
         }
 
-        public void ClearQueues()
+        private void ClearQueues()
         {
             commands.CreateCommand("ClearQueue")
                 .Do(async (e) =>
                 {
                     UserRepo userRepo = new UserRepo(new UserContext());
+                    SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
                     if (userRepo.IsAtlasAdmin(e.User.Id))
                     {
-                        SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
                         foreach (var server in BotUser.Servers)
                         {
                             if (settingsRepo.lfgStatus(server.Id))
                             {
-                                trigger.RemoveMessages(server);
-                                await e.Channel.SendMessage("Done!");
+                                await (Task.Run(() => trigger.RemoveMessages(server)));
+                                
                             }
                         }
+                        await e.Channel.SendMessage("Done!");
                     }
                 });
         }
         private void QueueUp()
         {
             commands.CreateCommand("QueueUp")
+                 .Parameter("Queue", ParameterType.Unparsed)
                 .Do(async (e) =>
                 {
                     string returnstring = "";
@@ -84,8 +87,30 @@ namespace AtlasBot.Modules.Matchmaking
                         {
                             try
                             {
-                                trigger.QueuePerson(summoner, e.User, e.Server);
-                                returnstring = "You were queued!";
+                                bool found = false;
+                                string queue = "";
+                                foreach (string line in Queues.GetQueues())
+                                {
+                                    if (e.GetArg("Queue").ToLower() == line)
+                                    {
+                                        found = true;
+                                        queue = line;
+                                    }
+                                }
+                                if (found == true)
+                                {
+                                    trigger.QueuePerson(summoner, e.User, e.Server, queue);
+                                    returnstring = "You were queued!";
+                                }
+                                else
+                                {
+                                    returnstring = "Please enter one of the following queues: ";
+                                    foreach (string line in Queues.GetQueues())
+                                    {
+                                        returnstring += "\n -" + line;
+                                    }
+                                }
+                                
                             }
                             catch
                             {

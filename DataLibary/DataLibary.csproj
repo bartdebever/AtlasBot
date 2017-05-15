@@ -83,6 +83,7 @@
     <Compile Include="Models\AtlasAdmin.cs" />
     <Compile Include="Models\Coach.cs" />
     <Compile Include="Models\CommandType.cs" />
+    <Compile Include="Models\Queues.cs" />
     <Compile Include="Models\Rank.cs" />
     <Compile Include="Models\Ranks.cs" />
     <Compile Include="Models\Role.cs" />
