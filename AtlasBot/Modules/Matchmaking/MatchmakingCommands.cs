@@ -63,6 +63,7 @@ namespace AtlasBot.Modules.Matchmaking
                 .Do(async (e) =>
                 {
                     string returnstring = "";
+                    StringHandler SH = new StringHandler(e.Server);
                     SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
                     ServerRepo serverRepo = new ServerRepo(new ServerContext());
                     if (serverRepo.IsServerVerified(e.Server.Id)&& settingsRepo.lfgStatus(e.Server.Id))
@@ -100,7 +101,8 @@ namespace AtlasBot.Modules.Matchmaking
                                 if (found == true)
                                 {
                                     trigger.QueuePerson(summoner, e.User, e.Server, queue);
-                                    returnstring = "You were queued!";
+                                    returnstring = SH.Build("QUP1");
+                                    //returnstring = "You were queued!";
                                 }
                                 else
                                 {

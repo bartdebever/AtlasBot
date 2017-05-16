@@ -10,18 +10,16 @@ namespace DataLibary.Models
 {
     public class Coach
     {
-        public int Id { get; private set; }
         public ulong CoachId { get; private set; }
-        public List<Role> Roles { get; private set; }
-        public List<Champion> Champions { get; private set; }
+        public Role Role { get; private set; }
+        public Champion Champion { get; private set; }
         public Region Region { get; private set; }
 
-        public Coach(int id, ulong coachid, List<Role> roles, List<Champion> champions, Region region)
+        public Coach(ulong coachid, Role role, Champion champion, Region region)
         {
-            this.Id = id;
             this.CoachId = coachid;
-            this.Roles = roles;
-            this.Champions = champions;
+            this.Role = role;
+            this.Champion = champion;
             this.Region = region;
         }
     }

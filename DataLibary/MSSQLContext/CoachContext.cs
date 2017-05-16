@@ -4,66 +4,61 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataLibary.Data;
+using DataLibary.Models;
 using RiotSharp;
 
-namespace DataLibary.Models
+namespace DataLibary.MSSQLContext
 {
-    public class CoachRepo
+    public class CoachContext : ICoachContext
     {
-        private ICoachContext context;
-
-        public CoachRepo(ICoachContext context)
-        {
-            this.context = context;
-        }
         public List<string> GetAllCoaches()
         {
-            return context.GetAllCoaches();
+            throw new NotImplementedException();
         }
 
         public List<string> GetCoachByRole(Role role)
         {
-            return context.GetCoachByRole(role);
+            throw new NotImplementedException();
         }
 
         public List<string> GetCoachByRegion(Region region)
         {
-            return context.GetCoachByRegion(region);
+            throw new NotImplementedException();
         }
 
         public List<string> GetCoachByChampion(int championid)
         {
-            return context.GetCoachByChampion(championid);
+            throw new NotImplementedException();
         }
 
         public void AddCoach(Coach coach)
         {
-            context.AddCoach(coach);
+            throw new NotImplementedException();
         }
 
         public void RemoveCoach(ulong id)
         {
-            context.RemoveCoach(id);
+            throw new NotImplementedException();
         }
 
         public void AddChampionToCoach(int championid, ulong id)
         {
-            context.AddChampionToCoach(championid, id);
+            throw new NotImplementedException();
         }
 
         public void RemoveChampionFromCoach(int championid, ulong id)
         {
-            context.RemoveChampionFromCoach(championid, id);
+            throw new NotImplementedException();
         }
 
         public void AddRoleToCoach(Role role, ulong id)
         {
-            context.AddRoleToCoach(role, id);
+            throw new NotImplementedException();
         }
 
         public void RemoveRoleFromCoach(Role role, ulong id)
         {
-            context.RemoveRoleFromCoach(role, id);
+            throw new NotImplementedException();
         }
     }
 }
