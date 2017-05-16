@@ -21,7 +21,7 @@ namespace DataLibary.Models
             return context.GetAllCoaches();
         }
 
-        public List<string> GetCoachByRole(Role role)
+        public List<string> GetCoachByRole(string role)
         {
             return context.GetCoachByRole(role);
         }
@@ -56,12 +56,12 @@ namespace DataLibary.Models
             context.RemoveChampionFromCoach(championid, id);
         }
 
-        public void AddRoleToCoach(Role role, ulong id)
+        public void AddRoleToCoach(string role, ulong id)
         {
             context.AddRoleToCoach(role, id);
         }
 
-        public void RemoveRoleFromCoach(Role role, ulong id)
+        public void RemoveRoleFromCoach(string role, ulong id)
         {
             context.RemoveRoleFromCoach(role, id);
         }

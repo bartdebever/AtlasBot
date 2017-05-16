@@ -7,6 +7,7 @@ using System.Runtime.Remoting.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using AtlasBot.Modules.Administrative;
+using AtlasBot.Modules.Coach;
 using AtlasBot.Modules.Logging;
 using AtlasBot.Modules.Mastery;
 using AtlasBot.Modules.Matchmaking;
@@ -81,7 +82,7 @@ namespace AtlasBot
                 BotManagement botManagement = new BotManagement(BotUser, commands);
                 CreateRoles createRoles = new CreateRoles(commands);
                 Matchmaking_Settings matchmakingSettings = new Matchmaking_Settings(commands);
-
+                CoachCommands coachCommands = new CoachCommands(commands);
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
                 MatchmakingTrigger trigger = new MatchmakingTrigger(BotUser, commands);
@@ -89,6 +90,7 @@ namespace AtlasBot
                 Task.Run(() => trigger.TimedClear(stopwatch));
                 matchmakingCommands.CreateCommands();
                 matchmakingSettings.ChannelSettings();
+                coachCommands.CreateCommands();
                 createRoles.CreateRank();
                 botManagement.SetGame();
                 summonerInfo.SelfInfo();

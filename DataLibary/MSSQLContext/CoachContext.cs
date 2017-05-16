@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace DataLibary.MSSQLContext
             throw new NotImplementedException();
         }
 
-        public List<string> GetCoachByRole(Role role)
+        public List<string> GetCoachByRole(string role)
         {
             throw new NotImplementedException();
         }
@@ -33,7 +34,20 @@ namespace DataLibary.MSSQLContext
 
         public void AddCoach(Coach coach)
         {
-            throw new NotImplementedException();
+            string query = "INSERT INTO [Coach] OUTPUT INSERTED.ID VALUES((SELECT [U].id FROM [User] U WHERE [U].DiscordId = @DiscordId)) ";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@DiscordId", Convert.ToInt64(coach.CoachId));
+            int id = (int) cmd.ExecuteScalar();
+            query = "INSERT INTO [Coach_Champion] VALUES (@CoachId, @ChampionId)";
+            cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@CoachId", id);
+            cmd.Parameters.AddWithValue("@ChampionId", coach.Champion);
+            cmd.ExecuteNonQuery();
+            query = "INSERT INTO [Coach_Role] VALUES (@CoachId, @Role)";
+            cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@CoachId", id);
+            cmd.Parameters.AddWithValue("@Role", coach.Role);
+            cmd.ExecuteNonQuery();
         }
 
         public void RemoveCoach(ulong id)
@@ -51,12 +65,12 @@ namespace DataLibary.MSSQLContext
             throw new NotImplementedException();
         }
 
-        public void AddRoleToCoach(Role role, ulong id)
+        public void AddRoleToCoach(string role, ulong id)
         {
             throw new NotImplementedException();
         }
 
-        public void RemoveRoleFromCoach(Role role, ulong id)
+        public void RemoveRoleFromCoach(string role, ulong id)
         {
             throw new NotImplementedException();
         }
