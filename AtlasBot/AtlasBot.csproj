@@ -236,6 +236,7 @@
     <Compile Include="Modules\Administrative\BotTriggers.cs" />
     <Compile Include="Modules\Administrative\CreateRoles.cs" />
     <Compile Include="Modules\Administrative\ManagementTools.cs" />
+    <Compile Include="Modules\Atlas Flair System\FlairTrigger.cs" />
     <Compile Include="Modules\Coach\CoachCommands.cs" />
     <Compile Include="Modules\Coach\CoachTrigger.cs" />
     <Compile Include="Modules\Logging\Log.cs" />

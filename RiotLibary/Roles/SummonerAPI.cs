@@ -16,7 +16,7 @@ namespace RiotLibary.Roles
     {
         private RiotApi api = RiotApi.GetInstance(Keys.Keys.riotKey);
         private StaticRiotApi sApi = StaticRiotApi.GetInstance(Keys.Keys.riotKey);
-        public Summoner GetSummoner(int id, Region region)
+        public Summoner GetSummoner(long id, Region region)
         {
             try
             {

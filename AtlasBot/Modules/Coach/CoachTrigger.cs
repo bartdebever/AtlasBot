@@ -7,6 +7,7 @@ using DataLibary.Models;
 using DataLibary.MSSQLContext;
 using Discord.Commands;
 using RiotLibary.Roles;
+using RiotSharp.ChampionEndpoint;
 
 namespace AtlasBot.Modules.Coach
 {
@@ -39,6 +40,13 @@ namespace AtlasBot.Modules.Coach
             {
                 throw new Exception("Role or Champion not found.");
             }
+        }
+
+        public void AddChampion(ulong discordid, string championname)
+        {
+            ChampionAPI championApi = new ChampionAPI();
+            int champid = championApi.GetChampionId(championname);
+            new CoachRepo(new CoachContext()).AddChampionToCoach(champid, discordid);
         }
     }
 }

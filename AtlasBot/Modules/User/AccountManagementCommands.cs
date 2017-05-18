@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AtlasBot.Modules.Atlas_Flair_System;
 using AtlasBot.Modules.Roles;
 using AtlasBot.Modules.Role_Management;
 using DataLibary.Models;
@@ -41,7 +42,7 @@ namespace AtlasBot.Modules.User
                         string summonername = e.GetArg("Summoner");
                         SummonerRepo sumRepo = new SummonerRepo(new SummonerContext());
                         UserRepo userRepo = new UserRepo(new UserContext());
-                        int riotid = Convert.ToInt32(new SummonerAPI().GetSummonerId(summonername, region));
+                        long riotid = Convert.ToInt32(new SummonerAPI().GetSummonerId(summonername, region));
                         string token = new StringBuilder().CreateToken();
                         if (
                             sumRepo.IsSummonerInSystem(riotid
@@ -74,6 +75,7 @@ namespace AtlasBot.Modules.User
                                 {
                                     sumRepo.VerifySummoner(userRepo.GetUserByDiscord((e.User.Id)), riotid);
                                     returnmessage = Eng_Default.AccountVerified();
+                                    new FlairTrigger(BotUser, commands).CreateFlair(new SummonerAPI().GetSummoner(riotid, region));
                                     new RoleManagementCommands(BotUser, commands).GetRoles(e.Server, e.User);
                                 }
                             }
@@ -114,6 +116,7 @@ namespace AtlasBot.Modules.User
                             {
                                 sumRepo.VerifySummoner(userRepo.GetUserByDiscord((e.User.Id)), Convert.ToInt32(summoner.Id));
                                 returnmessage = Eng_Default.AccountVerified();
+                                new FlairTrigger(BotUser, commands).CreateFlair(summoner);
                                 new RoleManagementCommands(BotUser, commands).GetRoles(e.Server, e.User);
                             }
                         }

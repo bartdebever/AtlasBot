@@ -18,28 +18,28 @@ namespace RiotLibary.Roles
         public string GetRankingHarder(Summoner summoner, Queue queue)
         {
             string result = null;
-            summoner.GetLeagues().ForEach(stat =>
+            foreach (var stat in summoner.GetLeagues())
             {
                 if (stat.Queue == queue)
                 {
                     string rank = stat.Tier.ToString();
-                    string division = stat.Entries.Where(y => y.PlayerOrTeamId == summoner.Id.ToString()).Select(y => y.Division).Single();
-                    result =  (rank + " " + division);
+                    string division = stat.Entries.Where(y => y.PlayerOrTeamId == Convert.ToString(summoner.Id)).Select(y => y.Division).Single();
+                    result = (rank + " " + division);
                 }
-            });
+            }
             return result;
         }
 
         public string GetRankingSimple(Summoner summoner, Queue queue)
         {
             string result = "";
-            summoner.GetLeagues().ForEach(stat =>
+            foreach(var stat in summoner.GetLeagues())
             {
                 if (stat.Queue == queue)
                 {
                     result = stat.Tier.ToString();
                 }
-            });
+            }
             return result;
         }
 

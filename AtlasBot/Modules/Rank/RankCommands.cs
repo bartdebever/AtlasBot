@@ -434,8 +434,16 @@ namespace AtlasBot.Modules.Rank
                 {
                     if (settingsRepo.RankCommandType(server.Id) == CommandType.Basic)
                     {
-                        string rank = new RankAPI().GetRankingSimple(summoner,
-                            Queue.RankedSolo5x5);
+                        string rank = "";
+                        try
+                        {
+                            rank = new RankAPI().GetRankingHarder(summoner, Queue.RankedSolo5x5)
+                                .ToLower();
+                        }
+                        catch
+                        {
+                            rank = new RankAPI().GetRankingSimple(summoner, Queue.RankedSolo5x5);
+                        }
                         try
                         {
                             await discorduser.AddRoles(
@@ -450,9 +458,17 @@ namespace AtlasBot.Modules.Rank
                     }
                     else if (settingsRepo.RankCommandType(server.Id) == CommandType.Division)
                     {
-                        string rank =
-                            new RankAPI().GetRankingHarder(summoner, Queue.RankedSolo5x5)
+                        string rank = "";
+                        try
+                        {
+                            rank = new RankAPI().GetRankingHarder(summoner, Queue.RankedSolo5x5)
                                 .ToLower();
+                        }
+                        catch
+                        {
+                            
+                        }
+                            
                         try
                         {
                             await discorduser.AddRoles(
@@ -485,7 +501,7 @@ namespace AtlasBot.Modules.Rank
                         }
                         catch
                         {
-                            Console.WriteLine(discorduser.Name + "doesn't have a soloq rank");
+                            Console.WriteLine(discorduser.Name + " doesn't have a soloq rank");
                         }
                         try
                         {
@@ -504,7 +520,7 @@ namespace AtlasBot.Modules.Rank
                         }
                         catch
                         {
-                            Console.WriteLine(discorduser.Name + "doesn't have a flex rank");
+                            Console.WriteLine(discorduser.Name + " doesn't have a flex rank");
                         }
                         try
                         {
@@ -523,7 +539,7 @@ namespace AtlasBot.Modules.Rank
                         }
                         catch
                         {
-                            Console.WriteLine(discorduser.Name + "doesn't have a 3v3 rank");
+                            Console.WriteLine(discorduser.Name + " doesn't have a 3v3 rank");
                         }
 
                     }

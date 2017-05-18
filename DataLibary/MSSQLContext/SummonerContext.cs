@@ -12,7 +12,7 @@ namespace DataLibary.MSSQLContext
 {
     public class SummonerContext : ISummonerContext
     {
-        public void AddSummoner(int userid, int riotid, int regionid, string token)
+        public void AddSummoner(int userid, long riotid, int regionid, string token)
         {
             string query = "INSERT INTO [Summoner] VALUES (@userid, @riotid, @regionid, @token, 0, null)";
             SqlCommand cmd = new SqlCommand(query, Database.Connection());
@@ -23,7 +23,7 @@ namespace DataLibary.MSSQLContext
             cmd.ExecuteNonQuery();
         }
 
-        public void RemoveSummoner(User user, int riotid)
+        public void RemoveSummoner(User user, long riotid)
         {
             string query = "DELETE [Summoner] WHERE UserId = @userid AND RiotId = @riotid";
             SqlCommand cmd = new SqlCommand(query, Database.Connection());
@@ -32,7 +32,7 @@ namespace DataLibary.MSSQLContext
             cmd.ExecuteNonQuery();
         }
 
-        public void VerifySummoner(User user, int riotid)
+        public void VerifySummoner(User user, long riotid)
         {
             string query = "UPDATE [Summoner] SET Verified = 1 WHERE UserId = @userid AND RiotId = @riotid";
             SqlCommand cmd = new SqlCommand(query, Database.Connection());
@@ -41,7 +41,7 @@ namespace DataLibary.MSSQLContext
             cmd.ExecuteNonQuery();
         }
 
-        public int GetSummonerByUserId(User user)
+        public long GetSummonerByUserId(User user)
         {
             string query = "SELECT Riotid FROM [Summoner] WHERE UserId = @userid AND Verified = 1";
             SqlCommand cmd = new SqlCommand(query, Database.Connection());
@@ -50,7 +50,7 @@ namespace DataLibary.MSSQLContext
             {
                 while (reader.Read())
                 {
-                    return reader.GetInt32(0);
+                    return reader.GetInt64(0);
                 }
             }
             throw new Exception("Summoner not found");
@@ -72,7 +72,7 @@ namespace DataLibary.MSSQLContext
             return result;
         }
 
-        public string GetToken(User user, int riotid)
+        public string GetToken(User user, long riotid)
         {
             string query = "SELECT Token FROM [Summoner] WHERE UserId = @userid AND RiotId = @riotid";
             SqlCommand cmd = new SqlCommand(query, Database.Connection());
@@ -88,7 +88,7 @@ namespace DataLibary.MSSQLContext
             throw new Exception("Summoner not found");
         }
 
-        public bool IsSummonerInSystem(int riotid)
+        public bool IsSummonerInSystem(long riotid)
         {
             string query = "SELECT COUNT(Id) FROM [Summoner] WHERE RiotId = @riotid";
             SqlCommand cmd = new SqlCommand(query, Database.Connection());
@@ -110,7 +110,7 @@ namespace DataLibary.MSSQLContext
             return false;
         }
 
-        public int GetUnverifiedSummonerByUserId(ulong userid)
+        public long GetUnverifiedSummonerByUserId(ulong userid)
         {
             string query = "SELECT Riotid FROM [Summoner] INNER JOIN [User] U ON [U].id = [Summoner].userid WHERE DiscordId = @userid AND verified = 0";
             SqlCommand cmd = new SqlCommand(query, Database.Connection());
@@ -119,7 +119,7 @@ namespace DataLibary.MSSQLContext
             {
                 while (reader.Read())
                 {
-                    return reader.GetInt32(0);
+                    return reader.GetInt64(0);
                 }
             }
             throw new Exception("Summoner not found");

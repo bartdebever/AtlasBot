@@ -57,7 +57,12 @@ namespace DataLibary.MSSQLContext
 
         public void AddChampionToCoach(int championid, ulong id)
         {
-            throw new NotImplementedException();
+            string query =
+                "INSERT INTO [Coach_Champion] VALUES (SELECT [C].Id FROM [Coach] INNER JOIN [User] U ON [U].Id = [C].UserId WHERE [U].DiscordId = @DiscordId), @ChampionId)";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@DiscordId", Convert.ToInt64(id));
+            cmd.Parameters.AddWithValue("@ChampionId", championid);
+            cmd.ExecuteNonQuery();
         }
 
         public void RemoveChampionFromCoach(int championid, ulong id)

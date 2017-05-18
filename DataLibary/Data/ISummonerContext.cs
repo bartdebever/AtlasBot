@@ -11,13 +11,13 @@ namespace DataLibary.Data
 {
     public interface ISummonerContext
     {
-        void AddSummoner(int userid, int riotid, int regionid, string token);
-        void RemoveSummoner(User user, int riotid);
-        void VerifySummoner(User user, int riotid);
-        string GetToken(User user, int riotid);
-        int GetSummonerByUserId(User user);
-        int GetUnverifiedSummonerByUserId(ulong userid);
+        void AddSummoner(int userid, long riotid, int regionid, string token);
+        void RemoveSummoner(User user, long riotid);
+        void VerifySummoner(User user,long riotid);
+        string GetToken(User user, long riotid);
+        long GetSummonerByUserId(User user);
+        long GetUnverifiedSummonerByUserId(ulong userid);
         List<int> GetSummonersByRegion(int regionid);
-        bool IsSummonerInSystem(int riotid);
+        bool IsSummonerInSystem(long riotid);
     }
 }

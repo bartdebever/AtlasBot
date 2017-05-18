@@ -36,6 +36,7 @@ namespace AtlasBot.Modules.Role_Management
                 ServerRepo serverRepo = new ServerRepo(new ServerContext());
                 UserRepo userRepo = new UserRepo(new UserContext());
                 RoleManagementTrigger rmt = new RoleManagementTrigger(BotUser, commands);
+                /*
                 if (userRepo.IsAtlasAdmin(e.User.Id))
                 {
                     foreach (Discord.Server server in BotUser.Servers)
@@ -61,7 +62,7 @@ namespace AtlasBot.Modules.Role_Management
                     returnstring = "System update complete.";
                 }
 
-                else if (new ServerRepo(new ServerContext()).IsAdmin(e.User.Id, e.Server.Id))
+                else*/ if (new ServerRepo(new ServerContext()).IsAdmin(e.User.Id, e.Server.Id))
                 {
                     if ((serverRepo.GetLastupdateDateServer(e.Server.Id) < DateTime.Today) && serverRepo.IsServerVerified(e.Server.Id))
                     {

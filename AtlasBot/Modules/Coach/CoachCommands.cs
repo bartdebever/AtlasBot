@@ -28,25 +28,29 @@ namespace AtlasBot.Modules.Coach
         private void AddCoach()
         {
             commands.CreateCommand("AddCoach")
+                .Parameter("CommandType")
                 .Parameter("User")
-                .Parameter("Role")
+                .Parameter("Role", ParameterType.Optional)
                 .Parameter("ChampionName",ParameterType.Unparsed)
                 .Do(async (e) =>
                 {
                     string returnstring = "";
                     ServerRepo serverRepo = new ServerRepo(new ServerContext());
+                    CoachTrigger trigger = new CoachTrigger(commands);
                     if (e.Server.Id == 302775478824075267 && serverRepo.IsAdmin(e.User.Id, e.Server.Id))
                     {
-                        CoachTrigger trigger = new CoachTrigger(commands);
-                        try
+                        if (e.GetArg("CommandType") == "add")
                         {
-                            trigger.AddCoach(e.Message.MentionedUsers.First().Id, e.GetArg("ChampionName"),
-                                e.GetArg("Role"));
-                            returnstring = "Coach added successfully.";
-                        }
-                        catch
-                        {
-                            returnstring = "Failed to add coach";
+                            try
+                            {
+                                trigger.AddCoach(e.Message.MentionedUsers.First().Id, e.GetArg("ChampionName"),
+                                    e.GetArg("Role"));
+                                returnstring = "Coach added successfully.";
+                            }
+                            catch
+                            {
+                                returnstring = "Failed to add coach";
+                            }
                         }
                     }
                     else

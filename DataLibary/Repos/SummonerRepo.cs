@@ -17,27 +17,27 @@ namespace DataLibary.Repos
             this.context = context;
         }
 
-        public void AddSummoner(int userid, int riotid, int regionid, string token)
+        public void AddSummoner(int userid, long riotid, int regionid, string token)
         {
             context.AddSummoner(userid, riotid, regionid, token);
         }
 
-        public void RemoveSummoner(User user, int riotid)
+        public void RemoveSummoner(User user, long riotid)
         {
             context.RemoveSummoner(user, riotid);
         }
 
-        public void VerifySummoner(User user, int riotid)
+        public void VerifySummoner(User user, long riotid)
         {
             context.VerifySummoner(user, riotid);
         }
 
-        public string GetToken(User user, int riotid)
+        public string GetToken(User user, long riotid)
         {
             return context.GetToken(user, riotid);
         }
 
-        public int GetSummonerByUserId(User user)
+        public long GetSummonerByUserId(User user)
         {
             return context.GetSummonerByUserId(user);
         }
@@ -47,11 +47,11 @@ namespace DataLibary.Repos
             return context.GetSummonersByRegion(regionid);
         }
 
-        public bool IsSummonerInSystem(int riotid)
+        public bool IsSummonerInSystem(long riotid)
         {
             return context.IsSummonerInSystem(riotid);
         }
-        public int GetUnverifiedSummonerByUserId(ulong userid)
+        public long GetUnverifiedSummonerByUserId(ulong userid)
         {
             return context.GetUnverifiedSummonerByUserId(userid);
         }
