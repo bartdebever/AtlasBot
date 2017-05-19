@@ -35,6 +35,8 @@ using ToolKit;
 using Message = Discord.API.Client.Message;
 using Region = RiotSharp.Region;
 using Role = Discord.API.Client.Role;
+using Keys;
+using Keys = Keys.Keys;
 
 namespace AtlasBot
 {
@@ -79,7 +81,7 @@ namespace AtlasBot
                 ServerManagement serverManagement = new ServerManagement(BotUser, commands);
                 RankCommands rankCommands = new RankCommands(BotUser, commands);
                 SummonerInfo summonerInfo = new SummonerInfo(commands);
-                BotManagement botManagement = new BotManagement(BotUser, commands);
+                BotManagement botManagement = new BotManagement(commands, BotUser);
                 CreateRoles createRoles = new CreateRoles(commands);
                 Matchmaking_Settings matchmakingSettings = new Matchmaking_Settings(commands);
                 CoachCommands coachCommands = new CoachCommands(commands);
@@ -92,7 +94,6 @@ namespace AtlasBot
                 matchmakingSettings.ChannelSettings();
                 coachCommands.CreateCommands();
                 createRoles.CreateRank();
-                botManagement.SetGame();
                 summonerInfo.SelfInfo();
                 summonerInfo.OtherInfo();
                 serverManagement.ServerAdded();
@@ -122,7 +123,7 @@ namespace AtlasBot
                 Test();
                 BotUser.ExecuteAndWait(async () =>
                 {
-                    await BotUser.Connect(Keys.Keys.discordKey, TokenType.Bot);
+                    await BotUser.Connect(global::Keys.Keys.discordkey, TokenType.Bot);
                 });
             }
             public void Legal()

@@ -9,6 +9,7 @@ using DataLibary.MSSQLContext;
 using DataLibary.Repos;
 using Discord;
 using Discord.Commands;
+using Keys;
 using RiotSharp.SummonerEndpoint;
 
 namespace AtlasBot.Modules.Matchmaking
@@ -45,6 +46,16 @@ namespace AtlasBot.Modules.Matchmaking
                     }
                     if (found == false) await channel.SendMessage(queuemessage);
                 }
+                else if (server.Id == DiscordIds.AtlasId)
+                {
+                    foreach (var channel in server.TextChannels)
+                    {
+                        if (channel.Name.Contains(summoner.Region.ToString()) && channel.Name.Contains("queue"))
+                        {
+                            await channel.SendMessage(queuemessage);
+                        }
+                    }
+                }
             }
         }
 
@@ -71,29 +82,69 @@ namespace AtlasBot.Modules.Matchmaking
         }
         public async void RemoveMessages(Discord.Server server)
         {
-            SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
-            Discord.Channel channel = server.GetChannel(settingsRepo.GetLfgChannel(server.Id));
-            Discord.Message[] temp = await channel.DownloadMessages(100);
-            bool found = false;
-            try
+            if (server.Id != DiscordIds.AtlasId)
             {
-
-                while (temp.Length > 1 && temp.Last().Text != "queue has been cleared!")
+                SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
+                Discord.Channel channel = server.GetChannel(settingsRepo.GetLfgChannel(server.Id));
+                Discord.Message[] temp = await channel.DownloadMessages(100);
+                bool found = false;
+                try
                 {
-                    await channel.DeleteMessages(temp);
-                    found = true;
-                    temp = await channel.DownloadMessages(100);
 
+                    while (temp.Length > 1 && temp.Last().Text != "queue has been cleared!")
+                    {
+                        await channel.DeleteMessages(temp);
+                        found = true;
+                        temp = await channel.DownloadMessages(100);
+
+                    }
+                }
+                catch
+                {
+                    found = true;
+                }
+                if (found == true)
+                {
+                    await channel.SendMessage("Queue has been cleared!");
                 }
             }
-            catch
+            else
             {
-                found = true;
+                List<Channel> channels = new List<Channel>();
+                foreach (var channel in server.TextChannels)
+                {
+                    if (channel.Name.Contains("queue"))
+                    {
+                        channels.Add(channel);
+                    }
+                    
+                }
+                foreach (var channel in channels)
+                {
+                    Discord.Message[] temp = await channel.DownloadMessages(100);
+                    bool found = false;
+                    try
+                    {
+
+                        while (temp.Length > 1 && temp.Last().Text != "queue has been cleared!")
+                        {
+                            await channel.DeleteMessages(temp);
+                            found = true;
+                            temp = await channel.DownloadMessages(100);
+
+                        }
+                    }
+                    catch
+                    {
+                        found = true;
+                    }
+                    if (found == true)
+                    {
+                        await channel.SendMessage("Queue has been cleared!");
+                    }
+                }
             }
-            if (found == true)
-            {
-                await channel.SendMessage("Queue has been cleared!");
-            }
+            
 
         }
 

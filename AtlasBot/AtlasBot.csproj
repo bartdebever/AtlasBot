@@ -232,6 +232,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTypes\Commands.cs" />
     <Compile Include="Modules\Administrative\BotManagement.cs" />
     <Compile Include="Modules\Administrative\BotTriggers.cs" />
     <Compile Include="Modules\Administrative\CreateRoles.cs" />

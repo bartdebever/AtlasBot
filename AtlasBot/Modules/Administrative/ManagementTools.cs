@@ -235,12 +235,12 @@ namespace AtlasBot.Modules.Administrative
                                                 "\n\nYou can also find out what overrides you have with -Override List." +
                                                 "\nThese overrides can be removed using *-Override remove <id>*." +
                                                 "\n\nYou can also disable roles, these will not be getable by parameter (-rank master)" +
-                                                "\nUse *-Override add <Role> disable* to disable a role." +
+                                                "\nUse *-Override add disable <Role>* to disable a role." +
                                                 "\nYou can see disables in the override list using *-Override list*." +
-                                                "\nYou can remove disables by using *-Override remove <id> disable*.";
+                                                "\nYou can remove disables by using *-Override remove disable <id>*.";
                             }
                             else if (e.GetArg("CommandType").ToLower() == "remove" &&
-                                     e.GetArg("Parameter").ToLower() != "disable")
+                                     e.GetArg("Role").ToLower() != "disable")
                             {
                                 try
                                 {
@@ -255,11 +255,11 @@ namespace AtlasBot.Modules.Administrative
                             }
                             else if ((e.GetArg("CommandType").ToLower() == "remove" ||
                                       e.GetArg("CommandType").ToLower() == "delete") &&
-                                     e.GetArg("Parameter").ToLower() == "disable")
+                                     e.GetArg("Role").ToLower() == "disable")
                             {
                                 try
                                 {
-                                    settingsRepo.RemoveRoleDisable(Convert.ToInt32(e.GetArg("Role")), e.Server.Id);
+                                    settingsRepo.RemoveRoleDisable(Convert.ToInt32(e.GetArg("Parameter")), e.Server.Id);
                                     returnstring = "Disable has been removed.";
                                 }
                                 catch
@@ -271,11 +271,11 @@ namespace AtlasBot.Modules.Administrative
                             else if (e.GetArg("CommandType").ToLower() == "add")
                             {
                                     //Adds an override to the system
-                                    if (e.GetArg("Parameter").ToLower() == "disable")
+                                    if (e.GetArg("Role").ToLower() == "disable")
                                 {
                                     try
                                     {
-                                        settingsRepo.AddRoleDisable(e.GetArg("Role"), e.Server.Id);
+                                        settingsRepo.AddRoleDisable(e.GetArg("Parameter"), e.Server.Id);
                                         returnstring = "Successfully added disable.";
                                     }
                                     catch

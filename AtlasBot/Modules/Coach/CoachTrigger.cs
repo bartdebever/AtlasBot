@@ -13,13 +13,6 @@ namespace AtlasBot.Modules.Coach
 {
     public class CoachTrigger
     {
-        private CommandService commands;
-
-        public CoachTrigger(CommandService commands)
-        {
-            this.commands = commands;
-        }
-
         public void AddCoach(ulong discordid, string championname, string role)
         {
             ChampionAPI championApi = new ChampionAPI();

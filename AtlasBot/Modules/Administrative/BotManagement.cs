@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AtlasBot.DataTypes;
 using DataLibary.Models;
 using DataLibary.MSSQLContext;
 using DataLibary.Repos;
@@ -12,15 +13,14 @@ using Languages;
 
 namespace AtlasBot.Modules.Administrative
 {
-    public class BotManagement
+    public class BotManagement : Commands
     {
-        private DiscordClient BotUser;
         private CommandService commands;
 
-        public BotManagement(DiscordClient BotUser, CommandService commands)
+        public BotManagement(CommandService commands, DiscordClient botuser):base(botuser)
         {
-            this.BotUser = BotUser;
             this.commands = commands;
+            CreateCommands();
         }
 
         public void SetGame()
@@ -40,6 +40,11 @@ namespace AtlasBot.Modules.Administrative
                         await e.Channel.SendMessage(Eng_Default.NotAllowed());
                     }
                 });
+        }
+
+        public override void CreateCommands()
+        {
+            SetGame();
         }
     }
 }
