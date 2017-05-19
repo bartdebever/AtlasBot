@@ -92,7 +92,7 @@ namespace AtlasBot.Modules.User
 
         public void Claim()
         {
-            commands.CreateCommand("ClaimAccount")
+            commands.CreateCommand("Claim")
                 .Do(async (e) =>
                 {
                    Summoner summoner =

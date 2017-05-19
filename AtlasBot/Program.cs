@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AtlasBot.Modules.Administrative;
 using AtlasBot.Modules.Coach;
+using AtlasBot.Modules.Help;
 using AtlasBot.Modules.Logging;
 using AtlasBot.Modules.Mastery;
 using AtlasBot.Modules.Matchmaking;
@@ -89,6 +90,7 @@ namespace AtlasBot
                 stopwatch.Start();
                 MatchmakingTrigger trigger = new MatchmakingTrigger(BotUser, commands);
                 MatchmakingCommands matchmakingCommands = new MatchmakingCommands(commands, BotUser, trigger);
+                new HelpCommand(BotUser, commands);
                 Task.Run(() => trigger.TimedClear(stopwatch));
                 matchmakingCommands.CreateCommands();
                 matchmakingSettings.ChannelSettings();
