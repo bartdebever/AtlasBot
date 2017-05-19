@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AtlasBot.Modules.Administrative;
 using AtlasBot.Modules.Coach;
+using AtlasBot.Modules.Help;
 using AtlasBot.Modules.Logging;
 using AtlasBot.Modules.Mastery;
 using AtlasBot.Modules.Matchmaking;
@@ -35,6 +36,8 @@ using ToolKit;
 using Message = Discord.API.Client.Message;
 using Region = RiotSharp.Region;
 using Role = Discord.API.Client.Role;
+using Keys;
+using Keys = Keys.Keys;
 
 namespace AtlasBot
 {
@@ -79,7 +82,7 @@ namespace AtlasBot
                 ServerManagement serverManagement = new ServerManagement(BotUser, commands);
                 RankCommands rankCommands = new RankCommands(BotUser, commands);
                 SummonerInfo summonerInfo = new SummonerInfo(commands);
-                BotManagement botManagement = new BotManagement(BotUser, commands);
+                BotManagement botManagement = new BotManagement(commands, BotUser);
                 CreateRoles createRoles = new CreateRoles(commands);
                 Matchmaking_Settings matchmakingSettings = new Matchmaking_Settings(commands);
                 CoachCommands coachCommands = new CoachCommands(commands);
@@ -87,12 +90,12 @@ namespace AtlasBot
                 stopwatch.Start();
                 MatchmakingTrigger trigger = new MatchmakingTrigger(BotUser, commands);
                 MatchmakingCommands matchmakingCommands = new MatchmakingCommands(commands, BotUser, trigger);
+                new HelpCommand(BotUser, commands);
                 Task.Run(() => trigger.TimedClear(stopwatch));
                 matchmakingCommands.CreateCommands();
                 matchmakingSettings.ChannelSettings();
                 coachCommands.CreateCommands();
                 createRoles.CreateRank();
-                botManagement.SetGame();
                 summonerInfo.SelfInfo();
                 summonerInfo.OtherInfo();
                 serverManagement.ServerAdded();
@@ -122,7 +125,7 @@ namespace AtlasBot
                 Test();
                 BotUser.ExecuteAndWait(async () =>
                 {
-                    await BotUser.Connect(Keys.Keys.discordKey, TokenType.Bot);
+                    await BotUser.Connect(global::Keys.Keys.discordkey, TokenType.Bot);
                 });
             }
             public void Legal()
@@ -130,7 +133,7 @@ namespace AtlasBot
                 commands.CreateCommand("legal")
                     .Do(async (e) =>
                     {
-                        await e.Channel.SendMessage("AtlasBot isn’t endorsed by Riot Games and doesn’t reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.");
+                        await e.Channel.SendMessage("AtlasBot isn’t endorsed by Riot Games and doesn’t reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc");
                     });
             }
 

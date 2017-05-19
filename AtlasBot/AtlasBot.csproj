@@ -232,6 +232,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTypes\Commands.cs" />
     <Compile Include="Modules\Administrative\BotManagement.cs" />
     <Compile Include="Modules\Administrative\BotTriggers.cs" />
     <Compile Include="Modules\Administrative\CreateRoles.cs" />
@@ -239,6 +240,7 @@
     <Compile Include="Modules\Atlas Flair System\FlairTrigger.cs" />
     <Compile Include="Modules\Coach\CoachCommands.cs" />
     <Compile Include="Modules\Coach\CoachTrigger.cs" />
+    <Compile Include="Modules\Help\HelpCommand.cs" />
     <Compile Include="Modules\Logging\Log.cs" />
     <Compile Include="Modules\Mastery\MasteryCommands.cs" />
     <Compile Include="Modules\Matchmaking\MatchmakingCommands.cs" />
