@@ -75,8 +75,8 @@ namespace AtlasBot.Modules.User
                                 {
                                     sumRepo.VerifySummoner(userRepo.GetUserByDiscord((e.User.Id)), riotid);
                                     returnmessage = Eng_Default.AccountVerified();
-                                    new FlairTrigger(BotUser, commands).CreateFlair(new SummonerAPI().GetSummoner(riotid, region));
                                     new RoleManagementCommands(BotUser, commands).GetRoles(e.Server, e.User);
+                                    new FlairTrigger(BotUser, commands).CreateFlair(new SummonerAPI().GetSummoner(riotid, region));
                                 }
                             }
                             foreach (var page in new SummonerAPI().GetRunePages(summonername, region))
@@ -85,8 +85,8 @@ namespace AtlasBot.Modules.User
                                 {
                                     sumRepo.VerifySummoner(userRepo.GetUserByDiscord((e.User.Id)), riotid);
                                     returnmessage = Eng_Default.AccountVerified();
-                                    new FlairTrigger(BotUser, commands).CreateFlair(new SummonerAPI().GetSummoner(riotid, region));
                                     new RoleManagementCommands(BotUser, commands).GetRoles(e.Server, e.User);
+                                    new FlairTrigger(BotUser, commands).CreateFlair(new SummonerAPI().GetSummoner(riotid, region));
                                 }
                             }
                         }
