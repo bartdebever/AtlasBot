@@ -50,7 +50,7 @@ namespace AtlasBot.Modules.Matchmaking
                 {
                     foreach (var channel in server.TextChannels)
                     {
-                        if (channel.Name.Contains(summoner.Region.ToString()) && channel.Name.Contains("queue"))
+                        if (channel.Name.ToLower().Contains(summoner.Region.ToString().ToLower()) && channel.Name.ToLower().Contains("queue"))
                         {
                             await channel.SendMessage(queuemessage);
                         }
@@ -108,7 +108,7 @@ namespace AtlasBot.Modules.Matchmaking
                     await channel.SendMessage("Queue has been cleared!");
                 }
             }
-            else
+            else if (server.Id == DiscordIds.AtlasId)
             {
                 List<Channel> channels = new List<Channel>();
                 foreach (var channel in server.TextChannels)
@@ -121,7 +121,7 @@ namespace AtlasBot.Modules.Matchmaking
                 }
                 foreach (var channel in channels)
                 {
-                    Discord.Message[] temp = await channel.DownloadMessages(100);
+                    Discord.Message[] temp = await channel.DownloadMessages();
                     bool found = false;
                     try
                     {
@@ -130,7 +130,7 @@ namespace AtlasBot.Modules.Matchmaking
                         {
                             await channel.DeleteMessages(temp);
                             found = true;
-                            temp = await channel.DownloadMessages(100);
+                            temp = await channel.DownloadMessages();
 
                         }
                     }
@@ -138,7 +138,7 @@ namespace AtlasBot.Modules.Matchmaking
                     {
                         found = true;
                     }
-                    if (found == true)
+                    if (found)
                     {
                         await channel.SendMessage("Queue has been cleared!");
                     }

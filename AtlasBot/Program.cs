@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AtlasBot.Modules.Administrative;
 using AtlasBot.Modules.Coach;
+using AtlasBot.Modules.Fun;
 using AtlasBot.Modules.Help;
 using AtlasBot.Modules.Logging;
 using AtlasBot.Modules.Mastery;
@@ -83,6 +84,7 @@ namespace AtlasBot
                 RankCommands rankCommands = new RankCommands(BotUser, commands);
                 SummonerInfo summonerInfo = new SummonerInfo(commands);
                 BotManagement botManagement = new BotManagement(commands, BotUser);
+                Interaction inter = new Interaction(BotUser, commands);
                 CreateRoles createRoles = new CreateRoles(commands);
                 Matchmaking_Settings matchmakingSettings = new Matchmaking_Settings(commands);
                 CoachCommands coachCommands = new CoachCommands(commands);
@@ -125,7 +127,7 @@ namespace AtlasBot
                 Test();
                 BotUser.ExecuteAndWait(async () =>
                 {
-                    await BotUser.Connect(global::Keys.Keys.discordkey, TokenType.Bot);
+                    await BotUser.Connect(global::Keys.Keys.discordKey, TokenType.Bot);
                 });
             }
             public void Legal()

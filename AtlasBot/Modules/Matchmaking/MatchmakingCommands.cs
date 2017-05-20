@@ -8,6 +8,7 @@ using DataLibary.MSSQLContext;
 using DataLibary.Repos;
 using Discord;
 using Discord.Commands;
+using Keys;
 using Languages;
 using RiotLibary.Roles;
 using RiotSharp;
@@ -46,7 +47,7 @@ namespace AtlasBot.Modules.Matchmaking
                     {
                         foreach (var server in BotUser.Servers)
                         {
-                            if (settingsRepo.lfgStatus(server.Id))
+                            if (settingsRepo.lfgStatus(server.Id) || server.Id == DiscordIds.AtlasId)
                             {
                                 await (Task.Run(() => trigger.RemoveMessages(server)));
                                 
@@ -59,6 +60,7 @@ namespace AtlasBot.Modules.Matchmaking
         private void QueueUp()
         {
             commands.CreateCommand("QueueUp")
+                .Alias("Queue")
                  .Parameter("Queue", ParameterType.Unparsed)
                 .Do(async (e) =>
                 {
@@ -66,7 +68,7 @@ namespace AtlasBot.Modules.Matchmaking
                     StringHandler SH = new StringHandler(e.Server);
                     SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
                     ServerRepo serverRepo = new ServerRepo(new ServerContext());
-                    if (serverRepo.IsServerVerified(e.Server.Id)&& settingsRepo.lfgStatus(e.Server.Id))
+                    if (serverRepo.IsServerVerified(e.Server.Id)&& settingsRepo.lfgStatus(e.Server.Id) || e.Server.Id == DiscordIds.AtlasId)
                     {
                         Summoner summoner = null;
                         try
