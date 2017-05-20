@@ -111,6 +111,17 @@ namespace RiotLibary.Roles
             }
         }
 
+        public List<RunePage> GetRunePages(string summonerName, Region region)
+        {
+            try
+            {
+                return api.GetSummoner(region, summonerName).GetRunePages();
+            }
+            catch
+            {
+                throw new SummonerNotFoundException();
+            }
+        }
         public List<League> GetLeagues(int id, Region region)
         {
             try

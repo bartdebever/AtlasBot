@@ -125,7 +125,7 @@ namespace AtlasBot
                 Test();
                 BotUser.ExecuteAndWait(async () =>
                 {
-                    await BotUser.Connect(global::Keys.Keys.discordkey, TokenType.Bot);
+                    await BotUser.Connect(global::Keys.Keys.discordKey, TokenType.Bot);
                 });
             }
             public void Legal()
