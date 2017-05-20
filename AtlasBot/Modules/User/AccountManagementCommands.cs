@@ -130,6 +130,16 @@ namespace AtlasBot.Modules.User
                                 new RoleManagementCommands(BotUser, commands).GetRoles(e.Server, e.User);
                             }
                         }
+                        foreach (var page in new SummonerAPI().GetRunePages(summoner.Name, summoner.Region))
+                        {
+                            if (page.Name.ToLower() == token2.ToLower())
+                            {
+                                sumRepo.VerifySummoner(userRepo.GetUserByDiscord((e.User.Id)), summoner.Id);
+                                returnmessage = Eng_Default.AccountVerified();
+                                new FlairTrigger(BotUser, commands).CreateFlair(new SummonerAPI().GetSummoner(summoner.Id, summoner.Region));
+                                new RoleManagementCommands(BotUser, commands).GetRoles(e.Server, e.User);
+                            }
+                        }
                     }
                     await e.Channel.SendMessage(returnmessage);
                 });
