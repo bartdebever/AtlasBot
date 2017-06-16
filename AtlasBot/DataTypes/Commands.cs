@@ -4,16 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Commands;
 
 namespace AtlasBot.DataTypes
 {
     public abstract class Commands
     {
-        public  DiscordClient BotUser { get; private set; }
+        public CommandService commands;
 
-        public Commands(DiscordClient BotUser)
+        public Commands(CommandService commands)
         {
-            this.BotUser = BotUser;
+            this.commands = commands;
         }
 
         public abstract void CreateCommands();

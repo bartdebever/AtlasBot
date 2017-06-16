@@ -11,10 +11,8 @@ namespace AtlasBot.Modules.Help
 {
     public class HelpCommand:Commands
     {
-        private CommandService commands;
-        public HelpCommand(DiscordClient BotUser, CommandService commands) : base(BotUser)
+        public HelpCommand(CommandService commands) : base(commands)
         {
-            this.commands = commands;
             CreateCommands();
         }
 

@@ -34,7 +34,7 @@ namespace Languages
 
         public static string RoleHasBeenGiven(string role)
         {
-            return "Given the " + role + " role to you.";
+            return ":ballot_box_with_check: Given the " + role + " role to you.";
         }
 
         public static string CommandTypeChange(string command, string type)
@@ -68,7 +68,15 @@ namespace Languages
 
         public static string RoleNotFound(string role)
         {
-            return "Can not find role called " + role + ".";
+            if (role.ToLower() != "@everyone" || role.ToLower() == "@here")
+            {
+                return "Can not find role called " + role + ".";
+            }
+            else
+            {
+                return "Funny guy, thinking I will mention everyone";
+            }
+            
         }
         public static string ServerDoesNotAllow()
         {

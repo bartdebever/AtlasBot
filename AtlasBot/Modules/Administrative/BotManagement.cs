@@ -15,11 +15,9 @@ namespace AtlasBot.Modules.Administrative
 {
     public class BotManagement : Commands
     {
-        private CommandService commands;
-
-        public BotManagement(CommandService commands, DiscordClient botuser):base(botuser)
+        private DiscordClient BotUser;
+        public BotManagement(CommandService commands, DiscordClient BotUser):base(commands)
         {
-            this.commands = commands;
             CreateCommands();
         }
 

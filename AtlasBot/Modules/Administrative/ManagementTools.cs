@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AtlasBot.DataTypes;
 using DataLibary.Models;
 using DataLibary.MSSQLContext;
 using DataLibary.Repos;
@@ -13,15 +14,11 @@ using RiotLibary.Roles;
 
 namespace AtlasBot.Modules.Administrative
 {
-    public class ManagementTools
+    public class ManagementTools : Commands
     {
-        private DiscordClient BotUser;
-        private CommandService commands;
-
-        public ManagementTools(DiscordClient BotUser, CommandService commands)
+        public ManagementTools(CommandService commands):base(commands)
         {
-            this.BotUser = BotUser;
-            this.commands = commands;
+            CreateCommands();
         }
         public void Admin()
         {
@@ -113,7 +110,7 @@ namespace AtlasBot.Modules.Administrative
 
         public void ChangeCommandAllowed()
         {
-            commands.CreateCommand("Command")
+            commands.CreateCommand("Commands")
                 .Parameter("Command", ParameterType.Required)
                 .Parameter("Value", ParameterType.Optional)
                 .Do(async (e) =>
@@ -476,6 +473,15 @@ namespace AtlasBot.Modules.Administrative
                     }
                     await e.Channel.SendMessage(returnstring);
                 });
+        }
+
+        public override void CreateCommands()
+        {
+            Admin();
+            AdminMastery();
+            ChangeCommandAllowed();
+            OverrideSystem();
+            ChangeType();
         }
     }
 }

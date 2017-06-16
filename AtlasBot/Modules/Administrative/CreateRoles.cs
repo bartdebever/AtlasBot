@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AtlasBot.DataTypes;
 using DataLibary.Models;
 using DataLibary.MSSQLContext;
 using DataLibary.Repos;
@@ -11,14 +12,12 @@ using Discord.Commands;
 
 namespace AtlasBot.Modules.Administrative
 {
-    public class CreateRoles
+    public class CreateRoles : Commands
     {
-        private DiscordClient BotUser;
-        private CommandService commands;
-
-        public CreateRoles(CommandService commands)
+        public CreateRoles(CommandService commands):base(commands)
         {
             this.commands = commands;
+            CreateCommands();
         }
         public void CreateRank()
         {
@@ -102,5 +101,9 @@ namespace AtlasBot.Modules.Administrative
             
         }
 
+        public override void CreateCommands()
+        {
+            CreateRank();
+        }
     }
 }

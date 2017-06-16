@@ -3,22 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AtlasBot.DataTypes;
 using Discord;
 
 namespace AtlasBot.Modules.Administrative
 {
-    public class BotTriggers
+    public class BotTriggers : Trigger
     {
-        private DiscordClient BotUser;
 
-        public BotTriggers(DiscordClient BotUser)
+        public BotTriggers(DiscordClient BotUser):base(BotUser)
         {
-            this.BotUser = BotUser;
+           
         }
-            public void SetGame(string game)
-            {
-                BotUser.SetGame(game);
-            }
-        
+        public void SetGame(string game)
+        {
+            BotUser.SetGame(game);
+        }
     }
 }

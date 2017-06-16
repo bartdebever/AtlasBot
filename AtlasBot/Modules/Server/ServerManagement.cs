@@ -10,7 +10,9 @@ using DataLibary.MSSQLContext;
 using DataLibary.Repos;
 using Discord;
 using Discord.Commands;
+using Discord.Modules;
 using Languages;
+using Microsoft.Runtime.CompilerServices;
 
 namespace AtlasBot.Modules.Server
 {
@@ -24,12 +26,27 @@ namespace AtlasBot.Modules.Server
             this.BotUser = BotUser;
             this.commands = commands;
         }
+
         public void ServerAdded()
         {
             BotUser.JoinedServer += async (s, u) =>
             {
                 AddServer(u.Server);
-                await u.Server.DefaultChannel.SendMessage("New server has been detected!");
+                Channel c = u.Server.FindChannels("general", ChannelType.Text).First();
+
+                try
+                {
+                    await c.SendMessage("New server has been detected! Hello new people!");
+                    if (u.Server.GetUser(111211693870161920) != null)
+                    {
+                        await c.SendMessage("Ow " + u.Server.GetUser(111211693870161920).Mention +
+                                            " is here. Act cool you got this.. Hi Bort!");
+                    }
+                }
+                catch
+                {
+                }
+
             };
         }
 

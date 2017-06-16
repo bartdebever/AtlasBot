@@ -24,21 +24,8 @@ using DataLibary.Models;
 using DataLibary.MSSQLContext;
 using DataLibary.Repos;
 using Discord;
-using Discord.API.Client;
-using Discord.API.Client.Rest;
 using Discord.Commands;
-using Languages;
-using Nito.AsyncEx;
-using RestSharp.Extensions;
-using RiotLibary.Roles;
-using RiotSharp;
-using RiotSharp.SummonerEndpoint;
-using ToolKit;
-using Message = Discord.API.Client.Message;
-using Region = RiotSharp.Region;
-using Role = Discord.API.Client.Role;
-using Keys;
-using Keys = Keys.Keys;
+using Discord.Commands.Permissions.Levels;
 
 namespace AtlasBot
 {
@@ -77,14 +64,11 @@ namespace AtlasBot
                 RoleManagementTrigger roleManagementTrigger = new RoleManagementTrigger(BotUser, commands);
                 RegionCommands regionCommands = new RegionCommands(BotUser, commands);
                 RoleCommand roleCommand = new RoleCommand(BotUser, commands);
-                ManagementTools managementTools = new ManagementTools(BotUser, commands);
                 ServerInfoCommands serverInfoCommands = new ServerInfoCommands(BotUser, commands);
                 MasteryCommands masteryCommands = new MasteryCommands(BotUser, commands);
                 ServerManagement serverManagement = new ServerManagement(BotUser, commands);
                 RankCommands rankCommands = new RankCommands(BotUser, commands);
                 SummonerInfo summonerInfo = new SummonerInfo(commands);
-                BotManagement botManagement = new BotManagement(commands, BotUser);
-                Interaction inter = new Interaction(BotUser, commands);
                 CreateRoles createRoles = new CreateRoles(commands);
                 Matchmaking_Settings matchmakingSettings = new Matchmaking_Settings(commands);
                 CoachCommands coachCommands = new CoachCommands(commands);
@@ -92,7 +76,11 @@ namespace AtlasBot
                 stopwatch.Start();
                 MatchmakingTrigger trigger = new MatchmakingTrigger(BotUser, commands);
                 MatchmakingCommands matchmakingCommands = new MatchmakingCommands(commands, BotUser, trigger);
-                new HelpCommand(BotUser, commands);
+                new HelpCommand(commands);
+                new ManagementTools(commands);
+                new Universal_Role(BotUser, commands).UniversalRole();
+                new BotManagement(commands, BotUser);
+                new Interaction(BotUser, commands);
                 Task.Run(() => trigger.TimedClear(stopwatch));
                 matchmakingCommands.CreateCommands();
                 matchmakingSettings.ChannelSettings();
@@ -106,23 +94,17 @@ namespace AtlasBot
                 amc.ClaimAccount();
                 amc.Claim();
                 rankCommands.GetRank();
-                new Universal_Role(BotUser, commands).UniversalRole();
                 regionCommands.GetRegion();
                 roleCommand.GetRole();
                 rmc.Update();
                 rmc.GetRoles();
-                managementTools.ChangeType();
-                managementTools.ChangeCommandAllowed();
-                managementTools.OverrideSystem();
                 serverInfoCommands.ServerInfo();
                 serverInfoCommands.Description();
                 serverManagement.CheckForNewServer();
-                managementTools.Admin();
                 roleCommand.GetRoleParameter();
                 Legal();
                 roleManagementTrigger.JoiningRoleGive();
                 masteryCommands.GetMasteryPoints();
-                managementTools.AdminMastery();
 
                 Test();
                 BotUser.ExecuteAndWait(async () =>
@@ -146,7 +128,7 @@ namespace AtlasBot
                     {
                         await e.Channel.SendMessage(e.Server.GetChannel(new SettingsContext().GetLfgChannel(e.Server.Id)).Mention);
                     });
-            }               
+            }
         }
     }
 }
