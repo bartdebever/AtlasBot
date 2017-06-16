@@ -387,6 +387,95 @@ namespace AtlasBot.Modules.Administrative
 
         public void AdminMastery()
         {
+            commands.CreateGroup("ConfigMastery", cbg =>
+            {
+                SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
+                ServerRepo serverRepo = new ServerRepo(new ServerContext());
+                cbg.CreateCommand("help")
+                    .Alias("?")
+                    .Do(async (e) =>
+                    {
+                        await e.Channel.SendMessage("**This command can be used to configure the Mastery Point system on your server.**" +
+                                                    "\nUse *-ConfigMastery champion <champion>* to set a champion for your server:" +
+                                                    "\nExample: -ConfigMastery champion Thresh" +
+                                                    "\n\nUse *-ConfigMastery list* to get a list of all the roles you have set up." +
+                                                    "\n\nUse *-ConfigMastery add <RoleName> <Amount>* to add a rank to the system:" +
+                                                    "\nExample: -ConfigMastery add \"1 Million\" 1000000" +
+                                                    "\n\nUse *-ConfigMastery remove <Points>* to remove a milestone rank:" +
+                                                    "\nExample: -ConfigMastery remove 1000000");
+                    });
+                cbg.CreateCommand("champion")
+                    .Parameter("Champion", ParameterType.Unparsed)
+                    .Description("Sets the server's champion.")
+                    .Do(async (e) =>
+                    {
+                        try
+                        {
+                            settingsRepo.SetChampionId(e.Server.Id, new ChampionAPI().GetChampionId(e.GetArg("Champion").ToString()));
+                            await e.Channel.SendMessage(":ballot_box_with_check: Champion set to " + e.GetArg("Champion"));
+                        }
+                        catch
+                        {
+                            await e.Channel.SendMessage(":x: Did not find champion called " + e.GetArg("Champion"));
+                        }
+                    });
+                cbg.CreateCommand("list")
+                    .Description("Shows the list of mastery roles set up for this server.")
+                    .Do(async (e) =>
+                    {
+                        string returnstring = "";
+                        try
+                        {
+                            returnstring = "Server looks at mastery points for " +
+                                           new ChampionAPI().GetChampionName(
+                                               settingsRepo.GetChampionId(e.Server.Id));
+                            returnstring += "\nRoles for this server: ```";
+                            foreach (string line in settingsRepo.GetAllMasteryRoles(e.Server.Id))
+                            {
+                                returnstring += "\n" + line.Split(':').First() + " points uses role: " +
+                                                e.Server.GetRole(Convert.ToUInt64(line.Split(':').Last())).Name;
+                            }
+                            returnstring += "\n```";
+                        }
+                        catch
+                        {
+                            returnstring = ":x: No champion or role found, please set this up first!";
+                        }
+                        await e.Channel.SendMessage(returnstring);
+                    });
+                cbg.CreateCommand("Add")
+                    .Parameter("Role")
+                    .Parameter("Points")
+                    .Description("Adds a treshhold role for an amount of points.")
+                    .Do(async (e) =>
+                    {
+                        try
+                        {
+                            Discord.Role r = e.Server.FindRoles(e.GetArg("Role"), false).First();
+                            settingsRepo.SetRoleByPoints(r.Id, e.Server.Id, Convert.ToInt32(e.GetArg("Points")));
+                            await e.Channel.SendMessage(":ballot_box_with_check: Added to the list!");
+                        }
+                        catch
+                        {
+                            await e.Channel.SendMessage(":x: Failed to add, role not found.");
+                        }
+                    });
+                cbg.CreateCommand("Remove")
+                    .Parameter("Points")
+                    .Description("Removes a treshhold role based on the amount of points.")
+                    .Do(async (e) =>
+                    {
+                        try
+                        {
+                            settingsRepo.RemoveRoleByPoints(e.Server.Id, Convert.ToInt32(e.GetArg("Points")));
+                            await e.Channel.SendMessage(":ballot_box_with_check: Removed the role with the points " + e.GetArg("Points"));
+                        }
+                        catch
+                        {
+                            await e.Channel.SendMessage(":x: Failed to remove the role with points " + e.GetArg("Points"));
+                        }
+                    });
+            });
             commands.CreateCommand("ConfigMastery")
                 .Parameter("CommandType")
                 .Parameter("Parameter", ParameterType.Optional)
@@ -398,81 +487,18 @@ namespace AtlasBot.Modules.Administrative
                     ServerRepo serverRepo = new ServerRepo(new ServerContext());
                     if (serverRepo.IsServerVerified(e.Server.Id) && serverRepo.IsAdmin(e.User.Id, e.Server.Id))
                     {
-                        if (e.GetArg("CommandType") == "?" || e.GetArg("CommandType").ToLower() == "help")
+                        if (e.GetArg("CommandType").ToLower() == "remove")
                         {
-                            returnstring =
-                                "**This command can be used to configure the Mastery Point system on your server.**" +
-                                "\nUse *-ConfigMastery champion <champion>* to set a champion for your server:" +
-                                "\nExample: -ConfigMastery champion Thresh" +
-                                "\n\nUse *-ConfigMastery list* to get a list of all the roles you have set up." +
-                                "\n\nUse *-ConfigMastery add <RoleName> <Amount>* to add a rank to the system:" +
-                                "\nExample: -ConfigMastery add \"1 Million\" 1000000" +
-                                "\n\nUse *-ConfigMastery remove <Points>* to remove a milestone rank:" +
-                                "\nExample: -ConfigMastery remove 1000000";
-                        }
-                        else if (e.GetArg("CommandType").ToLower() == "champion")
-                        {
-                            try
-                            {
-                                settingsRepo.SetChampionId(e.Server.Id, new ChampionAPI().GetChampionId(e.GetArg("Parameter").ToString()));
-                                returnstring = "Champion set to " + e.GetArg("Parameter");
-                            }
-                            catch
-                            {
-                                returnstring = "Did not find champion called " + e.GetArg("Parameter");
-                            }
 
-                        }
-                        else if (e.GetArg("CommandType").ToLower() == "list")
-                        {
-                            try
-                            {
-                                returnstring = "Server looks at mastery points for " +
-                                               new ChampionAPI().GetChampionName(
-                                                   settingsRepo.GetChampionId(e.Server.Id));
-                                returnstring += "\nRoles for this server: ```";
-                                foreach (string line in settingsRepo.GetAllMasteryRoles(e.Server.Id))
-                                {
-                                    returnstring += "\n" + line.Split(':').First() + " points uses role: " +
-                                                    e.Server.GetRole(Convert.ToUInt64(line.Split(':').Last())).Name;
-                                }
-                                returnstring += "\n```";
-                            }
-                            catch
-                            {
-                                returnstring = "No champion or role found, please set this up first!";
-                            }
-
-                        }
-                        else if (e.GetArg("CommandType").ToLower() == "add")
-                        {
-                            try
-                            {
-                                Discord.Role r = e.Server.FindRoles(e.GetArg("Parameter"), false).First();
-                                settingsRepo.SetRoleByPoints(r.Id, e.Server.Id, Convert.ToInt32(e.GetArg("Points")));
-                                returnstring = "Added to the list!";
-                            }
-                            catch
-                            {
-                                returnstring = "Failed to add, role not found.";
-                            }
-
-                        }
-                        else if (e.GetArg("CommandType").ToLower() == "remove")
-                        {
-                            try
-                            {
-                                settingsRepo.RemoveRoleByPoints(e.Server.Id, Convert.ToInt32(e.GetArg("Parameter")));
-                                returnstring = "Removed the role with the points " + e.GetArg("Parameter");
-                            }
-                            catch
-                            {
-                                returnstring = "Failed to remove the role with points " + e.GetArg("Parameter");
-                            }
                         }
                     }
                     await e.Channel.SendMessage(returnstring);
                 });
+        }
+
+        public void Test()
+        {
+            
         }
 
         public override void CreateCommands()
