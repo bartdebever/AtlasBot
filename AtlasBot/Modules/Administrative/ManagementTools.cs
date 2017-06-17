@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AtlasBot.DataTypes;
+using AtlasBot.Extentions;
 using DataLibary.Models;
 using DataLibary.MSSQLContext;
 using DataLibary.Repos;
@@ -387,25 +388,25 @@ namespace AtlasBot.Modules.Administrative
 
         public void AdminMastery()
         {
-            commands.CreateGroup("ConfigMastery", cbg =>
+            commands.CreateGroup("Config Mastery", cbg =>
             {
                 SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
                 ServerRepo serverRepo = new ServerRepo(new ServerContext());
                 cbg.CreateCommand("help")
                     .Alias("?")
-                    .AddCheck(((command, user, channel) => serverRepo.IsAdmin(user.Id, channel.Server.Id) && serverRepo.IsServerVerified(channel.Server.Id)),Eng_Default.NotAllowed())
+                    .AdminCheck()
                     .Do(async (e) =>
                     {
                         
                             await e.Channel.SendMessage(
                                 "**This command can be used to configure the Mastery Point system on your server.**" +
                                 "\nUse *-ConfigMastery champion <champion>* to set a champion for your server:" +
-                                "\nExample: -ConfigMastery champion Thresh" +
-                                "\n\nUse *-ConfigMastery list* to get a list of all the roles you have set up." +
-                                "\n\nUse *-ConfigMastery add <RoleName> <Amount>* to add a rank to the system:" +
-                                "\nExample: -ConfigMastery add \"1 Million\" 1000000" +
-                                "\n\nUse *-ConfigMastery remove <Points>* to remove a milestone rank:" +
-                                "\nExample: -ConfigMastery remove 1000000");
+                                "\nExample: -Config Mastery champion Thresh" +
+                                "\n\nUse *-Config Mastery list* to get a list of all the roles you have set up." +
+                                "\n\nUse *-Config Mastery add <RoleName> <Amount>* to add a rank to the system:" +
+                                "\nExample: -Config Mastery add \"1 Million\" 1000000" +
+                                "\n\nUse *-Config Mastery remove <Points>* to remove a milestone rank:" +
+                                "\nExample: -Config Mastery remove 1000000");
 
                     });
                 cbg.CreateCommand("champion")
