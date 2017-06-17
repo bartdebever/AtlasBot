@@ -393,54 +393,73 @@ namespace AtlasBot.Modules.Administrative
                 ServerRepo serverRepo = new ServerRepo(new ServerContext());
                 cbg.CreateCommand("help")
                     .Alias("?")
+                    .AddCheck(((command, user, channel) => serverRepo.IsAdmin(user.Id, channel.Server.Id) && serverRepo.IsServerVerified(channel.Server.Id)),Eng_Default.NotAllowed())
                     .Do(async (e) =>
                     {
-                        await e.Channel.SendMessage("**This command can be used to configure the Mastery Point system on your server.**" +
-                                                    "\nUse *-ConfigMastery champion <champion>* to set a champion for your server:" +
-                                                    "\nExample: -ConfigMastery champion Thresh" +
-                                                    "\n\nUse *-ConfigMastery list* to get a list of all the roles you have set up." +
-                                                    "\n\nUse *-ConfigMastery add <RoleName> <Amount>* to add a rank to the system:" +
-                                                    "\nExample: -ConfigMastery add \"1 Million\" 1000000" +
-                                                    "\n\nUse *-ConfigMastery remove <Points>* to remove a milestone rank:" +
-                                                    "\nExample: -ConfigMastery remove 1000000");
+                        
+                            await e.Channel.SendMessage(
+                                "**This command can be used to configure the Mastery Point system on your server.**" +
+                                "\nUse *-ConfigMastery champion <champion>* to set a champion for your server:" +
+                                "\nExample: -ConfigMastery champion Thresh" +
+                                "\n\nUse *-ConfigMastery list* to get a list of all the roles you have set up." +
+                                "\n\nUse *-ConfigMastery add <RoleName> <Amount>* to add a rank to the system:" +
+                                "\nExample: -ConfigMastery add \"1 Million\" 1000000" +
+                                "\n\nUse *-ConfigMastery remove <Points>* to remove a milestone rank:" +
+                                "\nExample: -ConfigMastery remove 1000000");
+
                     });
                 cbg.CreateCommand("champion")
                     .Parameter("Champion", ParameterType.Unparsed)
                     .Description("Sets the server's champion.")
                     .Do(async (e) =>
                     {
-                        try
+                        if (serverRepo.IsAdmin(e.User.Id, e.Server.Id) && serverRepo.IsServerVerified(e.Server.Id))
                         {
-                            settingsRepo.SetChampionId(e.Server.Id, new ChampionAPI().GetChampionId(e.GetArg("Champion").ToString()));
-                            await e.Channel.SendMessage(":ballot_box_with_check: Champion set to " + e.GetArg("Champion"));
+                            try
+                            {
+                                settingsRepo.SetChampionId(e.Server.Id,
+                                    new ChampionAPI().GetChampionId(e.GetArg("Champion").ToString()));
+                                await e.Channel.SendMessage(
+                                    ":ballot_box_with_check: Champion set to " + e.GetArg("Champion"));
+                            }
+                            catch
+                            {
+                                await e.Channel.SendMessage(":x: Did not find champion called " + e.GetArg("Champion"));
+                            }
                         }
-                        catch
+                        else
                         {
-                            await e.Channel.SendMessage(":x: Did not find champion called " + e.GetArg("Champion"));
+                            await e.Channel.SendMessage(Eng_Default.NotAllowed());
                         }
                     });
                 cbg.CreateCommand("list")
                     .Description("Shows the list of mastery roles set up for this server.")
                     .Do(async (e) =>
                     {
+
                         string returnstring = "";
-                        try
+                        if (serverRepo.IsAdmin(e.User.Id, e.Server.Id) && serverRepo.IsServerVerified(e.Server.Id))
                         {
-                            returnstring = "Server looks at mastery points for " +
-                                           new ChampionAPI().GetChampionName(
-                                               settingsRepo.GetChampionId(e.Server.Id));
-                            returnstring += "\nRoles for this server: ```";
-                            foreach (string line in settingsRepo.GetAllMasteryRoles(e.Server.Id))
+                            try
                             {
-                                returnstring += "\n" + line.Split(':').First() + " points uses role: " +
-                                                e.Server.GetRole(Convert.ToUInt64(line.Split(':').Last())).Name;
+                                returnstring = "Server looks at mastery points for " +
+                                               new ChampionAPI().GetChampionName(
+                                                   settingsRepo.GetChampionId(e.Server.Id));
+                                returnstring += "\nRoles for this server: ```";
+                                foreach (string line in settingsRepo.GetAllMasteryRoles(e.Server.Id))
+                                {
+                                    returnstring += "\n" + line.Split(':').First() + " points uses role: " +
+                                                    e.Server.GetRole(Convert.ToUInt64(line.Split(':').Last())).Name;
+                                }
+                                returnstring += "\n```";
                             }
-                            returnstring += "\n```";
+                            catch
+                            {
+                                returnstring = ":x: No champion or role found, please set this up first!";
+                            }
                         }
-                        catch
-                        {
-                            returnstring = ":x: No champion or role found, please set this up first!";
-                        }
+                        else returnstring = Eng_Default.NotAllowed();
+
                         await e.Channel.SendMessage(returnstring);
                     });
                 cbg.CreateCommand("Add")
@@ -449,51 +468,50 @@ namespace AtlasBot.Modules.Administrative
                     .Description("Adds a treshhold role for an amount of points.")
                     .Do(async (e) =>
                     {
-                        try
+                        if (serverRepo.IsAdmin(e.User.Id, e.Server.Id) && serverRepo.IsServerVerified(e.Server.Id))
                         {
-                            Discord.Role r = e.Server.FindRoles(e.GetArg("Role"), false).First();
-                            settingsRepo.SetRoleByPoints(r.Id, e.Server.Id, Convert.ToInt32(e.GetArg("Points")));
-                            await e.Channel.SendMessage(":ballot_box_with_check: Added to the list!");
+                            try
+                            {
+                                Discord.Role r = e.Server.FindRoles(e.GetArg("Role"), false).First();
+                                settingsRepo.SetRoleByPoints(r.Id, e.Server.Id, Convert.ToInt32(e.GetArg("Points")));
+                                await e.Channel.SendMessage(":ballot_box_with_check: Added to the list!");
+                            }
+                            catch
+                            {
+                                await e.Channel.SendMessage(":x: Failed to add, role not found.");
+                            }
                         }
-                        catch
+                        else
                         {
-                            await e.Channel.SendMessage(":x: Failed to add, role not found.");
+                            await e.Channel.SendMessage(Eng_Default.NotAllowed());
                         }
+
                     });
                 cbg.CreateCommand("Remove")
                     .Parameter("Points")
                     .Description("Removes a treshhold role based on the amount of points.")
                     .Do(async (e) =>
                     {
-                        try
+                        if (serverRepo.IsAdmin(e.User.Id, e.Server.Id) && serverRepo.IsServerVerified(e.Server.Id))
                         {
-                            settingsRepo.RemoveRoleByPoints(e.Server.Id, Convert.ToInt32(e.GetArg("Points")));
-                            await e.Channel.SendMessage(":ballot_box_with_check: Removed the role with the points " + e.GetArg("Points"));
+                            try
+                            {
+                                settingsRepo.RemoveRoleByPoints(e.Server.Id, Convert.ToInt32(e.GetArg("Points")));
+                                await e.Channel.SendMessage(
+                                    ":ballot_box_with_check: Removed the role with the points " + e.GetArg("Points"));
+                            }
+                            catch
+                            {
+                                await e.Channel.SendMessage(
+                                    ":x: Failed to remove the role with points " + e.GetArg("Points"));
+                            }
                         }
-                        catch
+                        else
                         {
-                            await e.Channel.SendMessage(":x: Failed to remove the role with points " + e.GetArg("Points"));
+                            await e.Channel.SendMessage(Eng_Default.NotAllowed());
                         }
                     });
             });
-            commands.CreateCommand("ConfigMastery")
-                .Parameter("CommandType")
-                .Parameter("Parameter", ParameterType.Optional)
-                .Parameter("Points", ParameterType.Optional)
-                .Do(async (e) =>
-                {
-                    string returnstring = "";
-                    SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
-                    ServerRepo serverRepo = new ServerRepo(new ServerContext());
-                    if (serverRepo.IsServerVerified(e.Server.Id) && serverRepo.IsAdmin(e.User.Id, e.Server.Id))
-                    {
-                        if (e.GetArg("CommandType").ToLower() == "remove")
-                        {
-
-                        }
-                    }
-                    await e.Channel.SendMessage(returnstring);
-                });
         }
 
         public void Test()
@@ -509,5 +527,6 @@ namespace AtlasBot.Modules.Administrative
             OverrideSystem();
             ChangeType();
         }
+
     }
 }
