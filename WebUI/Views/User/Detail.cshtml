@@ -1,0 +1,34 @@
+﻿@using RiotLibary.Roles
+@using RiotSharp
+@model DataLibary.Models.User
+@{
+    ViewBag.Title = "Details";
+    var summoner = new SummonerAPI().GetSummoner(Model.RiotId, Model.Region);
+    var rank = new RankAPI().GetRankingHarder(summoner, Queue.RankedSolo5x5);
+    var champion = new ChampionAPI().Get5MainChampions(summoner).First();
+}
+<div class="container">
+    <h2>@summoner.Name's user information</h2>    
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Internal Id</th>
+            <th>DiscordId</th>
+            <th>Summoner Name</th>
+            <th>Region</th>
+            <th>Rank</th>
+            <th>Most played champion</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>@Model.Id</td>
+            <td>@Model.DiscordId</td>
+            <td>@summoner.Name</td>
+            <td>@summoner.Region.ToString().ToUpper()</td>
+            <td>@rank winrate</td>
+            <td>@champion.Name: @champion.Count Games</td>
+        </tr>
+        </tbody>
+    </table>
+</div>

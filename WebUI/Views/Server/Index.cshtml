@@ -1,0 +1,13 @@
+﻿@using Discord;
+@model Discord.Server
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+<ul>
+@foreach (var user in Model.Users)
+{
+    <li>@user.Name</li>
+}
+</ul>

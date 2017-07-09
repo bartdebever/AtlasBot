@@ -9,6 +9,7 @@ using DataLibary.Data;
 using DataLibary.Models;
 using RiotSharp;
 using ToolKit;
+using CommandType = System.Data.CommandType;
 
 namespace DataLibary.MSSQLContext
 {
@@ -172,6 +173,23 @@ namespace DataLibary.MSSQLContext
                 }
             }
             return false;
+        }
+
+        public List<User> GetAllAccounts(ulong userid)
+        {
+            List<User> result  = new List<User>();
+            string query = "[dbo].[GetAccounts]";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@DiscordId", Convert.ToInt64(userid));
+            cmd.CommandType = CommandType.StoredProcedure;
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    result.Add(new User(0, userid, Convert.ToInt32(reader["SummonerId"]), LeagueAndDatabase.GetRegionFromDatabaseId(Convert.ToInt32(reader["Region"])), Convert.ToBoolean(Convert.ToInt64(reader["Type"]))));
+                }
+            }
+            return result;
         }
     }
 }

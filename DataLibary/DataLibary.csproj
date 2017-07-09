@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database.cs" />
+    <Compile Include="Data\IAltAccountContext.cs" />
     <Compile Include="Data\ICoachContext.cs" />
     <Compile Include="Data\IMessageContext.cs" />
     <Compile Include="Data\IRankContext.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="Models\Server.cs" />
     <Compile Include="Models\Setting.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="MSSQLContext\AltAccountContext.cs" />
     <Compile Include="MSSQLContext\CoachContext.cs" />
     <Compile Include="MSSQLContext\MessageContext.cs" />
     <Compile Include="MSSQLContext\RegionContext.cs" />
@@ -100,6 +102,7 @@
     <Compile Include="MSSQLContext\SummonerContext.cs" />
     <Compile Include="MSSQLContext\UserContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repos\AltAccountRepo.cs" />
     <Compile Include="Repos\AtlasAdminRepo.cs" />
     <Compile Include="Repos\CoachRepo.cs" />
     <Compile Include="Repos\CommandRepo.cs" />

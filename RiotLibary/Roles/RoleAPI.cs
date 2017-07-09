@@ -12,7 +12,7 @@ namespace RiotLibary.Roles
 {
     public class RoleAPI
     {
-        private RiotApi api = RiotApi.GetInstance(Keys.Keys.riotKey);
+        private RiotApi api = RiotApi.GetInstance(Keys.Keys.riotKey, 500, 30000);
         private StaticRiotApi sApi = StaticRiotApi.GetInstance(Keys.Keys.riotKey);
 
         public int GetGamesPlayed(Summoner summoner)

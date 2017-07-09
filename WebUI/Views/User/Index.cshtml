@@ -1,0 +1,12 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+@using (Html.BeginForm("Detail", "User", FormMethod.Post))
+{
+    @Html.TextBox("id", new{@class = "form-control"})
+    <button type="submit" class="form-control"></button>
+}

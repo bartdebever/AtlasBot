@@ -10,6 +10,8 @@ using DataLibary.Repos;
 using Discord;
 using Discord.Commands;
 using Keys;
+using RiotLibary.Roles;
+using RiotSharp;
 using RiotSharp.SummonerEndpoint;
 
 namespace AtlasBot.Modules.Matchmaking
@@ -28,8 +30,9 @@ namespace AtlasBot.Modules.Matchmaking
         public async void QueuePerson(Summoner summoner, Discord.User user, Discord.Server currentserver, string queue)
         {
             SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());
-            string queuemessage = "***" + user + " from " + currentserver.Name + " queued up for "+ queue + " as: ***\n";
-            queuemessage += new User.SummonerInfo(commands).GetInfoShort(summoner);
+            //string queuemessage = "***" + user + " from " + currentserver.Name + " queued up for "+ queue + " as: ***\n";
+            //queuemessage += new User.SummonerInfo(commands).GetInfoShort(summoner);
+            string queuemessage = GenerateMessage(summoner, user, currentserver, queue);
             foreach (Discord.Server server in BotUser.Servers)
             {
                 
@@ -59,6 +62,27 @@ namespace AtlasBot.Modules.Matchmaking
             }
         }
 
+        public string GenerateMessage(Summoner summoner, Discord.User user, Discord.Server currentserver, string queue)
+        {
+            string role = "-";
+            queue = queue.First().ToString().ToUpper() + String.Join("", queue.Skip(1));
+            string result = "```http\n";
+            result += user.ToString() + " from " + currentserver.Name + ": ";
+            string title = "Rank";
+            result += "\n";
+            if (summoner.Level != 30) title = "Level";
+            result += String.Format("{0,-30}{1,-10}{2,-20}{3,-20}{4}", "Summoner", "Region", "Queue", title, "Main Role");
+            string rank = summoner.Level.ToString();
+            if (summoner.Level == 30)
+            {
+                role = new RoleAPI().GetRole(summoner);
+                rank = new RankAPI().GetRankingHarder(summoner, Queue.RankedSolo5x5);
+            }
+            result += "\n";
+            result += String.Format("{0,-30}{1,-10}{2,-20}{3,-20}{4}",summoner.Name, summoner.Region.ToString().ToUpper(), queue, rank, role);
+            result += "\n```";
+            return result;
+        }
         public async void LeaveQueue(Discord.User user)
         {
             SettingsRepo settingsRepo = new SettingsRepo(new SettingsContext());

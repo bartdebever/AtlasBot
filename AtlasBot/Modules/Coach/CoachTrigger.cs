@@ -25,14 +25,14 @@ namespace AtlasBot.Modules.Coach
                     found = true;
                 }
             }
-            if (found == true)
-            {
-                new CoachRepo(new CoachContext()).AddCoach(new DataLibary.Models.Coach(discordid, role, champid));
-            }
-            else
-            {
-                throw new Exception("Role or Champion not found.");
-            }
+            //if (found == true)
+            //{
+            //    new CoachRepo(new CoachContext()).AddCoach(new DataLibary.Models.Coach(discordid, role, champid));
+            //}
+            //else
+            //{
+            //    throw new Exception("Role or Champion not found.");
+            //}
         }
 
         public void AddChampion(ulong discordid, string championname)

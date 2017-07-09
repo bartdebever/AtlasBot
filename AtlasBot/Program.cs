@@ -39,8 +39,8 @@ namespace AtlasBot
 
         public class Bot
         {
-            DiscordClient BotUser;
-            CommandService commands;
+            public DiscordClient BotUser;
+            public CommandService commands;
 
             public Bot()
             {
@@ -81,13 +81,14 @@ namespace AtlasBot
                 new Universal_Role(BotUser, commands).UniversalRole();
                 new BotManagement(commands, BotUser);
                 new Interaction(BotUser, commands);
+                new AltAccountCommand(commands).CreateCommands();
                 Task.Run(() => trigger.TimedClear(stopwatch));
                 matchmakingCommands.CreateCommands();
                 matchmakingSettings.ChannelSettings();
                 coachCommands.CreateCommands();
                 createRoles.CreateRank();
-                summonerInfo.SelfInfo();
-                summonerInfo.OtherInfo();
+                //summonerInfo.SelfInfo();
+                //summonerInfo.OtherInfo();
                 serverManagement.ServerAdded();
                 serverManagement.VerifyServer();
                 serverInfoCommands.InviteLink();

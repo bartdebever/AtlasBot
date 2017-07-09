@@ -11,7 +11,7 @@ namespace DataLibary.Data
 {
     public interface ICoachContext
     {
-        List<string> GetAllCoaches();
+        List<Coach> GetAllCoaches();
         List<string> GetCoachByRole(string role);
         List<string> GetCoachByRegion(Region region);
         List<string> GetCoachByChampion(int championid);

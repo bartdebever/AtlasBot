@@ -8,7 +8,7 @@ using RiotSharp;
 
 namespace DataLibary.Models
 {
-    public class UserRepo
+    public class UserRepo : IUserContext
     {
         private IUserContext context;
 
@@ -64,6 +64,11 @@ namespace DataLibary.Models
         public bool IsAtlasAdmin(ulong userid)
         {
             return context.IsAtlasAdmin(userid);
+        }
+
+        public List<User> GetAllAccounts(ulong userid)
+        {
+            return context.GetAllAccounts(userid);
         }
     }
 }

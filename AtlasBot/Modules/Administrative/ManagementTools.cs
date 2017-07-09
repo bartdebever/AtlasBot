@@ -386,7 +386,7 @@ namespace AtlasBot.Modules.Administrative
         }
 
 
-        public void AdminMastery()
+        private void AdminMastery()
         {
             commands.CreateGroup("Config Mastery", cbg =>
             {

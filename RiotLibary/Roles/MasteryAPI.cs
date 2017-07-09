@@ -13,7 +13,7 @@ namespace RiotLibary.Roles
 {
     public class MasteryAPI
     {
-        private RiotApi api = RiotApi.GetInstance(Keys.Keys.riotKey);
+        private RiotApi api = RiotApi.GetInstance(Keys.Keys.riotKey, 500, 30000);
         private StaticRiotApi sApi = StaticRiotApi.GetInstance(Keys.Keys.riotKey);
         public int GetLevel(Summoner summoner, Champion champion)
         {

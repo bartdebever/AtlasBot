@@ -14,7 +14,7 @@ namespace RiotLibary.Roles
 {
     public class ChampionAPI
     {
-        private RiotApi api = RiotApi.GetInstance(Keys.Keys.riotKey);
+        private RiotApi api = RiotApi.GetInstance(Keys.Keys.riotKey, 500, 30000);
         private StaticRiotApi sApi = StaticRiotApi.GetInstance(Keys.Keys.riotKey);
         public List<MainChampion> Get5MainChampions(Summoner summoner)
         {

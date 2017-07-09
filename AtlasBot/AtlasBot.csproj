@@ -258,6 +258,7 @@
     <Compile Include="Modules\Server\ServerManagement.cs" />
     <Compile Include="Modules\StringBuilder.cs" />
     <Compile Include="Modules\User\AccountManagementCommands.cs" />
+    <Compile Include="Modules\User\AltAccountCommand.cs" />
     <Compile Include="Modules\User\SummonerInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -16,7 +16,7 @@ namespace DataLibary.Models
         {
             this.context = context;
         }
-        public List<string> GetAllCoaches()
+        public List<Coach> GetAllCoaches()
         {
             return context.GetAllCoaches();
         }

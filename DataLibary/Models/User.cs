@@ -13,13 +13,14 @@ namespace DataLibary.Models
         public ulong DiscordId { get; private set; }
         public int RiotId { get; private set; }
         public Region Region { get; private set; }
-
-        public User(int id, ulong discordId, int riotid, Region region)
+        public bool Main { get; set; }
+        public User(int id, ulong discordId, int riotid, Region region, bool main = false)
         {
             this.Id = id;
             this.DiscordId = discordId;
             this.RiotId = riotid;
             this.Region = region;
+            this.Main = main;
         }
     }
 }
