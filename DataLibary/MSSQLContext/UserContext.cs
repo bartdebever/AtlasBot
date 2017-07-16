@@ -191,5 +191,20 @@ namespace DataLibary.MSSQLContext
             }
             return result;
         }
+
+        public string GetBackupName(ulong discordid)
+        {
+            string query = "SELECT Tag FROM [User] WHERE DiscordId = @Id";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@id", Convert.ToInt64(discordid));
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return reader.GetString(0);
+                }
+            }
+            return null;
+        }
     }
 }

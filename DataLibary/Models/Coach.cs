@@ -32,12 +32,13 @@ namespace DataLibary.Models
         public string Cost { get; set; }
         public string Timezone { get; }
         public string Availability { get; }
+        public string Bio { get; }
         public bool LoMVerified { get; }
         public int SummonerId { get; }
         public Region region { get; }
         public ulong DiscordId { get; }
 
-        public Coach(int id, List<string> roles, List<int> championIds, string Timezone, string Availability, bool loMVerified, int summonerId, Region region, ulong discordId)
+        public Coach(int id, List<string> roles, List<int> championIds, string Timezone, string Availability, bool loMVerified, int summonerId, Region region, ulong discordId, string bio)
         {
             this.Id = id;
             this.Roles = roles;
@@ -51,8 +52,9 @@ namespace DataLibary.Models
             this.Languages = new List<string>();
             this.Links = new List<string>();
             this.Prerferences = new List<string>();
+            this.Bio = bio;
         }
-        public Coach(int id, List<string> roles, List<int> championIds, string Timezone, string Availability, bool loMVerified, int summonerId, Region region, ulong discordId, List<string> language, List<string> preferences, List<string> links, string cost)
+        public Coach(int id, List<string> roles, List<int> championIds, string Timezone, string Availability, bool loMVerified, int summonerId, Region region, ulong discordId, List<string> language, List<string> preferences, List<string> links, string cost, string bio)
         {
             this.Id = id;
             this.Roles = roles;
@@ -67,6 +69,7 @@ namespace DataLibary.Models
             this.Languages = language;
             this.Prerferences = preferences;
             this.Links = links;
+            this.Bio = bio;
         }
         public Coach(int id, string role, int champion)
         {

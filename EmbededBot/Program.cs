@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -9,9 +10,13 @@ using DataLibary.MSSQLContext;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Novacode;
 using RiotLibary.Roles;
 using RiotSharp;
 using RiotSharp.SummonerEndpoint;
+using Header = System.Runtime.Remoting.Messaging.Header;
+using Microsoft.Office.Interop.Word;
+using Task = System.Threading.Tasks.Task;
 
 namespace EmbededBot
 {
@@ -71,137 +76,15 @@ namespace EmbededBot
             }
             else if (message.Content.ToLower().Contains("-coach"))
             {
+                await message.Channel.TriggerTypingAsync();
                 CoachRepo coachRepo = new CoachRepo(new CoachContext());
                 ChampionAPI championApi = new ChampionAPI();
                 if (message.Content.ToLower().Contains("-coach list"))
                 {
-                    var coachlist = coachRepo.GetAllCoaches();
-                    string coaches = "\n```http\nThese are all of our coaches: \n";
-                    coaches += string.Format("{0,-4}{1,-30}{2,-30}{3,-30}{4,-30}{5}", "Id", "Name", "Champion(s)",
-                        "Role(s)",
-                        "Language(s)", "Verified");
-                    coaches += "\n";
-                    foreach (var coach in coachlist)
-                    {
-                        string roles = "";
-                        //coach.Roles.ForEach(r => roles += r + ", ");
+                    var coachlist = CoachlistHolder.List;
+                    string returnmessage = GetList(coachlist);
+                    await message.Channel.SendMessageAsync(returnmessage);
 
-                        string champions = "";
-                        string languages = "";
-                        int x = 0;
-                        bool loop = true; //need better name
-                        while (loop || x <= coach.ChampionIds.Count)
-                        {
-                            var champname = "";
-                            try
-                            {
-                                champname = championApi.GetChampionName(coach.ChampionIds[x]) + ", ";
-                            }
-                            catch
-                            {
-                                loop = false;
-                            }
-
-                            if (champions.Length + champname.Length < 30)
-                            {
-                                champions += champname;
-                            }
-                            else
-                            {
-                                loop = false;
-                            }
-                            x++;
-                        }
-                        x = 0;
-                        loop = true;
-                        while (loop || x <= coach.Roles.Count)
-                        {
-                            var rolename = "";
-                            try
-                            {
-                                rolename = coach.Roles[x] + ", ";
-                            }
-                            catch
-                            {
-                                loop = false;
-                            }
-
-                            if (roles.Length + rolename.Length < 30)
-                            {
-                                roles += rolename;
-                            }
-                            else
-                            {
-                                loop = false;
-                            }
-                            x++;
-                        }
-                        x = 0;
-                        loop = true;
-                        while (loop || x <= coach.Languages.Count)
-                        {
-                            var rolename = "";
-                            try
-                            {
-                                rolename = coach.Languages[x] + ", ";
-                            }
-                            catch
-                            {
-                                loop = false;
-                            }
-
-                            if (languages.Length + rolename.Length < 30)
-                            {
-                                languages += rolename;
-                            }
-                            else
-                            {
-                                loop = false;
-                            }
-                            x++;
-                        }
-                        try
-                        {
-                            roles = roles.Remove(roles.Length - 2, 2);
-                        }
-                        catch
-                        {
-                        }
-                        try
-                        {
-                            languages = languages.Remove(languages.Length - 2, 2);
-                        }
-                        catch
-                        {
-                        }
-                        try
-                        {
-                            champions = champions.Remove(champions.Length - 2, 2);
-                        }
-                        catch
-                        {
-                        }
-                        string verified = "-";
-                        if (coach.LoMVerified)
-                        {
-                            verified = "League of Mentoring";
-                        }
-                        string name = "BACKUP";
-                        try
-                        {
-                            name = client.GetUser(coach.DiscordId).ToString();
-                        }
-                        catch
-                        {
-                            /*Get Name From Database*/
-                        }
-
-                        coaches += string.Format("{0,-4}{1,-30}{2,-30}{3,-30}{4,-30}{5}", coach.Id + ":", name,
-                            champions, roles, languages, verified);
-                        coaches += "\n";
-                    }
-                    coaches += "\n```";
-                    await message.Channel.SendMessageAsync(coaches);
                 }
                 else
                 {
@@ -212,13 +95,38 @@ namespace EmbededBot
                     if (id != 0)
                     {
                         embed = GetCoachInformation(coachRepo.GetAllCoaches().Single(c => c.Id == id));
+                        await message.Channel.SendMessageAsync(returnmessage, false, embed);
                     }
                     else
                     {
-                        returnmessage = "Coach not found with id " + message.Content.Split(' ')[1];
+                        int championid = 0;
+                        try
+                        {
+                            championid =
+                                championApi.GetChampionId(message.Content.Remove(0, message.Content.IndexOf(' ') + 1));
+                            await message.Channel.SendMessageAsync(GetList(coachRepo.GetCoachByChampion(championid)));
+                        }
+                        catch
+                        {
+                            await message.Channel.SendMessageAsync(GetList(coachRepo.GetCoachByRole(message.Content.Remove(0, message.Content.IndexOf(' ') + 1))));
+                        }
+                            
+                        
+
+
                     }
-                    await message.Channel.SendMessageAsync(returnmessage, false, embed);
+                    
                 }
+            }
+            else if (message.Content.ToLower() == "-export")
+            {
+                string filepath = ExportFile();
+                await message.Channel.SendFileAsync(filepath);
+            }
+            else if (message.Content.ToLower() == "-deport bort")
+            {
+                await message.Channel.SendMessageAsync(message.Author.Mention +
+                                                       ", sorry can not get rid of the creator. Must obay to not start Skynet.");
             }
         }
 
@@ -341,7 +249,12 @@ namespace EmbededBot
             catch
             {
             }
-            coachInformation += string.Format("{0,-29}{1}", "**Champions:**", champions);
+            if (!string.IsNullOrEmpty(champions))
+            {
+                coachInformation += string.Format("{0,-29}{1}", "**Champions:**", champions);
+                coachInformation += "\n";
+            }
+
             string language = "";
             coach.Languages.ForEach(l => language += l + ", ");
             try
@@ -351,9 +264,13 @@ namespace EmbededBot
             catch
             {
             }
-            coachInformation += "\n";
-            coachInformation += string.Format("{0,-27}{1}", "**Language(s):  **", " " + language);
-            coachInformation += "\n";
+
+            if (!string.IsNullOrEmpty(language))
+            {
+                coachInformation += string.Format("{0,-27}{1}", "**Language(s):  **", " " + language);
+                coachInformation += "\n";
+            }
+
             string preference = "";
             coach.Prerferences.ForEach(p => preference += p + ", ");
             try
@@ -389,8 +306,6 @@ namespace EmbededBot
             coach.Links.ForEach(l => link += l + "\n");
             var embed = new EmbedBuilder()
                     .WithFooter(new EmbedFooterBuilder().WithText("AtlasBot Coaching Module | " + DateTime.Now.ToLongTimeString()))
-                    .AddField(new EmbedFieldBuilder().WithName("Summoner information:")
-                        .WithValue(summmonerInfo))
                     .AddField(new EmbedFieldBuilder().WithName("Coaching information:")
                         .WithValue(coachInformation))
 
@@ -400,6 +315,20 @@ namespace EmbededBot
             {
                 embed.WithAuthor(new EmbedAuthorBuilder().WithName(user.ToString()))
                     .WithThumbnailUrl(user.GetAvatarUrl());
+            }
+            else
+            {
+                embed.WithAuthor(
+                    new EmbedAuthorBuilder().WithName(new UserRepo(new UserContext()).GetBackupName(coach.DiscordId)));
+            }
+            if (!string.IsNullOrEmpty(summmonerInfo))
+            {
+                embed.AddField(new EmbedFieldBuilder().WithName("Summoner information:")
+                    .WithValue(summmonerInfo));
+            }
+            if (!string.IsNullOrEmpty(coach.Bio))
+            {
+                embed.AddField(new EmbedFieldBuilder().WithName("Bio").WithValue(coach.Bio));
             }
             if (!string.IsNullOrEmpty(link))
                 embed.AddField(new EmbedFieldBuilder().WithName("Personal Links").WithValue(link));
@@ -411,5 +340,245 @@ namespace EmbededBot
             }
             return embed;
         }
+
+        public string GetList(List<Coach> coachlist)
+        {
+            ChampionAPI championApi = new ChampionAPI();
+            string coaches = "\n```http\nThese are all of our coaches: \n";
+            coaches += string.Format("{0,-4}{1,-35}{2,-30}{3,-30}{4,-20}{5}", "Id", "Name", "Champion(s)",
+                "Role(s)",
+                "Language(s)", "Verified");
+            coaches += "\n";
+            foreach (var coach in coachlist)
+            {
+                string roles = "";
+                //coach.Roles.ForEach(r => roles += r + ", ");
+
+                string champions = "";
+                string languages = "";
+                int x = 0;
+                bool loop = true; //need better name
+                while (loop || x <= coach.ChampionIds.Count)
+                {
+                    var champname = "";
+                    try
+                    {
+                        champname = championApi.GetChampionName(coach.ChampionIds[x]) + ", ";
+                    }
+                    catch
+                    {
+                        loop = false;
+                    }
+
+                    if (champions.Length + champname.Length < 30)
+                    {
+                        champions += champname;
+                    }
+                    else
+                    {
+                        loop = false;
+                    }
+                    x++;
+                }
+                x = 0;
+                loop = true;
+                while (loop || x <= coach.Roles.Count)
+                {
+                    var rolename = "";
+                    try
+                    {
+                        rolename = coach.Roles[x] + ", ";
+                    }
+                    catch
+                    {
+                        loop = false;
+                    }
+
+                    if (roles.Length + rolename.Length < 30)
+                    {
+                        roles += rolename;
+                    }
+                    else
+                    {
+                        loop = false;
+                    }
+                    x++;
+                }
+                x = 0;
+                loop = true;
+                while (loop || x <= coach.Languages.Count)
+                {
+                    var rolename = "";
+                    try
+                    {
+                        rolename = coach.Languages[x] + ", ";
+                    }
+                    catch
+                    {
+                        loop = false;
+                    }
+
+                    if (languages.Length + rolename.Length < 30)
+                    {
+                        languages += rolename;
+                    }
+                    else
+                    {
+                        loop = false;
+                    }
+                    x++;
+                }
+                try
+                {
+                    roles = roles.Remove(roles.Length - 2, 2);
+                }
+                catch
+                {
+                }
+                try
+                {
+                    languages = languages.Remove(languages.Length - 2, 2);
+                }
+                catch
+                {
+                }
+                try
+                {
+                    champions = champions.Remove(champions.Length - 2, 2);
+                }
+                catch
+                {
+                }
+                string verified = "-";
+                if (coach.LoMVerified)
+                {
+                    verified = "League of Mentoring";
+                }
+                string name = "Error";
+                try
+                {
+                    name = client.GetUser(coach.DiscordId).ToString();
+                }
+                catch
+                {
+                    name = new UserRepo(new UserContext()).GetBackupName(coach.DiscordId);/*Get Name From Database*/
+                }
+
+                coaches += string.Format("{0,-4}{1,-35}{2,-30}{3,-30}{4,-20}{5}", coach.Id + ":", name,
+                    champions, roles, languages, verified);
+                coaches += "\n";
+            }
+            coaches += "\n```";
+            return coaches;
+        }
+
+        public string ExportFile()
+        {
+            //string filepath = @"C:\Users\bartd\Desktop\Exports\Export.txt";
+            //List<string> content = new List<string>();
+            //content.Add("Coaching file export by AtlasBot");
+            //var coachlist = new CoachRepo(new CoachContext()).GetAllCoaches();
+            //content.Add("Coach list for League of Mentoring as of " + DateTime.Now.ToLongDateString());
+            //content.Add("---------------------------------------------------------------------");
+            //foreach (var coach in coachlist)
+            //{
+            //    content.Add(new UserRepo(new UserContext()).GetBackupName(coach.DiscordId) + ":");
+            //    content.Add(string.Format("{0,-30}{1}", "Id", coach.Id));
+            //    content.Add(string.Format("{0,-30}{1}", "Discordid", coach.DiscordId));
+            //    content.Add("---------------------------------------------------------------------");
+            //}
+            //StreamWriter sw = new StreamWriter(filepath);
+            //foreach (var line in content)
+            //{
+            //    sw.WriteLine(line);
+            //}
+            //sw.Close();
+            string filepath = @"C:\Users\bartd\Desktop\Exports\Export.docx";
+            var doc = DocX.Create(filepath);
+            string headerText = "Coach list for League of Mentoring as of " + DateTime.Now.ToLongDateString();
+            var titleFormat = new Formatting();
+            titleFormat.FontFamily = new System.Drawing.FontFamily("Arial Black");
+            titleFormat.Size = 18D;
+            titleFormat.Position = 12;
+            var paraFormat = new Formatting();
+            paraFormat.FontFamily = new System.Drawing.FontFamily("Calibri");
+            paraFormat.Size = 10D;
+            titleFormat.Position = 12;
+            var coachFormat = new Formatting();
+            coachFormat.FontFamily = new System.Drawing.FontFamily("Arial Black");
+            coachFormat.Size = 15D;
+            coachFormat.Position = 12;
+            Novacode.Paragraph title = doc.InsertParagraph(headerText, false, titleFormat);
+            title.Alignment = Alignment.center;
+            var coachlist = new CoachRepo(new CoachContext()).GetAllCoaches();
+            Novacode.Table table = doc.AddTable(coachlist.Count +1, 3);
+            table.Rows[0].Cells[0].Paragraphs.First().AppendLine("Id");
+            table.Rows[0].Cells[1].Paragraphs.First().AppendLine("Name");
+            table.Rows[0].Cells[2].Paragraphs.First().AppendLine("DiscordId");
+            int x = 1;
+            UserRepo userRepo = new UserRepo(new UserContext());
+            foreach (var coach in coachlist)
+            {
+                table.Rows[x].Cells[0].Paragraphs.First().AppendLine(coach.Id.ToString());
+                table.Rows[x].Cells[1].Paragraphs.First().AppendLine(userRepo.GetBackupName(coach.DiscordId));
+                table.Rows[x].Cells[2].Paragraphs.First().AppendLine(coach.DiscordId.ToString());
+                x++;
+            }
+            ////doc.InsertTableOfContents("Test", TableOfContentsSwitches.None); ITS POSSSIBLE YAY
+            doc.InsertTable(table);
+            //foreach (Coach coach in new CoachRepo(new CoachContext()).GetAllCoaches())
+            //{
+            //    doc.InsertParagraph(new UserRepo(new UserContext()).GetBackupName(coach.DiscordId) + ":", false, coachFormat);
+            //    //string content = "";
+            //    Novacode.Table table = doc.AddTable(2, 2);
+            //    table.Rows[0].Cells[0].Paragraphs.First().AppendLine("Id");
+            //    table.Rows[0].Cells[1].Paragraphs.First().AppendLine(coach.Id.ToString());
+            //    table.Rows[1].Cells[0].Paragraphs.First().AppendLine("Discord Id");
+            //    table.Rows[1].Cells[1].Paragraphs.First().AppendLine(coach.DiscordId.ToString());
+            //    doc.InsertTable(table);
+            //    //content += string.Format("{0,-30}{1}", "Id", coach.Id);
+            //    //content += "\n";
+            //    //content += string.Format("{0,-30}{1}", "Discordid", coach.DiscordId);
+            //    //Novacode.Paragraph coachtext = doc.InsertParagraph(content, false, paraFormat);
+            //}
+            doc.Save();
+            Microsoft.Office.Interop.Word.Application appWord = new Microsoft.Office.Interop.Word.Application();
+            var wordDocument = appWord.Documents.Open(filepath);
+            wordDocument.ExportAsFixedFormat(Path.ChangeExtension(filepath, ".pdf"), WdExportFormat.wdExportFormatPDF);
+            wordDocument.Close();
+            appWord.Quit();
+            return Path.ChangeExtension(filepath, ".pdf");
+        }
+    }
+
+    public static class CoachlistHolder
+    {
+        private static List<Coach> list;
+        private static bool upToDate = false;
+
+        public static List<Coach> List
+        {
+            get
+            {
+                if (list == null)
+                {
+                    Update();
+                    upToDate = true;
+                }
+                if (upToDate == false)
+                {
+                    Update();
+                    upToDate = true;
+                }
+                return list;
+            }
+            set { list = value; }
+        }
+
+        public static void Update()
+        {
+            List = new CoachRepo(new CoachContext()).GetAllCoaches();
+        }
+
     }
 }

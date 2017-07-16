@@ -70,5 +70,10 @@ namespace DataLibary.Models
         {
             return context.GetAllAccounts(userid);
         }
+
+        public string GetBackupName(ulong discordid)
+        {
+            return context.GetBackupName(discordid);
+        }
     }
 }

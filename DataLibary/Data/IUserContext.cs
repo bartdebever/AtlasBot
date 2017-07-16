@@ -21,5 +21,6 @@ namespace DataLibary.Data
         void SetLastRefreshDate(ulong userid, DateTime date);
         bool IsAtlasAdmin(ulong userid);
         List<User> GetAllAccounts(ulong userid);
+        string GetBackupName(ulong discordid);
     }
 }

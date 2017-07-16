@@ -8,7 +8,7 @@ using RiotSharp;
 
 namespace DataLibary.Models
 {
-    public class CoachRepo
+    public class CoachRepo : ICoachContext
     {
         private ICoachContext context;
 
@@ -21,17 +21,22 @@ namespace DataLibary.Models
             return context.GetAllCoaches();
         }
 
-        public List<string> GetCoachByRole(string role)
+        public List<Coach> GetCoachByRole(string role)
         {
             return context.GetCoachByRole(role);
         }
 
-        public List<string> GetCoachByRegion(Region region)
+        public List<Coach> GetCoachByRegion(Region region)
         {
             return context.GetCoachByRegion(region);
         }
 
-        public List<string> GetCoachByChampion(int championid)
+        public Coach GetCoachById(int id)
+        {
+            return context.GetCoachById(id);
+        }
+
+        public List<Coach> GetCoachByChampion(int championid)
         {
             return context.GetCoachByChampion(championid);
         }

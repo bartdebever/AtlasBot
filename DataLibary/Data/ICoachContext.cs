@@ -12,9 +12,10 @@ namespace DataLibary.Data
     public interface ICoachContext
     {
         List<Coach> GetAllCoaches();
-        List<string> GetCoachByRole(string role);
-        List<string> GetCoachByRegion(Region region);
-        List<string> GetCoachByChampion(int championid);
+        List<Coach> GetCoachByRole(string role);
+        List<Coach> GetCoachByRegion(Region region);
+        Models.Coach GetCoachById(int id);
+        List<Coach> GetCoachByChampion(int championid);
         void AddCoach(Coach coach);
         void RemoveCoach(ulong id);
         void AddChampionToCoach(int championid, ulong id);
