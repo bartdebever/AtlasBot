@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using DataLibary.MSSQLContext;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Office.Interop.Excel;
 using Novacode;
 using RiotLibary.Roles;
 using RiotSharp;
@@ -20,15 +22,48 @@ using Task = System.Threading.Tasks.Task;
 
 namespace EmbededBot
 {
-    class Program
+    public static class DiscordInformationGather
     {
-        private DiscordSocketClient client;
+        private static DiscordSocketClient client;
+
+        public static SocketUser GetUser(ulong id)
+        {
+            SocketUser user = null;
+            if (client == null)
+            {
+                client = new DiscordSocketClient();
+                client.LoginAsync(TokenType.Bot, Keys.Keys.discordKey);
+                client.StartAsync();
+            }
+            try
+            {
+                user = client.GetUser(id);
+            }
+            catch
+            {
+            }
+            return user;
+        }
+    }
+    public static class Program
+    {
+        public static DiscordSocketClient client;
+        public static DiscordSocketClient Client
+        {
+            get {
+                if (client == null)
+                {
+                    MainAsync();
+                }
+                return client;
+            }
+        }
         static void Main(string[] args)
         {
-            new Program().MainAsync().GetAwaiter().GetResult();
+            MainAsync().GetAwaiter().GetResult();
             Console.ReadLine();
         }
-        public async Task MainAsync()
+        public static async Task MainAsync()
         {
             client = new DiscordSocketClient();
 
@@ -42,13 +77,13 @@ namespace EmbededBot
             // Block this task until the program is closed.
             await Task.Delay(-1);
         }
-        private Task Log(LogMessage msg)
+        private static Task Log(LogMessage msg)
         {
             Console.WriteLine(msg.ToString());
             return Task.FromResult(false);
         }
 
-        private async Task MessageReceived(SocketMessage message)
+        private static async Task MessageReceived(SocketMessage message)
         {
             if (message.Content.Contains("-info"))
             {
@@ -94,7 +129,7 @@ namespace EmbededBot
                     try { id = Convert.ToInt32(message.Content.Split(' ')[1]); } catch { }
                     if (id != 0)
                     {
-                        embed = GetCoachInformation(coachRepo.GetAllCoaches().Single(c => c.Id == id));
+                        embed = GetCoachInformation(CoachlistHolder.List.Single(c => c.Id == id));
                         await message.Channel.SendMessageAsync(returnmessage, false, embed);
                     }
                     else
@@ -120,7 +155,7 @@ namespace EmbededBot
             }
             else if (message.Content.ToLower() == "-export")
             {
-                string filepath = ExportFile();
+                string filepath = ExportFileExcel();
                 await message.Channel.SendFileAsync(filepath);
             }
             else if (message.Content.ToLower() == "-deport bort")
@@ -130,7 +165,7 @@ namespace EmbededBot
             }
         }
 
-        public string GetInfoShort(Summoner summoner)
+        public static string GetInfoShort(Summoner summoner)
         {
             StaticRiotApi staticApi = StaticRiotApi.GetInstance(Keys.Keys.riotKey);
             string returnstring = "```http\n";
@@ -201,7 +236,7 @@ namespace EmbededBot
             return returnstring;
         }
 
-        public Embed GetCoachInformation(Coach coach)
+        public static Embed GetCoachInformation(Coach coach)
         {
 
             SocketUser user = null;
@@ -240,18 +275,9 @@ namespace EmbededBot
             }
             coachInformation += string.Format("{0,-36}{1}", "**Roles:**", roles);
             coachInformation += "\n";
-            string champions = "";
-            coach.ChampionIds.ForEach(c => champions += new ChampionAPI().GetChampionName(c) + ", ");
-            try
+            if (!string.IsNullOrEmpty(coach.Champions))
             {
-                champions = champions.Remove(champions.Length - 2, 2);
-            }
-            catch
-            {
-            }
-            if (!string.IsNullOrEmpty(champions))
-            {
-                coachInformation += string.Format("{0,-29}{1}", "**Champions:**", champions);
+                coachInformation += string.Format("{0,-29}{1}", "**Champions:**", coach.Champions);
                 coachInformation += "\n";
             }
 
@@ -341,114 +367,16 @@ namespace EmbededBot
             return embed;
         }
 
-        public string GetList(List<Coach> coachlist)
+        public static string GetList(List<Coach> coachlist)
         {
             ChampionAPI championApi = new ChampionAPI();
             string coaches = "\n```http\nThese are all of our coaches: \n";
-            coaches += string.Format("{0,-4}{1,-35}{2,-30}{3,-30}{4,-20}{5}", "Id", "Name", "Champion(s)",
+            coaches += string.Format("{0,-4}{1,-35}{2,-30}{3,-30}{4}", "Id", "Name", "Champion(s)",
                 "Role(s)",
-                "Language(s)", "Verified");
+                "Language(s)");
             coaches += "\n";
             foreach (var coach in coachlist)
             {
-                string roles = "";
-                //coach.Roles.ForEach(r => roles += r + ", ");
-
-                string champions = "";
-                string languages = "";
-                int x = 0;
-                bool loop = true; //need better name
-                while (loop || x <= coach.ChampionIds.Count)
-                {
-                    var champname = "";
-                    try
-                    {
-                        champname = championApi.GetChampionName(coach.ChampionIds[x]) + ", ";
-                    }
-                    catch
-                    {
-                        loop = false;
-                    }
-
-                    if (champions.Length + champname.Length < 30)
-                    {
-                        champions += champname;
-                    }
-                    else
-                    {
-                        loop = false;
-                    }
-                    x++;
-                }
-                x = 0;
-                loop = true;
-                while (loop || x <= coach.Roles.Count)
-                {
-                    var rolename = "";
-                    try
-                    {
-                        rolename = coach.Roles[x] + ", ";
-                    }
-                    catch
-                    {
-                        loop = false;
-                    }
-
-                    if (roles.Length + rolename.Length < 30)
-                    {
-                        roles += rolename;
-                    }
-                    else
-                    {
-                        loop = false;
-                    }
-                    x++;
-                }
-                x = 0;
-                loop = true;
-                while (loop || x <= coach.Languages.Count)
-                {
-                    var rolename = "";
-                    try
-                    {
-                        rolename = coach.Languages[x] + ", ";
-                    }
-                    catch
-                    {
-                        loop = false;
-                    }
-
-                    if (languages.Length + rolename.Length < 30)
-                    {
-                        languages += rolename;
-                    }
-                    else
-                    {
-                        loop = false;
-                    }
-                    x++;
-                }
-                try
-                {
-                    roles = roles.Remove(roles.Length - 2, 2);
-                }
-                catch
-                {
-                }
-                try
-                {
-                    languages = languages.Remove(languages.Length - 2, 2);
-                }
-                catch
-                {
-                }
-                try
-                {
-                    champions = champions.Remove(champions.Length - 2, 2);
-                }
-                catch
-                {
-                }
                 string verified = "-";
                 if (coach.LoMVerified)
                 {
@@ -461,18 +389,18 @@ namespace EmbededBot
                 }
                 catch
                 {
-                    name = new UserRepo(new UserContext()).GetBackupName(coach.DiscordId);/*Get Name From Database*/
+                    name = coach.Name; /*Get Name From Database*/
                 }
 
-                coaches += string.Format("{0,-4}{1,-35}{2,-30}{3,-30}{4,-20}{5}", coach.Id + ":", name,
-                    champions, roles, languages, verified);
+                coaches += string.Format("{0,-4}{1,-35}{2,-30}{3,-30}{4}", coach.Id + ":", name,
+                    coach.ChampionsShort, coach.RoleShort, coach.LanguagesShort);
                 coaches += "\n";
             }
             coaches += "\n```";
             return coaches;
         }
 
-        public string ExportFile()
+        public static string ExportFile()
         {
             //string filepath = @"C:\Users\bartd\Desktop\Exports\Export.txt";
             //List<string> content = new List<string>();
@@ -549,6 +477,138 @@ namespace EmbededBot
             appWord.Quit();
             return Path.ChangeExtension(filepath, ".pdf");
         }
+
+        public static string ExportFileExcel()
+        {
+            string path = @"C:\Users\bartd\Desktop\Exports\Export.xls";
+            Microsoft.Office.Interop.Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
+            xlApp.DisplayAlerts = false;
+            XlFixedFormatType paramExportFormat = XlFixedFormatType.xlTypePDF;
+            XlFixedFormatQuality paramExportQuality =
+                XlFixedFormatQuality.xlQualityStandard;
+            bool paramOpenAfterPublish = false;
+            bool paramIncludeDocProps = true;
+            bool paramIgnorePrintAreas = true;
+            object paramFromPage = Type.Missing;
+            object paramToPage = Type.Missing;
+            object misValue = System.Reflection.Missing.Value;
+            object paramMissing = Type.Missing;
+
+            Microsoft.Office.Interop.Excel.Workbook xlWorkBook = xlApp.Workbooks.Add(misValue);
+            Microsoft.Office.Interop.Excel.Worksheet xlWorkSheet = (Microsoft.Office.Interop.Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
+            xlWorkSheet.Columns.EntireColumn.AutoFit();
+            xlWorkSheet.Cells[1, 1] = "ID";
+            xlWorkSheet.Cells[1, 2] = "Name";
+            xlWorkSheet.Cells[1, 3] = "Timezone";
+            xlWorkSheet.Cells[1, 4] = "Availability";
+            xlWorkSheet.Cells[1, 5] = "Bio";
+            xlWorkSheet.Cells[1, 6] = "Roles";
+            xlWorkSheet.Cells[1, 7] = "Champions";
+            xlWorkSheet.Cells[1, 8] = "Languages";
+            var coaches = CoachlistHolder.List;
+            UserRepo userRepo = new UserRepo(new UserContext());
+            int maxname = 0;
+            var range2 = xlWorkSheet.get_Range("D1", "H1");
+            var range3 = xlWorkSheet.get_Range("E1");
+            range3.WrapText = true;
+            range2.WrapText = true;
+            range2.EntireColumn.ColumnWidth = 50;
+            range3.EntireColumn.ColumnWidth = 100;
+            var range4 = xlWorkSheet.get_Range("C1");
+            range4.EntireColumn.ColumnWidth = 10;
+            for (int i = 0; i < coaches.Count; i++)
+            {
+                xlWorkSheet.Cells[i + 2, 1] = coaches[i].Id;
+                xlWorkSheet.Cells[i + 2, 2] = coaches[i].Name;
+                if (maxname < coaches[i].Name.Length)
+                {
+                    maxname = coaches[i].Name.Length;
+                }
+                if (!string.IsNullOrEmpty(coaches[i].Availability))
+                {
+                    xlWorkSheet.Cells[i + 2, 4] = StringSplitter(coaches[i].Availability, 50);
+                }
+                if (!string.IsNullOrEmpty(coaches[i].Bio))
+                {
+                    xlWorkSheet.Cells[i + 2, 5] = StringSplitter(coaches[i].Bio, 100);
+                }
+                if (!string.IsNullOrEmpty(coaches[i].Timezone))
+                {
+                    xlWorkSheet.Cells[i+2, 3] = StringSplitter(coaches[i].Timezone, 10);
+                }
+                if (coaches[i].ChampionIds.Count != 0)
+                {
+                    xlWorkSheet.Cells[i + 2, 7] = StringSplitter(coaches[i].Champions.Replace(',', ' '), 50);
+                }
+                if (coaches[i].Roles.Count != 0)
+                {
+                    string roles = "";
+                    foreach (var role in coaches[i].Roles)
+                    {
+                        roles += role + " ";
+                    }
+                    xlWorkSheet.Cells[i + 2, 6] = StringSplitter(roles, 50);
+                }
+                if (coaches[i].Languages.Count != 0)
+                {
+                    string languages = "";
+                    coaches[i].Languages.ForEach(l => languages += l + " ");
+                    xlWorkSheet.Cells[i + 2, 8] = StringSplitter(languages, 50);
+                }
+            }
+            range2.WrapText = true;
+            var range = xlWorkSheet.get_Range("B1");
+            range.EntireColumn.ColumnWidth = maxname;
+            var tiles = xlWorkSheet.get_Range("A1");
+            tiles.EntireRow.Font.Bold = true;
+            xlWorkSheet.ListObjects.AddEx(XlListObjectSourceType.xlSrcRange, xlWorkSheet.get_Range("A1", "G" + (coaches.Count + 1)), Type.Missing, XlYesNoGuess.xlYes, Type.Missing).Name = "Table";
+            xlWorkSheet.ListObjects["Table"].TableStyle = "TableStyleMedium3";
+            xlWorkBook.SaveAs(path, Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
+            //xlWorkBook.ExportAsFixedFormat(paramExportFormat,
+            //    Path.ChangeExtension(path, ".pdf"), paramExportQuality,
+            //    paramIncludeDocProps, paramIgnorePrintAreas, paramFromPage,
+            //    paramToPage, paramOpenAfterPublish,
+            //    paramMissing);
+            xlWorkBook.Close(true, misValue, misValue);
+            xlApp.Quit();
+
+            Marshal.ReleaseComObject(xlWorkSheet);
+            Marshal.ReleaseComObject(xlWorkBook);
+            Marshal.ReleaseComObject(xlApp);
+            //SautinSoft.ExcelToPdf x = new SautinSoft.ExcelToPdf();
+            //x.ConvertFile(path, Path.ChangeExtension(path, ".pdf"));
+
+            //return Path.ChangeExtension(path, ".pdf");
+            return path;
+
+        }
+
+        public static string StringSplitter(string initial, int size)
+        {
+            if (initial.Length > size)
+            {
+                var splitstring = "";
+                var words = initial.Split(' ');
+                int stepsize = size;
+                foreach (var word in words)
+                {
+                    if (splitstring.Length + word.Length > size)
+                    {
+                        splitstring += "\n" + word + " ";
+                        size += stepsize;
+                    }
+                    else
+                    {
+                        splitstring += word + " ";
+                    }
+                }
+                 return splitstring;
+            }
+            else
+            {
+                return initial;
+            }
+        }
     }
 
     public static class CoachlistHolder
@@ -575,6 +635,36 @@ namespace EmbededBot
             set { list = value; }
         }
 
+        public static List<Coach> Filter(string filter)
+        {
+            var returnlist = new List<Coach>();
+            foreach (var coach in List)
+            {
+                bool added = false;
+                foreach (var language in coach.Languages)
+                {
+                    if (language.ToLower().Contains(filter.ToLower()) && added == false)
+                    {
+                        returnlist.Add(coach);
+                        added = true;
+                    }
+                }
+                foreach (var role in coach.Roles)
+                {
+                    if (role.ToLower().Contains(filter.ToLower()) && added == false)
+                    {
+                        returnlist.Add(coach);
+                        added = true;
+                    }
+                }
+                if (coach.Champions.Contains(filter.ToLower()) && added == false)
+                {
+                    returnlist.Add(coach);
+                    added = true;
+                }
+            }
+            return returnlist;
+        }
         public static void Update()
         {
             List = new CoachRepo(new CoachContext()).GetAllCoaches();

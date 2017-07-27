@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using DataLibary.Models;
 using DataLibary.MSSQLContext;
+using EmbededBot;
 
 namespace WebUI.Controllers
 {
@@ -13,7 +14,8 @@ namespace WebUI.Controllers
         // GET: User
         public ActionResult Index()
         {
-            return View();
+            var user = Program.Client.GetUser(111211693870161920);
+            return View(user);
         }
         [HttpPost]
         public ActionResult Detail(int id)

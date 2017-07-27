@@ -36,9 +36,8 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="RiotSharp, Version=2.5.5.38286, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\RiotSharp.2.5.5\lib\portable45-net45+win8+wpa81\RiotSharp.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="RiotSharp, Version=2.5.6.37551, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RiotSharp.2.5.6\lib\portable45-net45+win8+wpa81\RiotSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -116,6 +115,10 @@
     <Compile Include="Repos\UserRepo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RiotLibary\RiotLibary.csproj">
+      <Project>{77a519a7-c7c4-4331-bb30-075db13f18d9}</Project>
+      <Name>RiotLibary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ToolKit\ToolKit.csproj">
       <Project>{56827137-d90d-4475-9050-0cc22e254c47}</Project>
       <Name>ToolKit</Name>

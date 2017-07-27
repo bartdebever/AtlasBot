@@ -1,9 +1,9 @@
-﻿
+﻿@model Discord.WebSocket.SocketUser
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>@Model.Username</h2>
 
 @using (Html.BeginForm("Detail", "User", FormMethod.Post))
 {

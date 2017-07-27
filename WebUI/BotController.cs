@@ -55,7 +55,7 @@ namespace WebUI
 
         public async void Connect()
         {
-            await BotUser.Connect(global::Keys.Keys.discordKey, TokenType.Bot);
+            //await BotUser.Connect(Keys.Keys.discordKey, TokenType.Bot);
         }
     }
 }

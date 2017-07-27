@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataLibary.MSSQLContext;
+using RiotLibary.Roles;
 using RiotSharp;
 using RiotSharp.ChampionEndpoint;
 
@@ -26,9 +28,15 @@ namespace DataLibary.Models
         public int Id { get; }
         public List<string> Roles { get; }
         public List<int> ChampionIds { get; set; }
+        public string Champions = "";
+        public string ChampionsShort = "";
+        public string RoleShort = "";
+        public string LanguagesShort = "";
+        public string Name = "";
         public List<string> Languages { get; set; }
         public List<string> Prerferences { get; set; }
         public List<string> Links { get; set; }
+        public List<string> ChampionsList { get; set; }
         public string Cost { get; set; }
         public string Timezone { get; }
         public string Availability { get; }
@@ -38,7 +46,8 @@ namespace DataLibary.Models
         public Region region { get; }
         public ulong DiscordId { get; }
 
-        public Coach(int id, List<string> roles, List<int> championIds, string Timezone, string Availability, bool loMVerified, int summonerId, Region region, ulong discordId, string bio)
+        public Coach(int id, List<string> roles, List<int> championIds, string Timezone, string Availability,
+            bool loMVerified, int summonerId, Region region, ulong discordId, string bio)
         {
             this.Id = id;
             this.Roles = roles;
@@ -53,8 +62,12 @@ namespace DataLibary.Models
             this.Links = new List<string>();
             this.Prerferences = new List<string>();
             this.Bio = bio;
+            this.ChampionsList = new List<string>();
         }
-        public Coach(int id, List<string> roles, List<int> championIds, string Timezone, string Availability, bool loMVerified, int summonerId, Region region, ulong discordId, List<string> language, List<string> preferences, List<string> links, string cost, string bio)
+
+        public Coach(int id, List<string> roles, List<int> championIds, string Timezone, string Availability,
+            bool loMVerified, int summonerId, Region region, ulong discordId, List<string> language,
+            List<string> preferences, List<string> links, string cost, string bio)
         {
             this.Id = id;
             this.Roles = roles;
@@ -70,7 +83,9 @@ namespace DataLibary.Models
             this.Prerferences = preferences;
             this.Links = links;
             this.Bio = bio;
+            this.ChampionsList = new List<string>();
         }
+
         public Coach(int id, string role, int champion)
         {
             this.Id = id;
@@ -85,6 +100,133 @@ namespace DataLibary.Models
             this.ChampionIds = new List<int>();
             this.Roles = new List<string>();
             this.Roles = new List<string>();
+        }
+
+        public void CreateChampions()
+        {
+            int x = 0;
+            bool loop = true; //need better name
+            if (ChampionIds.Count != 0)
+            {
+                ChampionAPI championApi = new ChampionAPI();
+
+                Champions = "";
+                while (loop && x <= ChampionIds.Count)
+                {
+
+                    try
+                    {
+                        var name = championApi.GetChampionName(ChampionIds[x]);
+                        Champions +=  name + ", ";
+                        ChampionsList.Add(name);
+                    }
+                    catch
+                    {
+                        loop = false;
+                    }
+                    x++;
+                }
+                try
+                {
+                    Champions = Champions.Remove(Champions.Length - 2, 2);
+                }
+                catch { }
+
+                string[] champions = Champions.Split(',');
+                x = 0;
+                loop = true;
+                while (loop && x <= champions.Length)
+                {
+                    try
+                    {
+                        if (ChampionsShort.Length + champions[x].Length + 1 >= 30)
+                        {
+                            loop = false;
+                        }
+                        else
+                        {
+                            ChampionsShort += champions[x] + ",";
+                        }
+                        x++;
+                    }
+                    catch
+                    {
+                        loop = false;
+                    }
+
+                }
+                try
+                {
+                    ChampionsShort = ChampionsShort.Remove(ChampionsShort.Length - 1, 1);
+                }
+                catch
+                {
+                }
+            }
+            x = 0;
+                loop = true;
+                while (loop || x <= Roles.Count)
+                {
+                    var rolename = "";
+                    try
+                    {
+                        rolename = Roles[x] + ", ";
+                    }
+                    catch
+                    {
+                        loop = false;
+                    }
+
+                    if (RoleShort.Length + rolename.Length < 30)
+                    {
+                        RoleShort += rolename;
+                    }
+                    else
+                    {
+                        loop = false;
+                    }
+                    x++;
+                }
+                x = 0;
+                loop = true;
+                while (loop || x <= Languages.Count)
+                {
+                    var rolename = "";
+                    try
+                    {
+                        rolename = Languages[x] + ", ";
+                    }
+                    catch
+                    {
+                        loop = false;
+                    }
+
+                    if (LanguagesShort.Length + rolename.Length < 30)
+                    {
+                        LanguagesShort += rolename;
+                    }
+                    else
+                    {
+                        loop = false;
+                    }
+                    x++;
+                }
+                try
+                {
+                    RoleShort = RoleShort.Remove(RoleShort.Length - 2, 2);
+                }
+                catch
+                {
+                }
+                try
+                {
+                    LanguagesShort = LanguagesShort.Remove(LanguagesShort.Length - 2, 2);
+                }
+                catch
+                {
+                }
+            Name = new UserRepo(new UserContext()).GetBackupName(DiscordId);
+
         }
     }
 }

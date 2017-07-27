@@ -295,7 +295,7 @@ namespace DataLibary.MSSQLContext
             {
                 
             }
-
+            coach.CreateChampions();
             return coach;
 
         }

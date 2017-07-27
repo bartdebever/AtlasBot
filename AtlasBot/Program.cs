@@ -72,8 +72,8 @@ namespace AtlasBot
                 CreateRoles createRoles = new CreateRoles(commands);
                 Matchmaking_Settings matchmakingSettings = new Matchmaking_Settings(commands);
                 CoachCommands coachCommands = new CoachCommands(commands);
-                Stopwatch stopwatch = new Stopwatch();
-                stopwatch.Start();
+                //Stopwatch stopwatch = new Stopwatch();
+                //stopwatch.Start();
                 MatchmakingTrigger trigger = new MatchmakingTrigger(BotUser, commands);
                 MatchmakingCommands matchmakingCommands = new MatchmakingCommands(commands, BotUser, trigger);
                 new HelpCommand(commands);
@@ -82,7 +82,7 @@ namespace AtlasBot
                 new BotManagement(commands, BotUser);
                 new Interaction(BotUser, commands);
                 new AltAccountCommand(commands).CreateCommands();
-                Task.Run(() => trigger.TimedClear(stopwatch));
+                //Task.Run(() => trigger.TimedClear(stopwatch));
                 matchmakingCommands.CreateCommands();
                 matchmakingSettings.ChannelSettings();
                 coachCommands.CreateCommands();

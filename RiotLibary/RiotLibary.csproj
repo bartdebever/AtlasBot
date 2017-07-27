@@ -124,10 +124,6 @@
     <Content Include="Info.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataLibary\DataLibary.csproj">
-      <Project>{bae10f63-7dec-4f01-8ca5-c540473a228a}</Project>
-      <Name>DataLibary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Keys\Keys.csproj">
       <Project>{48857361-d3cb-4dcc-b89b-f43ccb85f147}</Project>
       <Name>Keys</Name>
