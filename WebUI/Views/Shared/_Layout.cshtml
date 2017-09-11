@@ -17,13 +17,45 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            @Html.ActionLink("Atlas", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                <li>@Html.ActionLink("Coach", "Index", "Coach")</li>
-                <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                <li>
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">League of Legends
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li>@Html.ActionLink("Coaches", "Index", "Coach")</li>
+                        <li>@Html.ActionLink("Looking For Group", "Yup")</li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Coaching
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li>@Html.ActionLink("League of Mentoring", "Index", "Coach")</li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        Servers
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>@Html.ActionLink("Atlas Servers", "Index", "Coach")</li>
+                        <li>@Html.ActionLink("Our Partners", "Yup")</li>
+                        <li>@Html.ActionLink("Public Server Listing", "Yup")</li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Help
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li>@Html.ActionLink("Commands", "Index", "Coach")</li>
+                        <li>@Html.ActionLink("Looking For Group", "Yup")</li>
+                    </ul>
+                </li>
+                <li>@Html.ActionLink("Get AtlasBot", "Yup")</li>
             </ul>
             @Html.Partial("_LoginPartial")
         </div>
@@ -36,9 +68,9 @@
     <hr/>
 
     <footer>
-        @if (ViewBag.Title != "" && ViewBag.Title != null)
+        @if (!string.IsNullOrEmpty(ViewBag.Module))
         {
-            <p>&copy; @DateTime.Now.Year - AtlasBot @ViewBag.Title Module</p>
+            <p>&copy; @DateTime.Now.Year - AtlasBot @ViewBag.Module Module</p>
         }
         else
         {

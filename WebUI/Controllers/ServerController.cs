@@ -15,14 +15,6 @@ namespace WebUI.Controllers
         // GET: Server
         public ActionResult Index()
         {
-            try
-            {
-                return View(BotController.AtlasBot.GetServer(305289625667108865));
-            }
-            catch
-            {
-                //
-            }
             return RedirectToAction("Index");
         }
     }

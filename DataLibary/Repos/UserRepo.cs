@@ -75,5 +75,20 @@ namespace DataLibary.Models
         {
             return context.GetBackupName(discordid);
         }
+
+        public bool Login(string username, string hash)
+        {
+            return context.Login(username, hash);
+        }
+
+        public bool Validate(string username)
+        {
+            return context.Validate(username);
+        }
+
+        public void Register(string username, string password)
+        {
+            context.Register(username, password);
+        }
     }
 }

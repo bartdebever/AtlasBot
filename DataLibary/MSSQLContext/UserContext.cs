@@ -194,7 +194,7 @@ namespace DataLibary.MSSQLContext
 
         public string GetBackupName(ulong discordid)
         {
-            string query = "SELECT Tag FROM [User] WHERE DiscordId = @Id";
+            string query = "SELECT Username FROM [User] WHERE DiscordId = @Id";
             SqlCommand cmd = new SqlCommand(query, Database.Connection());
             cmd.Parameters.AddWithValue("@id", Convert.ToInt64(discordid));
             using (SqlDataReader reader = cmd.ExecuteReader())
@@ -205,6 +205,50 @@ namespace DataLibary.MSSQLContext
                 }
             }
             return null;
+        }
+
+        public bool Login(string username, string hash)
+        {
+            string query = "SELECT CASE WHEN EXISTS (SELECT U.Id FROM [User] U WHERE U.Username = @Username AND U.Password = @Password) THEN 1 ELSE 0 END AS [Login]";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Username", username);
+            cmd.Parameters.AddWithValue("@Password", hash);
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return Convert.ToBoolean(reader.GetInt32(0));
+                }
+                
+            }
+            return false;
+        }
+
+        public bool Validate(string username)
+        {
+            string query =
+                "SELECT CASE WHEN EXISTS (SELECT U.Id FROM [User] U WHERE U.Username = @Username) THEN 0 ELSE 1 END";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Username", username);
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return Convert.ToBoolean(reader.GetInt32(0));
+                }
+            }
+            return false;
+        }
+
+        public void Register(string username, string password)
+        {
+            string query = "INSERT INTO [User] VALUES (NULL, @Username, @Password)";
+            SqlCommand cmd = new SqlCommand(query, Database.Connection());
+            cmd.Parameters.AddWithValue("@Username", username);
+            cmd.Parameters.AddWithValue("@Password", password);
+            try { cmd.ExecuteNonQuery(); }
+            catch { }
+            
         }
     }
 }

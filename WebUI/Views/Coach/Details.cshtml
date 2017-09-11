@@ -11,7 +11,7 @@
     catch { /*Ignored*/}
 }
 <br/>
-<div clas="container">
+<div class="container titlecontainer">
     <h1 style="display: inline;">@Model.Name:</h1>
     <img class="profileimage img-responsive"src="https://www.timeshighereducation.com/sites/default/files/byline_photos/default-avatar.png" style="display: inline-block; height: 5em; width: 5em; margin-right: 2%;"/>
 
@@ -105,9 +105,16 @@
                     <strong>Links:</strong>
                 </td>
                 <td>
-                    @foreach (var link in Model.Links)
+                    @for (int i = 0; i < Model.Links.Count; i++)
                     {
-                        <a href="@link">@link, </a>
+                        if (i == Model.Links.Count - 1)
+                        {
+                            <a href="@Model.Links[i]">@Model.Links[i]</a>
+                        }
+                        else
+                        {
+                            <a href="@Model.Links[i]">@Model.Links[i], </a>
+                        }
                     }
                 </td>
             </tr>
@@ -127,12 +134,93 @@
         <table class="table table-striped table-bordered" style="width: auto;">
 
             <tbody>
-            <tr>
-                @foreach (var role in Model.Roles)
+            @{
+                int stepsizeroles = 5;
+                int x = 0;
+                List<string> roles = Model.Roles;
+                List<string> temproles = new List<string>();
+                roles = roles.Where(r => r.Length != 0 && r.Length != -1).ToList();
+                int totalroles = roles.Count;
+            }
+                @for (int i = 0; i < totalroles; i++)
                 {
-                    <td>@role</td>
+                    temproles.Add(roles[i]);
+                    x++;
+                    if (x == stepsizeroles)
+                    {
+                        <tr>
+                            <td>
+                                @temproles[i-4]
+                            </td>
+                            <td>
+                                @temproles[i-3]
+                            </td>
+                            <td>
+                                @temproles[i-2]
+                            </td>
+                            <td>
+                                @temproles[i-1]
+                            </td>
+                            <td>
+                                @temproles[i]
+                            </td>
+                        </tr>
+                        x = 0;
+                    }
+                    if (i == totalroles - 1)
+                    {
+                        if (x == 4)
+                        {
+                            <tr>
+                            <td>
+                                @temproles[i-3]
+                            </td>
+                            <td>
+                                @temproles[i-2]
+                            </td>
+                            <td>
+                                @temproles[i-1]
+                            </td>
+                            <td>
+                                @temproles[i]
+                            </td>
+                            </tr>
+                        }
+                        else if (x == 3)
+                        {
+                            <tr>
+                                <td>
+                                    @temproles[i - 2]
+                                </td>
+                                <td>
+                                    @temproles[i - 1]
+                                </td>
+                                <td>
+                                    @temproles[i]
+                                </td>
+                            </tr>
+                        }
+                        else if (x == 2)
+                        {
+                            <tr>
+                                <td>
+                                    @temproles[i-1]
+                                </td>
+                                <td>
+                                    @temproles[i]
+                                </td>
+                            </tr>
+                        }
+                        else if (x == 1)
+                        {
+                            <tr>
+                                <td>
+                                    @temproles[i]
+                                </td>
+                            </tr>
+                        }
+                    }
                 }
-            </tr>
             </tbody>
         </table>
     }
@@ -145,7 +233,6 @@
             <tbody>
                 @{
                     int stepsize = 3;
-                    int x = 0;
                     int y = 0;
                     List<string> images = new List<string>();
                     List<string> champions = new List<string> {"Thresh", "Aatrox", "Thresh", "Aatrox", "Sivir", "Aatrox", "Sivir", "Lucian", "Gragas", "Singed", "Graves"};//Model.Champions.Split(',').Where(c => c.Length!= 0 && c.Length != 1).ToList()

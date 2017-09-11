@@ -22,5 +22,8 @@ namespace DataLibary.Data
         bool IsAtlasAdmin(ulong userid);
         List<User> GetAllAccounts(ulong userid);
         string GetBackupName(ulong discordid);
+        bool Login(string username, string hash);
+        bool Validate(string username);
+        void Register(string username, string password);
     }
 }

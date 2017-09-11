@@ -22,7 +22,7 @@ namespace WebUI.Controllers
             {
                 if (update)
                 {
-                    loMCoaches = CoachlistHolder.List;
+                    loMCoaches = CoachlistHolder.list;
                     update = false;
                 }
                 return loMCoaches;

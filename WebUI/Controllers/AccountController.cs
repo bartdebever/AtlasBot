@@ -5,6 +5,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
+using DataLibary.Models;
+using DataLibary.MSSQLContext;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -75,10 +78,11 @@ namespace WebUI.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var result = new AccountManager().Login(model);
             switch (result)
             {
                 case SignInStatus.Success:
+                    FormsAuthentication.SetAuthCookie(model.Username, model.RememberMe);
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -149,23 +153,29 @@ namespace WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
+            UserRepo userRepo = new UserRepo(new UserContext());
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                if (model.Username.Length < 4)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
+                    AddErrors("Username was too short!");
+                }
+                else if (model.Password.Length < 6)
+                {
+                    AddErrors("Password was too short!");
+                }
+                else if (userRepo.Validate(model.Username))
+                {
+                    userRepo.Register(model.Username, new Encryptor().Hash(model.Password));
+                    FormsAuthentication.SetAuthCookie(model.Username, false);
                     return RedirectToAction("Index", "Home");
                 }
-                AddErrors(result);
+                else
+                {
+                    AddErrors("Username is taken");
+                }
+
+                
             }
 
             // If we got this far, something failed, redisplay form
@@ -259,7 +269,6 @@ namespace WebUI.Controllers
             {
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
-            AddErrors(result);
             return View();
         }
 
@@ -378,7 +387,6 @@ namespace WebUI.Controllers
                         return RedirectToLocal(returnUrl);
                     }
                 }
-                AddErrors(result);
             }
 
             ViewBag.ReturnUrl = returnUrl;
@@ -391,7 +399,7 @@ namespace WebUI.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            FormsAuthentication.SignOut();
             return RedirectToAction("Index", "Home");
         }
 
@@ -435,12 +443,10 @@ namespace WebUI.Controllers
             }
         }
 
-        private void AddErrors(IdentityResult result)
+        private void AddErrors(string result)
         {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError("", error);
-            }
+                ModelState.AddModelError("", result);
+            
         }
 
         private ActionResult RedirectToLocal(string returnUrl)

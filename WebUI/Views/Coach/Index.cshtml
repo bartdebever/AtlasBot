@@ -1,13 +1,15 @@
 ﻿@{
     var uri = Request.Url.ToString();
+    ViewBag.Title = "Coaching";
 }
 @Styles.Render("~/Content/css")
 <div class="container titlecontainer">
     <h2 id="test">League of Mentoring Coach System</h2>
-    <p>Currently known coaches of the <strong>League of Mentoring</strong> System
+    <p>Currently known coaches of the <strong>League of Mentoring</strong> System.<br/>
+    Visit them at <a>their discord.</a>
     </p>
 </div>
-<div class='container'>
+<div class="container">
     <div class='row'>
         <div class='col-md-6'>
             <div class='search-box'>
@@ -18,19 +20,17 @@
             </div>
         </div>
     </div>
-</div>
-<br/>
-<div class="container">
-    <table class="table table-responsive table-striped table-hover table-bordered">
+    <br/>
+    <table class="table table-responsive table-striped table-hover table-bordered" style="width: 97%">
         <thead>
         <tr>
-            <th class="col-sm-1">Discord Tag</th>
+            <th class="col-sm-1">Name</th>
             <th>Bio</th>
             <th>Roles</th>
             <th>Champion(s)</th>
             <th class="col-sm-2">Ranking</th>
             <th>Region</th>
-            <th>More Info</th>
+            <th></th>
         </tr>
         </thead>
         <tbody id="coaches"/>

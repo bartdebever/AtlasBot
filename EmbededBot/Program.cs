@@ -22,29 +22,6 @@ using Task = System.Threading.Tasks.Task;
 
 namespace EmbededBot
 {
-    public static class DiscordInformationGather
-    {
-        private static DiscordSocketClient client;
-
-        public static SocketUser GetUser(ulong id)
-        {
-            SocketUser user = null;
-            if (client == null)
-            {
-                client = new DiscordSocketClient();
-                client.LoginAsync(TokenType.Bot, Keys.Keys.discordKey);
-                client.StartAsync();
-            }
-            try
-            {
-                user = client.GetUser(id);
-            }
-            catch
-            {
-            }
-            return user;
-        }
-    }
     public static class Program
     {
         public static DiscordSocketClient client;
@@ -85,6 +62,7 @@ namespace EmbededBot
 
         private static async Task MessageReceived(SocketMessage message)
         {
+            int number = 1;
             if (message.Content.Contains("-info"))
             {
                 try
@@ -109,15 +87,21 @@ namespace EmbededBot
 
 
             }
-            else if (message.Content.ToLower().Contains("-coach"))
+            else if (message.Content.ToLower().Split(' ').First().Equals("-coach"))
             {
                 await message.Channel.TriggerTypingAsync();
                 CoachRepo coachRepo = new CoachRepo(new CoachContext());
                 ChampionAPI championApi = new ChampionAPI();
                 if (message.Content.ToLower().Contains("-coach list"))
                 {
-                    var coachlist = CoachlistHolder.List;
-                    string returnmessage = GetList(coachlist);
+                    try
+                    {
+                        number = Convert.ToInt32(message.Content.Split(' ').Last());
+                    }
+                    catch { }
+                    number--;
+                    var coachlist = CoachlistHolder.List(number);
+                    string returnmessage = GetList(coachlist, number);
                     await message.Channel.SendMessageAsync(returnmessage);
 
                 }
@@ -129,7 +113,7 @@ namespace EmbededBot
                     try { id = Convert.ToInt32(message.Content.Split(' ')[1]); } catch { }
                     if (id != 0)
                     {
-                        embed = GetCoachInformation(CoachlistHolder.List.Single(c => c.Id == id));
+                        embed = GetCoachInformation(CoachlistHolder.list[id-1]);
                         await message.Channel.SendMessageAsync(returnmessage, false, embed);
                     }
                     else
@@ -139,11 +123,11 @@ namespace EmbededBot
                         {
                             championid =
                                 championApi.GetChampionId(message.Content.Remove(0, message.Content.IndexOf(' ') + 1));
-                            await message.Channel.SendMessageAsync(GetList(coachRepo.GetCoachByChampion(championid)));
+                            await message.Channel.SendMessageAsync(GetList(coachRepo.GetCoachByChampion(championid), number));
                         }
                         catch
                         {
-                            await message.Channel.SendMessageAsync(GetList(coachRepo.GetCoachByRole(message.Content.Remove(0, message.Content.IndexOf(' ') + 1))));
+                            await message.Channel.SendMessageAsync(GetList(coachRepo.GetCoachByRole(message.Content.Remove(0, message.Content.IndexOf(' ') + 1)),number));
                         }
                             
                         
@@ -367,7 +351,7 @@ namespace EmbededBot
             return embed;
         }
 
-        public static string GetList(List<Coach> coachlist)
+        public static string GetList(List<Coach> coachlist, int pagenumber)
         {
             ChampionAPI championApi = new ChampionAPI();
             string coaches = "\n```http\nThese are all of our coaches: \n";
@@ -375,6 +359,7 @@ namespace EmbededBot
                 "Role(s)",
                 "Language(s)");
             coaches += "\n";
+            int count = 1 + (pagenumber * 10);
             foreach (var coach in coachlist)
             {
                 string verified = "-";
@@ -392,10 +377,13 @@ namespace EmbededBot
                     name = coach.Name; /*Get Name From Database*/
                 }
 
-                coaches += string.Format("{0,-4}{1,-35}{2,-30}{3,-30}{4}", coach.Id + ":", name,
+                coaches += string.Format("{0,-4}{1,-35}{2,-30}{3,-30}{4}", count + ":", name,
                     coach.ChampionsShort, coach.RoleShort, coach.LanguagesShort);
                 coaches += "\n";
+                count++;
             }
+            int pagenumber2 = pagenumber + 1;
+            coaches += "List page number " + pagenumber2 + ". Please use -coach list <number> to browse more.";
             coaches += "\n```";
             return coaches;
         }
@@ -505,7 +493,7 @@ namespace EmbededBot
             xlWorkSheet.Cells[1, 6] = "Roles";
             xlWorkSheet.Cells[1, 7] = "Champions";
             xlWorkSheet.Cells[1, 8] = "Languages";
-            var coaches = CoachlistHolder.List;
+            var coaches = CoachlistHolder.list;
             UserRepo userRepo = new UserRepo(new UserContext());
             int maxname = 0;
             var range2 = xlWorkSheet.get_Range("D1", "H1");
@@ -613,32 +601,42 @@ namespace EmbededBot
 
     public static class CoachlistHolder
     {
-        private static List<Coach> list;
+        public static List<Coach> list;
         private static bool upToDate = false;
 
-        public static List<Coach> List
+        public static List<Coach> List(int pagenumber)
         {
-            get
+            if (list == null)
             {
-                if (list == null)
-                {
-                    Update();
-                    upToDate = true;
-                }
-                if (upToDate == false)
-                {
-                    Update();
-                    upToDate = true;
-                }
-                return list;
+                Update();
+                upToDate = true;
             }
-            set { list = value; }
+            if (upToDate == false)
+            {
+                Update();
+                upToDate = true;
+            }
+            int minumum = 0;
+            int maxinum = 10;
+            minumum = minumum + (pagenumber * 10);
+            maxinum = maxinum + (pagenumber * 10);
+            var returnlist = new List<Coach>();
+            for (int i = minumum; i < maxinum; i++)
+            {
+                try
+                {
+                    returnlist.Add(list[i]);
+                }
+                catch { }
+            }
+            return returnlist;
+
         }
 
         public static List<Coach> Filter(string filter)
         {
             var returnlist = new List<Coach>();
-            foreach (var coach in List)
+            foreach (var coach in list)
             {
                 bool added = false;
                 foreach (var language in coach.Languages)
@@ -667,7 +665,7 @@ namespace EmbededBot
         }
         public static void Update()
         {
-            List = new CoachRepo(new CoachContext()).GetAllCoaches();
+            list = new CoachRepo(new CoachContext()).GetAllCoaches();
         }
 
     }

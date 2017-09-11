@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using DataLibary.Models;
 using DataLibary.MSSQLContext;
+using EmbededBot;
 
 namespace WebUI.Controllers
 {
@@ -18,9 +19,20 @@ namespace WebUI.Controllers
 
         public ActionResult Details(int id)
         {
-            //temporary
-            var coachModel = new CoachRepo(new CoachContext()).GetAllCoaches().Single(c => c.Id == id);
+            var coachModel = CoachlistHolder.list.Single(c => c.Id == id);
             return View(coachModel);
+        }
+
+        public ActionResult Edit(int id)
+        {
+            //check login
+            var coachModel = CoachlistHolder.list.Single(c => c.Id == id);
+            return View(coachModel);
+        }
+
+        public ActionResult Edit(Coach coach)
+        {
+            return View(coach);
         }
     }
 }

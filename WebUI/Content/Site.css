@@ -13,7 +13,7 @@ textarea {
     max-width: 280px;
 }
 .titlecontainer {
-    margin-top: 2em;
+    margin-top: 4em;
 }
 .search-box {
     display: inline-block;
@@ -82,4 +82,19 @@ textarea {
     width: 2em;
     height: 2em;
     display: inline
+}
+.body-content {
+    background-color: white !important;
+    border: 2px solid black!important;
+}
+.navbar {
+    background-color: black;
+}
+.navbar-inverse .navbar-nav > li > a {
+    color: white;
+}
+.btn-info {
+    background-color: #349cd8;
+    color: black;
+    border: 2px solid gray;
 }

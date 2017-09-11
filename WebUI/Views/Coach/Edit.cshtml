@@ -1,0 +1,185 @@
+﻿@model DataLibary.Models.Coach
+@{
+    ViewBag.Title = "Edit";
+    ViewBag.Module = "Coach";
+    var champions = new List<string> {"Thresh", "Graves", "Gragas"};
+}
+<div class="container titlecontainer">
+    <h2>Edit @Model.Name</h2>
+</div>
+<div class="container col-md-7">
+
+    <h4>General information</h4>
+    @Html.LabelFor(m => m.Id)
+    @Html.TextBox("id", Model.Id, new {@class = "form-control", style = "max-width:500px;", disabled = "disabled"})
+    @Html.LabelFor(m => m.Name)
+    @Html.TextBox("name", Model.Name, new {@class = "form-control", style = "max-width:500px;"})
+    @Html.LabelFor(m => m.Timezone)
+    @Html.TextBox("timezone", Model.Timezone, new {@class = "form-control", style = "max-width:500px;"})
+    @Html.LabelFor(m => m.Availability)
+    @Html.TextBox("availability", Model.Availability, new {@class = "form-control", style = "max-width:500px;"})
+    @Html.LabelFor(m => m.Bio)
+    @Html.TextArea("bio", Model.Bio, new {@class = "form-control", @cols = 40, @rows = 11, style = "max-width:500px;"})
+    <h4>Safety</h4>
+    <!--
+    All these need to be with bools soontm
+    -->
+    <table class="table table-bordered" style="width: 79%;">
+        <thead>
+        <tr>
+            <th>Module</th>
+            <th>Information</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tr>
+            <td>Summoner Info:</td>
+            <td>Display the linked summoner information</td>
+            <td>Disabled</td>
+            <td><button class="btn btn-info">Enable</button></td>
+        </tr>
+        <tr>
+            <td>Lockdown:</td>
+            <td>Remove the coach from the listing and schedular</td>
+            <td>Disabled</td>
+            <td><button class="btn btn-info">Enable</button></td>
+        </tr>
+        <tr>
+            <td>Schedualer:</td>
+            <td>Allowes apointsments to be schedualed using the AtlasBot system</td>
+            <td>Disabled</td>
+            <td><button class="btn btn-info">Enable</button></td>
+        </tr>
+    </table>
+</div>
+<div class="container col-md-5">
+    <h4>Champions</h4>
+    <table class="table table-bordered" style="width: 65%">
+        @foreach (var champion in champions)
+        {
+            <tr>
+                <td>
+                    @{
+                        var img = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/" + champion.Replace("'", "") + ".png";
+                    }
+                    <img class="img-responsive" height="40" width="40" src="@img"/>
+                </td>
+                <td>
+                    @champion
+                </td>
+                <td>
+                    <button class="btn btn-danger">Remove</button>
+                </td>
+            </tr>
+        }
+    </table>
+    <button class="btn btn-info" data-toggle="modal" data-target="#championModal">Add Champion</button>
+    <br/>
+    <h4>Roles</h4>
+    <table class="table table-bordered" style="width: 65%">
+        @foreach (var role in Model.Roles)
+        {
+            <tr>
+                <td>@role</td>
+                <td><button class="btn btn-danger">Remove</button></td>
+            </tr>
+        }
+    </table>
+    <button class="btn btn-info" data-toggle="modal" data-target="#roleModal">Add Role</button>
+    <h4>Preferences</h4>
+    @if (Model.Prerferences.Count != 0)
+    {
+        <table class="table table-bordered" style="width: 65%">
+            @foreach (var preference in Model.Prerferences)
+            {
+                <tr>
+                    <td>@preference</td>
+                    <td><button class="btn btn-danger">Remove</button></td>
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+        <p>There are no preferences set</p>
+    }
+    <button class="btn btn-info"data-toggle="modal" data-target="#preferenceModal">Add Preference</button>
+    <h4>Accounts</h4>
+    @if (Model.DiscordId != 0)
+    {
+        @Html.Label("discordId", "Discord Id")
+        @Html.TextBoxFor(m =>m.DiscordId, new{@class= "form-control"})
+        <p>Belongs to @Model.Name</p> 
+    }
+    else
+    {
+        @Html.Label("discordId", "Discord")
+        <p><b><i>No discord account added</i></b></p>
+    }
+    @if (Model.SummonerId != 0)
+    {
+        @Html.Label("leagueName", "League of Legends")
+        @Html.TextBox("summonerId", Model.SummonerId)
+    }
+
+    else
+    {
+        @Html.Label("leagueName", "League of Legends")
+        <p><b><i>No summoner set at the moment</i></b></p>
+    }
+
+</div>
+<div class="container col-md-8">
+    <br/>
+    <button class="btn btn-primary">Save</button>
+    <button class="btn btn-danger">Cancel</button>
+</div>
+<div id="championModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add champion</h4>
+            </div>
+            <div class="modal-body">
+                @Html.Label("championName", "Name:")
+                @Html.TextBox("championName","", new {@class = "form-control"})
+                <p><i>Waiting for champion name</i></p>
+                <button class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="roleModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add a Role</h4>
+            </div>
+            <div class="modal-body">
+                @Html.Label("roleName", "Role:")
+                @Html.TextBox("roleName", "", new { @class = "form-control" })
+                <br/>
+                <button class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="preferenceModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add a Preference</h4>
+            </div>
+            <div class="modal-body">
+                @Html.Label("preference", "Preference:")
+                @Html.TextBox("preference", "", new { @class = "form-control" })
+                <br/>
+                <button class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
