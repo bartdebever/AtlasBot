@@ -10,16 +10,27 @@
 <div class="container col-md-7">
 
     <h4>General information</h4>
-    @Html.LabelFor(m => m.Id)
-    @Html.TextBox("id", Model.Id, new {@class = "form-control", style = "max-width:500px;", disabled = "disabled"})
-    @Html.LabelFor(m => m.Name)
-    @Html.TextBox("name", Model.Name, new {@class = "form-control", style = "max-width:500px;"})
-    @Html.LabelFor(m => m.Timezone)
-    @Html.TextBox("timezone", Model.Timezone, new {@class = "form-control", style = "max-width:500px;"})
-    @Html.LabelFor(m => m.Availability)
-    @Html.TextBox("availability", Model.Availability, new {@class = "form-control", style = "max-width:500px;"})
-    @Html.LabelFor(m => m.Bio)
-    @Html.TextArea("bio", Model.Bio, new {@class = "form-control", @cols = 40, @rows = 11, style = "max-width:500px;"})
+    @using (Html.BeginForm("Edit", "Coach", FormMethod.Post))
+    { 
+        @Html.LabelFor(m => m.Id)
+        @Html.TextBox("id", Model.Id, new { @class = "form-control", style = "max-width:500px;", disabled = "disabled" })
+        @Html.LabelFor(m => m.Name)
+        @Html.TextBox("name", Model.Name, new { @class = "form-control", style = "max-width:500px;" })
+        @Html.LabelFor(m => m.Timezone)
+        @Html.TextBox("timezone", Model.Timezone, new { @class = "form-control", style = "max-width:500px;" })
+        @Html.LabelFor(m => m.Availability)
+        @Html.TextBox("availability", Model.Availability, new { @class = "form-control", style = "max-width:500px;" })
+        @Html.LabelFor(m => m.Bio)
+        @Html.TextArea("bio", Model.Bio, new { @class = "form-control", @cols = 40, @rows = 11, style = "max-width:500px;" })
+        foreach (var champion in champions)
+        {
+            @Html.Hidden("champions", champion);
+        }
+
+        <input id="Submit1" type="submit" value="submit" />
+    }
+
+
     <h4>Safety</h4>
     <!--
     All these need to be with bools soontm
@@ -72,7 +83,7 @@
                     <button class="btn btn-danger">Remove</button>
                 </td>
             </tr>
-        }
+                        }
     </table>
     <button class="btn btn-info" data-toggle="modal" data-target="#championModal">Add Champion</button>
     <br/>
@@ -109,7 +120,7 @@
     @if (Model.DiscordId != 0)
     {
         @Html.Label("discordId", "Discord Id")
-        @Html.TextBoxFor(m =>m.DiscordId, new{@class= "form-control"})
+        @Html.TextBoxFor(m => m.DiscordId, new { @class = "form-control" })
         <p>Belongs to @Model.Name</p> 
     }
     else
@@ -144,7 +155,7 @@
             </div>
             <div class="modal-body">
                 @Html.Label("championName", "Name:")
-                @Html.TextBox("championName","", new {@class = "form-control"})
+                @Html.TextBox("championName", "", new { @class = "form-control" })
                 <p><i>Waiting for champion name</i></p>
                 <button class="btn btn-primary">Save</button>
             </div>

@@ -26,13 +26,15 @@ namespace WebUI.Controllers
         public ActionResult Edit(int id)
         {
             //check login
+            CoachlistHolder.Update();
             var coachModel = CoachlistHolder.list.Single(c => c.Id == id);
             return View(coachModel);
         }
-
-        public ActionResult Edit(Coach coach)
+        [HttpPost]
+        public ActionResult Edit(int id, string bio, string name, string timezone, string availability, ICollection<string> champions)
         {
-            return View(coach);
+            var coachModel = CoachlistHolder.list.Single(c => c.Id == id);
+            return View(coachModel);
         }
     }
 }
